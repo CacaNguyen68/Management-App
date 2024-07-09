@@ -2,21 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
-  android:orientation="vertical"
-  android:background="#372C52"
+  android:id="@+id/mainLayout"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content">
+  android:layout_height="wrap_content"
+  android:background="#372C52"
+  android:orientation="vertical">
 
   <androidx.cardview.widget.CardView
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-      android:layout_width="match_parent"
-      android:layout_height="match_parent">
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-  </androidx.cardview.widget.CardView>
+    android:layout_height="wrap_content"/>
 
   <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
@@ -59,5 +53,32 @@
       app:layout_constraintHorizontal_bias="0.09"
       app:layout_constraintStart_toEndOf="@+id/category_id_txt"
       app:layout_constraintTop_toBottomOf="@+id/category_name_txt" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/floatingUpdate"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="16dp"
+      android:backgroundTint="#00FFA000"
+      android:clickable="true"
+      app:tint="#FFAF10"
+      app:backgroundTint="@android:color/transparent"
+      android:textColor="@android:color/white"
+      app:layout_constraintEnd_toStartOf="@+id/floatingDelete"
+      app:layout_constraintTop_toTopOf="@+id/category_id_txt"
+      app:srcCompat="@drawable/ic_border" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/floatingDelete"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:clickable="true"
+      app:tint="#FFAF10"
+      app:backgroundTint="@android:color/transparent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="@+id/category_id_txt"
+      app:rippleColor="@color/cardview_shadow_end_color"
+      app:srcCompat="@drawable/ic_delete" />
+
   </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

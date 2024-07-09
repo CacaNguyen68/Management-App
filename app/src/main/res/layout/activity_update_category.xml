@@ -7,56 +7,32 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:background="#372C52"
-  tools:context=".UpdateCategoryActivity">
+  tools:context=".Category.UpdateCategoryActivity">
 
-  <com.google.android.material.floatingactionbutton.FloatingActionButton
-    android:id="@+id/back_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="20dp"
-    android:layout_marginTop="20dp"
-    android:clickable="true"
-    android:src="@drawable/ic_arrow_back"
-    app:backgroundTint="@android:color/transparent"
-    app:tint="#FFD385"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+  <!-- Toolbar -->
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    android:elevation="4dp"
+    android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+    app:layout_constraintTop_toTopOf="parent"
+    app:title="CẬP NHẬT DANH MỤC"
+    app:navigationIcon="@drawable/ic_arrow_back"
+    app:navigationContentDescription="Back"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-  <com.google.android.material.floatingactionbutton.FloatingActionButton
-    android:id="@+id/menu_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
-    android:layout_marginEnd="20dp"
-    android:clickable="true"
-    android:src="@drawable/ic_menu"
-    app:backgroundTint="@android:color/transparent"
-    app:tint="#FFD385"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
-
-  <TextView
-    android:id="@+id/editText"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="32dp"
-    android:text="CẬP NHẬT DANH MỤC"
-    android:textColor="#FFFFFF"
-    android:textSize="25sp"
-    android:textStyle="bold"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
-
+  <!-- Content -->
   <com.google.android.material.textfield.TextInputLayout
     android:id="@+id/tenDanhMucLayout"
-    android:layout_width="match_parent"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginTop="20dp"
     android:textColorHint="@color/white"
-    app:layout_constraintTop_toBottomOf="@+id/editText"
+    app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent">
+    app:layout_constraintTop_toBottomOf="@id/toolbar">
 
     <com.google.android.material.textfield.TextInputEditText
       android:id="@+id/tenDanhMuc"
@@ -75,29 +51,29 @@
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
-    android:layout_marginTop="72dp"
-    android:layout_marginEnd="8dp"
+    android:layout_marginTop="32dp"
+    android:layout_marginEnd="16dp"
     android:backgroundTint="#FFA000"
     android:text="Cập nhật"
     android:textColor="@android:color/white"
     android:textSize="20sp"
-    app:layout_constraintEnd_toStartOf="@+id/buttonReset"
+    app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/tenDanhMucLayout" />
+    app:layout_constraintTop_toBottomOf="@id/tenDanhMucLayout" />
 
   <Button
     android:id="@+id/buttonReset"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="68dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp"
     android:layout_marginEnd="16dp"
     android:backgroundTint="#FFA000"
     android:text="Đặt lại"
     android:textColor="@android:color/white"
     android:textSize="20sp"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toEndOf="@+id/buttonUpdate"
-    app:layout_constraintTop_toBottomOf="@+id/tenDanhMucLayout" />
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/buttonUpdate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
