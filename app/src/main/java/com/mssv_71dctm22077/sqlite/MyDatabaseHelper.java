@@ -5,12 +5,15 @@ import static android.content.ContentValues.TAG;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,7 +47,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_DOB_USER = "ngay_sinh";
   private static final String COLUMN_PHONE_USER = "so_dien_thoai";
   private static final String COLUMN_EMAIL_USER = "email";
-  private static final String COLUMN_USERNAME = "username";
   private static final String COLUMN_PASSWORD = "password";
   private static final String COLUMN_USER_TYPE = "loai_nguoi_dung";
   private static final String COLUMN_CREATED_USER = "ngay_khoi_tao";
@@ -69,7 +71,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.execSQL(queryProduct);
 
     // Câu lệnh tạo bảng cho bảng "user" với trường hình ảnh
-    String queryUser = "CREATE TABLE " + TABLE_USER + "(" + COLUMN_ID_USER + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME_USER + " TEXT, " + COLUMN_DOB_USER + " TEXT, " + COLUMN_PHONE_USER + " TEXT, " + COLUMN_EMAIL_USER + " TEXT, " + COLUMN_USERNAME + " TEXT UNIQUE, " + COLUMN_PASSWORD + " TEXT, " + COLUMN_USER_TYPE + " TEXT, " + COLUMN_CREATED_USER + " TEXT, " + COLUMN_IMAGE_USER + " BLOB" + ")";
+    String queryUser = "CREATE TABLE " + TABLE_USER + "(" + COLUMN_ID_USER + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME_USER + " TEXT, " + COLUMN_DOB_USER + " TEXT, " + COLUMN_PHONE_USER + " TEXT UNIQUE, " + COLUMN_EMAIL_USER + " TEXT, " + COLUMN_PASSWORD + " TEXT, " + COLUMN_USER_TYPE + " TEXT, " + COLUMN_CREATED_USER + " TEXT, " + COLUMN_IMAGE_USER + " BLOB" + ")";
 
 // Thực thi câu lệnh SQL để tạo bảng "user" với trường hình ảnh
     db.execSQL(queryUser);
@@ -84,8 +86,33 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     onCreate(db);
   }
 
+  //    Câu truy vấn cho đăng nhập
+  public boolean checkUser(String phone, String password) {
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    // Xác định các cột cần truy vấn
+    String query = "SELECT " + COLUMN_PASSWORD + " FROM " + TABLE_USER + " WHERE " + COLUMN_PHONE_USER + "=?";
+    Cursor cursor = db.rawQuery(query, new String[]{phone});
+
+    boolean userExists = false;
+    if (cursor.moveToFirst()) {
+      String storedPasswordHash = cursor.getString(cursor.getColumnIndex(COLUMN_PASSWORD));
+      // Kiểm tra mật khẩu đã nhập với mật khẩu đã mã hóa trong cơ sở dữ liệu
+      if (BCrypt.checkpw(password, storedPasswordHash)) {
+        userExists = true;
+      }
+    }
+
+    // Đóng cursor và cơ sở dữ liệu
+    cursor.close();
+    db.close();
+
+    return userExists;
+  }
+
+
   // Phương thức để thêm một người dùng mới vào cơ sở dữ liệu
-  public void addUser(String name, String dob, String phone, String email, String username, String password, String userType, String createdDate, byte[] image) {
+  public void addUser(String name, String dob, String phone, String email, String password, String userType, byte[] image) {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
 
@@ -93,19 +120,40 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     values.put(COLUMN_DOB_USER, dob);
     values.put(COLUMN_PHONE_USER, phone);
     values.put(COLUMN_EMAIL_USER, email);
-    values.put(COLUMN_USERNAME, username);
     values.put(COLUMN_PASSWORD, password);
     values.put(COLUMN_USER_TYPE, userType);
-    values.put(COLUMN_CREATED_USER, createdDate);
+    values.put(COLUMN_CREATED_USER, getCurrentDate());
     values.put(COLUMN_IMAGE_USER, image);
 
-    // Thực thi câu lệnh insert vào bảng TABLE_USER
-    long result = db.insert(TABLE_USER, null, values);
-
-    // Đóng kết nối đến cơ sở dữ liệu
-    db.close();
+    try {
+      // Thực thi câu lệnh insert vào bảng TABLE_USER
+      long result = db.insertOrThrow(TABLE_USER, null, values);
+      if (result == -1) {
+        Toast.makeText(context, "Thêm thất bại!", Toast.LENGTH_SHORT).show();
+      } else {
+        Toast.makeText(context, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
+      }
+    } catch (SQLiteConstraintException e) {
+      // Lỗi trùng lặp số điện thoại
+      Toast.makeText(context, "Số điện thoại đã tồn tại", Toast.LENGTH_SHORT).show();
+    } finally {
+      // Đóng kết nối đến cơ sở dữ liệu
+      db.close();
+    }
   }
 
+  // Câu truy vấn lấy danh sách người dùng mới vào cơ sở dữ liệu
+  public Cursor getAllUser() {
+    String query = "SELECT * FROM " + TABLE_USER;
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    Cursor cursor = null;
+    if (db != null) {
+      cursor = db.rawQuery(query, null);
+    }
+    Log.d("List user", "cout = " + cursor.getCount());
+    return cursor;
+  }
 
   //  kiem tra xem ten danh muc do co ton tai hay khong
   public boolean isDanhMucExists(String tenDanhMuc) {

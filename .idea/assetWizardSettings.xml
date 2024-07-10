@@ -304,7 +304,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/border_color/baseline_border_color_24.xml" />
+                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/visibility/baseline_visibility_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -315,7 +315,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="ffd385" />
-                            <entry key="outputName" value="ic_border" />
+                            <entry key="outputName" value="ic_visibility" />
                           </map>
                         </option>
                       </PersistentState>
