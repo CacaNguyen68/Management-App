@@ -96,7 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
   }
 
   private void updateLabel() {
-    String myFormat = "yyyy-MM-dd";
+    String myFormat = "dd-MM-yyyy";
     SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
     tvDOB.setText(sdf.format(myCalendar.getTime()));
   }

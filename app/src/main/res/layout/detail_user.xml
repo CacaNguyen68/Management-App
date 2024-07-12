@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:background="#FFFFFF"
+  android:layout_margin="8dp"
+  app:cardCornerRadius="8dp"
+  app:cardElevation="4dp">
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <ImageView
+      android:id="@+id/user_image"
+      android:layout_width="80dp"
+      android:layout_height="80dp"
+      android:layout_marginEnd="16dp"
+      android:contentDescription="@string/user_image"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:srcCompat="@drawable/ic_user" />
+
+    <TextView
+      android:id="@+id/user_name"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:text="Tên người dùng"
+      android:textStyle="bold"
+      android:textSize="18sp"
+      android:textColor="@color/black"
+      app:layout_constraintStart_toEndOf="@id/user_image"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.0" />
+
+    <TextView
+      android:id="@+id/user_phone"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:text="Số điện thoại"
+      android:textSize="14sp"
+      android:textColor="@color/black"
+      app:layout_constraintStart_toEndOf="@id/user_image"
+      app:layout_constraintTop_toBottomOf="@id/user_name"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.0" />
+
+    <TextView
+      android:id="@+id/user_email"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:text="Email"
+      android:textSize="14sp"
+      android:textColor="@color/black"
+      app:layout_constraintStart_toEndOf="@id/user_image"
+      app:layout_constraintTop_toBottomOf="@id/user_phone"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.0" />
+
+    <TextView
+      android:id="@+id/user_dob"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:text="Ngày sinh"
+      android:textSize="14sp"
+      android:textColor="@color/black"
+      app:layout_constraintStart_toEndOf="@id/user_image"
+      app:layout_constraintTop_toBottomOf="@id/user_email"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.0" />
+
+    <TextView
+      android:id="@+id/user_type"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:text="Loại người dùng"
+      android:textSize="14sp"
+      android:textColor="@color/black"
+      app:layout_constraintStart_toEndOf="@id/user_image"
+      app:layout_constraintTop_toBottomOf="@id/user_dob"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintHorizontal_bias="0.0" />
+
+    <TextView
+      android:id="@+id/user_created"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:text="Ngày khởi tạo"
+      android:textSize="14sp"
+      android:textColor="@color/black"
+      app:layout_constraintStart_toEndOf="@id/user_image"
+      app:layout_constraintTop_toBottomOf="@id/user_type"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintHorizontal_bias="0.0" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

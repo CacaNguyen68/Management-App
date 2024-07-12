@@ -13,10 +13,14 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.mssv_71dctm22077.model.User;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class MyDatabaseHelper extends SQLiteOpenHelper {
@@ -39,6 +43,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_PRICE_PRODUCT = "gia_san_pham";
   private static final String COLUMN_CATEGORY_ID = "danhmuc_id"; // Đây là khóa ngoại
   private static final String COLUMN_CREATED_PRODUCT = "ngay_khoi_tao";
+  private static final String COLUMN_USER_CREATED_PRODUCT = "nguoi_khoi_tao";
+
 
   //  Khoi tao cho table nguoi dung
   private static final String TABLE_USER = "table_user";
@@ -50,6 +56,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_PASSWORD = "password";
   private static final String COLUMN_USER_TYPE = "loai_nguoi_dung";
   private static final String COLUMN_CREATED_USER = "ngay_khoi_tao";
+  private static final String COLUMN_USER_CREATED_USER = "nguoi_khoi_tao";
   private static final String COLUMN_IMAGE_USER = "hinh_anh";
 
 
@@ -67,11 +74,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.execSQL(queryCategory);
 
 //    Cau lenh tao bang cho san pham
-    String queryProduct = "CREATE TABLE " + TABLE_PRODUCT + "(" + COLUMN_ID_PRODUCT + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME_PRODUCT + " TEXT, " + COLUMN_IMAGE_PRODUCT + " TEXT, " + COLUMN_PRICE_PRODUCT + " DOUBLE, " + COLUMN_CREATED_PRODUCT + " TEXT, " + COLUMN_CATEGORY_ID + " INTEGER, " + "FOREIGN KEY(" + COLUMN_CATEGORY_ID + ") REFERENCES " + TABLE_CATEGORY + "(" + COLUMN_ID_CATEGORY + ")" + ")";
+    String queryProduct = "CREATE TABLE " + TABLE_PRODUCT + "(" + COLUMN_ID_PRODUCT + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME_PRODUCT + " TEXT, " + COLUMN_IMAGE_PRODUCT + " TEXT, " + COLUMN_PRICE_PRODUCT + " DOUBLE, " + COLUMN_CREATED_PRODUCT + " TEXT," + COLUMN_USER_CREATED_PRODUCT + " TEXT, " + COLUMN_CATEGORY_ID + " INTEGER, " + "FOREIGN KEY(" + COLUMN_CATEGORY_ID + ") REFERENCES " + TABLE_CATEGORY + "(" + COLUMN_ID_CATEGORY + ")" + ")";
     db.execSQL(queryProduct);
 
     // Câu lệnh tạo bảng cho bảng "user" với trường hình ảnh
-    String queryUser = "CREATE TABLE " + TABLE_USER + "(" + COLUMN_ID_USER + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME_USER + " TEXT, " + COLUMN_DOB_USER + " TEXT, " + COLUMN_PHONE_USER + " TEXT UNIQUE, " + COLUMN_EMAIL_USER + " TEXT, " + COLUMN_PASSWORD + " TEXT, " + COLUMN_USER_TYPE + " TEXT, " + COLUMN_CREATED_USER + " TEXT, " + COLUMN_IMAGE_USER + " BLOB" + ")";
+    String queryUser = "CREATE TABLE " + TABLE_USER + "(" + COLUMN_ID_USER + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME_USER + " TEXT, " + COLUMN_DOB_USER + " TEXT, " + COLUMN_PHONE_USER + " TEXT UNIQUE, " + COLUMN_EMAIL_USER + " TEXT, " + COLUMN_PASSWORD + " TEXT, " + COLUMN_USER_TYPE + " TEXT," + COLUMN_USER_CREATED_USER + " TEXT, " + COLUMN_CREATED_USER + " TEXT, " + COLUMN_IMAGE_USER + " BLOB" + ")";
 
 // Thực thi câu lệnh SQL để tạo bảng "user" với trường hình ảnh
     db.execSQL(queryUser);
@@ -181,6 +188,92 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return cursor;
   }
 
+  // Lấy user theo ID
+  public User getUser(long id) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    User user = null;
+
+    Cursor cursor = db.query(TABLE_USER,
+      new String[]{COLUMN_ID_USER, COLUMN_NAME_USER, COLUMN_DOB_USER, COLUMN_PHONE_USER, COLUMN_EMAIL_USER, COLUMN_USER_TYPE, COLUMN_CREATED_USER, COLUMN_IMAGE_USER},
+      COLUMN_ID_USER + "=?",
+      new String[]{String.valueOf(id)}, null, null, null, null);
+
+    if (cursor != null) {
+      if (cursor.moveToFirst()) {
+        user = new User(
+          cursor.getInt(cursor.getColumnIndex(COLUMN_ID_USER)),
+          cursor.getString(cursor.getColumnIndex(COLUMN_NAME_USER)),
+          cursor.getString(cursor.getColumnIndex(COLUMN_DOB_USER)),
+          cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_USER)),
+          cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL_USER)),
+          cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE)),
+          cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_USER)),
+          cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_USER)),
+          cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_USER))
+        );
+      }
+      cursor.close();
+    }
+    return user;
+  }
+
+  // Lấy danh sách tất cả users
+// Lấy danh sách tất cả users
+  public List<User> getAllUsers() {
+    List<User> userList = new ArrayList<>();
+    SQLiteDatabase db = this.getWritableDatabase();
+    Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_USER, null);
+
+    if (cursor.moveToFirst()) {
+      do {
+        User user = new User();
+        user.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_ID_USER)));
+        user.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_USER)));
+        user.setDob(cursor.getString(cursor.getColumnIndex(COLUMN_DOB_USER)));
+        user.setPhone(cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_USER)));
+        user.setEmail(cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL_USER)));
+        user.setUserType(cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE)));
+        user.setCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_USER)));
+        user.setUserCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_USER)));
+        user.setImage(cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_USER)));
+        userList.add(user);
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    return userList;
+  }
+
+  // Tìm kiếm user theo tên hoặc email, sdt
+  // Tìm kiếm user theo tên hoặc email
+  public List<User> searchUsers(String query) {
+    List<User> userList = new ArrayList<>();
+    SQLiteDatabase db = this.getWritableDatabase();
+    String[] columns = {COLUMN_ID_USER, COLUMN_NAME_USER, COLUMN_DOB_USER, COLUMN_PHONE_USER, COLUMN_EMAIL_USER, COLUMN_USER_TYPE, COLUMN_CREATED_USER, COLUMN_USER_CREATED_USER, COLUMN_IMAGE_USER};
+    String selection = COLUMN_NAME_USER + " LIKE ? OR " + COLUMN_EMAIL_USER + " LIKE ? OR "+ COLUMN_PHONE_USER +" LIKE ?";
+    String[] selectionArgs = {"%" + query + "%", "%" + query + "%", "%" + query + "%"};
+    Cursor cursor = db.query(TABLE_USER, columns, selection, selectionArgs, null, null, null);
+
+    if (cursor.moveToFirst()) {
+      do {
+        User user = new User();
+        user.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_ID_USER)));
+        user.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_USER)));
+        user.setDob(cursor.getString(cursor.getColumnIndex(COLUMN_DOB_USER)));
+        user.setPhone(cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_USER)));
+        user.setEmail(cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL_USER)));
+        user.setUserType(cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE)));
+        user.setCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_USER)));
+        user.setUserCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_USER)));
+        user.setImage(cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_USER)));
+        userList.add(user);
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    return userList;
+  }
+
+
+
   //  kiem tra xem ten danh muc do co ton tai hay khong
   public boolean isDanhMucExists(String tenDanhMuc) {
     SQLiteDatabase db = this.getReadableDatabase();
@@ -278,4 +371,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
     return formatter.format(today);
   }
+
+
 }

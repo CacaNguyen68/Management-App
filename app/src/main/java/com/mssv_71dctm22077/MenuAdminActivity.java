@@ -82,6 +82,10 @@ public class MenuAdminActivity extends AppCompatActivity {
     });
     productFloating = findViewById(R.id.fabManageProducts);
     userFloating = findViewById(R.id.fabManageUsers);
+    userFloating.setOnClickListener(view -> {
+      Intent intent = new Intent(this, UserActivity.class);
+      startActivity(intent);
+    });
     statisticFloating = findViewById(R.id.fabStatistics);
     notifiactionFloating = findViewById(R.id.fabNewNotifications);
     orderFloating = findViewById(R.id.fabInventoryManagement);

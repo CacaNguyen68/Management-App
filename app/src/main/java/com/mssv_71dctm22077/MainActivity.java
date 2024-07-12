@@ -35,16 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     setContentView(R.layout.activity_main);
     MyDatabaseHelper myDB = new MyDatabaseHelper(this);
-    Cursor cursor = myDB.getAllUser();
-
-    if (cursor.getCount() == 0) {
-      Date today = new Date();
-      SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-
-      String hashedPassword = BCrypt.hashpw("superadmin", BCrypt.gensalt());
-      myDB.addUser("Super Admin", formatter.format(today), "012345678", "thubackend2022@gmail.com", hashedPassword, "ADMIN", null);
-
-    }
+    storeDataArrays();
 
     edPhone = findViewById(R.id.edittext_phone);
     edPassword = findViewById(R.id.edittext_password);
@@ -109,13 +100,16 @@ public class MainActivity extends AppCompatActivity {
 
 
   void storeDataArrays() {
+    MyDatabaseHelper myDB = new MyDatabaseHelper(this);
     Cursor cursor = myDB.getAllUser();
+
     if (cursor.getCount() == 0) {
-      MyDatabaseHelper myDB = new MyDatabaseHelper(this);
       Date today = new Date();
       SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-      String hashedPassword = BCrypt.hashpw("superadmin", BCrypt.gensalt());
-      myDB.addUser("Super Admin", formatter.format(today), "012345678", "thubackend2022@gmail.com", hashedPassword, "ADMIN", null);
+
+      myDB.addUser("Super Admin", formatter.format(today), "012345678", "thubackend2022@gmail.com", BCrypt.hashpw("superadmin", BCrypt.gensalt()), "ADMIN", null);
+      myDB.addUser("Join User", formatter.format(today), "88888888", "john.doe@example.com", BCrypt.hashpw("88888888", BCrypt.gensalt()), "USER", null);
+      myDB.addUser("Kate Admin", formatter.format(today), "66666666", "kate.doe@example.com", BCrypt.hashpw("66666666", BCrypt.gensalt()), "ADMIN", null);
 
     }
   }
