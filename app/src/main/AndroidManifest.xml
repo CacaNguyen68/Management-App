@@ -34,7 +34,7 @@
     <activity
       android:name=".MainActivity"
       android:exported="true"
-      android:label="LIST CATEGOGY COSPLAY">
+      android:label="Cosplay App">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <action android:name="android.intent.action.VIEW" />

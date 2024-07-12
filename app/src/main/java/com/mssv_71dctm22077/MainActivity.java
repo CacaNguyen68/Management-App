@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
       SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
 
       String hashedPassword = BCrypt.hashpw("superadmin", BCrypt.gensalt());
-      myDB.addUser("Super Admin", formatter.format(today), "012345678", "thubackend2022@gmail.com",hashedPassword , "ADMIN", null);
+      myDB.addUser("Super Admin", formatter.format(today), "012345678", "thubackend2022@gmail.com", hashedPassword, "ADMIN", null);
 
     }
 
@@ -79,9 +79,18 @@ public class MainActivity extends AppCompatActivity {
 
     if (mb.checkUser(phone, password)) {
       Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-      // Chuyển sang màn hình chính hoặc làm bất kỳ hành động nào khác sau khi đăng nhập thành công
-      Intent intent = new Intent(MainActivity.this, MenuAdminActivity.class);
-      startActivity(intent);
+      String typeUser = mb.getTypeUserByPhone(phone);
+      Log.d("Type User", typeUser);
+      if (typeUser.equals("ADMIN")) {
+        // Chuyển sang màn hình chính hoặc làm bất kỳ hành động nào khác sau khi đăng nhập thành công
+        Intent intent = new Intent(MainActivity.this, MenuAdminActivity.class);
+        startActivity(intent);
+      } else {
+// Chuyển sang màn hình chính hoặc làm bất kỳ hành động nào khác sau khi đăng nhập thành công
+        Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
+        startActivity(intent);
+      }
+
     } else {
       Toast.makeText(this, "Sai tên đăng nhập hoặc mật khẩu", Toast.LENGTH_SHORT).show();
       edPhone.getText().clear();
@@ -106,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
       Date today = new Date();
       SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
       String hashedPassword = BCrypt.hashpw("superadmin", BCrypt.gensalt());
-      myDB.addUser("Super Admin", formatter.format(today), "012345678", "thubackend2022@gmail.com",hashedPassword , "ADMIN", null);
+      myDB.addUser("Super Admin", formatter.format(today), "012345678", "thubackend2022@gmail.com", hashedPassword, "ADMIN", null);
 
     }
   }

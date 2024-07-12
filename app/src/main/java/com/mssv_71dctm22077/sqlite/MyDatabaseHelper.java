@@ -86,6 +86,19 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     onCreate(db);
   }
 
+  //  Câu truy vấn lay type user tu phone
+  public String getTypeUserByPhone(String phone) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    String query = "SELECT " + COLUMN_USER_TYPE + " FROM " + TABLE_USER + " WHERE " + COLUMN_PHONE_USER + "=?";
+    Cursor cursor = db.rawQuery(query, new String[]{phone});
+    String type = null;
+
+    cursor.moveToFirst();
+    type = cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE));
+
+    return type;
+  }
+
   //    Câu truy vấn cho đăng nhập
   public boolean checkUser(String phone, String password) {
     SQLiteDatabase db = this.getReadableDatabase();
@@ -102,7 +115,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         userExists = true;
       }
     }
-
     // Đóng cursor và cơ sở dữ liệu
     cursor.close();
     db.close();
@@ -110,6 +122,16 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return userExists;
   }
 
+
+  //  kiem tra xem phone do co ton tai hay khong
+  public boolean isPhoneExists(String phone) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    String query = "SELECT * FROM " + TABLE_USER + " WHERE " + COLUMN_PHONE_USER + "=?";
+    Cursor cursor = db.rawQuery(query, new String[]{phone});
+    boolean exists = cursor.getCount() > 0;
+    cursor.close();
+    return exists;
+  }
 
   // Phương thức để thêm một người dùng mới vào cơ sở dữ liệu
   public void addUser(String name, String dob, String phone, String email, String password, String userType, byte[] image) {
@@ -126,12 +148,16 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     values.put(COLUMN_IMAGE_USER, image);
 
     try {
-      // Thực thi câu lệnh insert vào bảng TABLE_USER
-      long result = db.insertOrThrow(TABLE_USER, null, values);
-      if (result == -1) {
-        Toast.makeText(context, "Thêm thất bại!", Toast.LENGTH_SHORT).show();
+      if (isPhoneExists(phone)) {
+        Toast.makeText(context, "Số điện thoại đã được đăng ký!", Toast.LENGTH_SHORT).show();
       } else {
-        Toast.makeText(context, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
+        // Thực thi câu lệnh insert vào bảng TABLE_USER
+        long result = db.insertOrThrow(TABLE_USER, null, values);
+        if (result == -1) {
+          Toast.makeText(context, "Thêm thất bại!", Toast.LENGTH_SHORT).show();
+        } else {
+          Toast.makeText(context, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
+        }
       }
     } catch (SQLiteConstraintException e) {
       // Lỗi trùng lặp số điện thoại
