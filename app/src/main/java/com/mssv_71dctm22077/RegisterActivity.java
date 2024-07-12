@@ -140,6 +140,11 @@ public class RegisterActivity extends AppCompatActivity {
     // Mã hóa mật khẩu
     String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
+    if (userType.equals("Khách hàng")){
+      userType = "USER";
+    }else{
+      userType = "ADMIN";
+    }
 
     byte[] image = getBitmapAsByteArray(selectedImageBitmap);
 

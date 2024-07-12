@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -76,7 +77,6 @@ public class CategoryActivity extends AppCompatActivity {
       myDB.addDanhMuc("Phụ kiện");
       myDB.addDanhMuc("Cổ trang");
 
-      Toast.makeText(this, "Dữ liệu rỗng.", Toast.LENGTH_SHORT).show();
     } else {
       while (cursor.moveToNext()) {
         categoryId.add(cursor.getString(0));
