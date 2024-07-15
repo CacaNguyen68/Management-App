@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.mssv_71dctm22077.model.Product;
 import com.mssv_71dctm22077.model.User;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -129,7 +130,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return userExists;
   }
 
-
   //  kiem tra xem phone do co ton tai hay khong
   public boolean isPhoneExists(String phone) {
     SQLiteDatabase db = this.getReadableDatabase();
@@ -244,7 +244,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   }
 
   // Tìm kiếm user theo tên hoặc email, sdt
-  // Tìm kiếm user theo tên hoặc email
   public List<User> searchUsers(String query) {
     List<User> userList = new ArrayList<>();
     SQLiteDatabase db = this.getWritableDatabase();
@@ -271,8 +270,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     cursor.close();
     return userList;
   }
-
-
 
   //  kiem tra xem ten danh muc do co ton tai hay khong
   public boolean isDanhMucExists(String tenDanhMuc) {
@@ -354,15 +351,48 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   }
 
   //  Cau truy van lay danh sach san pham
-  public Cursor getAllProducts() {
-    String query = "SELECT * FROM " + TABLE_PRODUCT;
-    SQLiteDatabase db = this.getReadableDatabase();
+  public List<Product> getAllProducts() {
+    List<Product> productList = new ArrayList<>();
+    String selectQuery = "SELECT * FROM " + TABLE_PRODUCT;
+    SQLiteDatabase db = this.getWritableDatabase();
+    Cursor cursor = db.rawQuery(selectQuery, null);
+    if (cursor.moveToFirst()) {
+      do {
+        int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID_PRODUCT));
+        String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PRODUCT));
+        byte[] image = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_PRODUCT));
+        double price = cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICE_PRODUCT));
+        int categoryId = cursor.getInt(cursor.getColumnIndex(COLUMN_CATEGORY_ID));
+        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_PRODUCT));
+        String userCreated = cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_PRODUCT));
 
-    Cursor cursor = null;
-    if (db != null) {
-      cursor = db.rawQuery(query, null);
+        productList.add(new Product(id, name, price, categoryId, createdAt, userCreated, image));
+      } while (cursor.moveToNext());
     }
-    return cursor;
+    cursor.close();
+    return productList;
+  }
+
+  public List<Product> searchProducts(String query) {
+    List<Product> productList = new ArrayList<>();
+    String selectQuery = "SELECT * FROM " + TABLE_PRODUCT + " WHERE " + COLUMN_NAME_PRODUCT + " LIKE ?";
+    SQLiteDatabase db = this.getWritableDatabase();
+    Cursor cursor = db.rawQuery(selectQuery, new String[]{"%" + query + "%"});
+    if (cursor.moveToFirst()) {
+      do {
+        int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID_PRODUCT));
+        String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PRODUCT));
+        byte[] image = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_PRODUCT));
+        double price = cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICE_PRODUCT));
+        int categoryId = cursor.getInt(cursor.getColumnIndex(COLUMN_CATEGORY_ID));
+        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_PRODUCT));
+        String userCreated = cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_PRODUCT));
+
+        productList.add(new Product(id, name, price, categoryId, createdAt, userCreated,image));
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    return productList;
   }
 
   // Lấy ngày hiện tại dd-MM-yyyy

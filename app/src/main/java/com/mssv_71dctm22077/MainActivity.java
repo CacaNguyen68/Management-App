@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
+import com.mssv_71dctm22077.user.RegisterActivity;
 
 import org.mindrot.jbcrypt.BCrypt;
 

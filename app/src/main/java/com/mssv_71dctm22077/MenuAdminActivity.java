@@ -3,26 +3,19 @@ package com.mssv_71dctm22077;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.mssv_71dctm22077.Category.AddCategoryActivity;
 import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
+import com.mssv_71dctm22077.user.UserActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MenuAdminActivity extends AppCompatActivity {
@@ -81,6 +74,10 @@ public class MenuAdminActivity extends AppCompatActivity {
       startActivity(intent);
     });
     productFloating = findViewById(R.id.fabManageProducts);
+    productFloating.setOnClickListener(view -> {
+      Intent intent = new Intent(this, ProductActivity.class);
+      startActivity(intent);
+    });
     userFloating = findViewById(R.id.fabManageUsers);
     userFloating.setOnClickListener(view -> {
       Intent intent = new Intent(this, UserActivity.class);

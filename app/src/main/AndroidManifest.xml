@@ -13,13 +13,13 @@
     android:theme="@style/Theme.ManagementApp"
     tools:targetApi="31">
     <activity
-      android:name=".UserActivity"
+      android:name=".user.UserActivity"
       android:exported="false" />
     <activity
       android:name=".MenuAdminActivity"
       android:exported="false" />
     <activity
-      android:name=".RegisterActivity"
+      android:name=".user.RegisterActivity"
       android:exported="false" />
     <activity
       android:name=".Category.CategoryActivity"
