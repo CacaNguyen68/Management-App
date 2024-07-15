@@ -350,6 +350,19 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
   }
 
+  // Câu truy vấn lấy danh sách người dùng mới vào cơ sở dữ liệu
+  public Cursor getAllProduct() {
+    String query = "SELECT * FROM " + TABLE_PRODUCT;
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    Cursor cursor = null;
+    if (db != null) {
+      cursor = db.rawQuery(query, null);
+    }
+    Log.d("List product", "cout = " + cursor.getCount());
+    return cursor;
+  }
+
   //  Cau truy van lay danh sach san pham
   public List<Product> getAllProducts() {
     List<Product> productList = new ArrayList<>();
@@ -372,6 +385,34 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     cursor.close();
     return productList;
   }
+
+  // Phương thức để thêm một sản phẩm mới vào cơ sở dữ liệu
+  public void addProduct(String name, double price, int categoryId, String createdAt, String userCreated, byte[] image) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues values = new ContentValues();
+
+    values.put(COLUMN_NAME_PRODUCT, name);
+    values.put(COLUMN_PRICE_PRODUCT, price);
+    values.put(COLUMN_CATEGORY_ID, categoryId);
+    values.put(COLUMN_CREATED_PRODUCT, createdAt);
+    values.put(COLUMN_USER_CREATED_PRODUCT, userCreated);
+    values.put(COLUMN_IMAGE_PRODUCT, image);
+
+    try {
+      long result = db.insertOrThrow(TABLE_PRODUCT, null, values);
+      if (result == -1) {
+        Toast.makeText(context, "Thêm sản phẩm thất bại!", Toast.LENGTH_SHORT).show();
+      } else {
+        Toast.makeText(context, "Thêm sản phẩm thành công", Toast.LENGTH_SHORT).show();
+      }
+    } catch (SQLiteConstraintException e) {
+      // Xử lý các trường hợp lỗi
+      Toast.makeText(context, "Lỗi khi thêm sản phẩm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+    } finally {
+      db.close();
+    }
+  }
+
 
   public List<Product> searchProducts(String query) {
     List<Product> productList = new ArrayList<>();
