@@ -291,6 +291,23 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return count;
   }
 
+  //
+  public List<String> getCategoryList() {
+    List<String> categories = new ArrayList<>();
+    Cursor cursor = getAllDanhMuc();
+
+    if (cursor != null && cursor.moveToFirst()) {
+      int columnIndex = cursor.getColumnIndex(COLUMN_NAME_CATEGORY); // Tên cột của danh mục trong cơ sở dữ liệu
+      do {
+        String categoryName = cursor.getString(columnIndex);
+        categories.add(categoryName);
+      } while (cursor.moveToNext());
+      cursor.close();
+    }
+
+    return categories;
+  }
+
   //  Cau truy van lay danh sach danh muc
   public Cursor getAllDanhMuc() {
     String query = "SELECT * FROM " + TABLE_CATEGORY;
@@ -301,6 +318,26 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
       cursor = db.rawQuery(query, null);
     }
     return cursor;
+  }
+
+//  Câu truy vấn lấy tên danh mục từ id danh mục
+  public String getCategoryNameById(int categoryId) {
+    String categoryName = null;
+    SQLiteDatabase db = this.getReadableDatabase();
+    Cursor cursor = db.query(TABLE_CATEGORY,
+      new String[]{COLUMN_NAME_CATEGORY},
+      COLUMN_ID_CATEGORY + "=?",
+      new String[]{String.valueOf(categoryId)},
+      null, null, null, null);
+    if (cursor != null) {
+      if (cursor.moveToFirst()) {
+        categoryName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_CATEGORY));
+      }
+      cursor.close();
+    }
+
+    Log.d("Danh muc:" ,categoryName);
+    return categoryName;
   }
 
   //  Cau truy van them 1 danh muc moi

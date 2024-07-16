@@ -1,18 +1,8 @@
 package com.mssv_71dctm22077.Product;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.service.controls.actions.FloatAction;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -21,12 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.mssv_71dctm22077.MainActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.ProductAdapter;
 import com.mssv_71dctm22077.model.Product;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
-import com.mssv_71dctm22077.user.RegisterActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -105,8 +93,23 @@ public class ProductActivity extends AppCompatActivity {
       Date today = new Date();
       SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
 
-      myDB.addProduct("Product 1", 100.0, 1, formatter.format(today), "Admin", null);
-      myDB.addProduct("Product 2", 120.0, 2, formatter.format(today), "Admin", null);
+      myDB.addProduct("Product 1", 100, 1, formatter.format(today), "Admin", null);
+      myDB.addProduct("Product 2", 120, 2, formatter.format(today), "Admin", null);
     }
   }
+  @Override
+  public void onResume() {
+    super.onResume();
+    // Clear old data
+    productList.clear();
+
+    // Reload data from the database
+    productList.addAll(myDB.getAllProducts());
+
+    // Notify the adapter about the data change
+    if (productAdapter != null) {
+      productAdapter.notifyDataSetChanged();
+    }
+  }
+
 }

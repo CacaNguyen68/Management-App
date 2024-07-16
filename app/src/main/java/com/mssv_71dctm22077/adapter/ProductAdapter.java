@@ -3,6 +3,7 @@ package com.mssv_71dctm22077.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.model.Product;
 import com.mssv_71dctm22077.model.User;
+import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +27,13 @@ public class ProductAdapter  extends RecyclerView.Adapter<ProductAdapter.Product
   private Context context;
   private List<Product> productList;
   private List<Product> productListFull;
+  private MyDatabaseHelper myDB;
 
   public ProductAdapter(Context context, List<Product> productList) {
     this.context = context;
     this.productList = productList;
     this.productListFull = new ArrayList<>(productList);
+    this.myDB = new MyDatabaseHelper(context);
   }
 
   @NonNull
@@ -43,10 +47,12 @@ public class ProductAdapter  extends RecyclerView.Adapter<ProductAdapter.Product
   public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
     Product product = productList.get(position);
     holder.nameTextView.setText(product.getName());
-    holder.priceTextView.setText("Price: " + product.getPrice());
-    holder.categoryTextView.setText("Category: " + product.getCategoryId());
-    holder.createdTextView.setText("Created Date: " + product.getCreatedAt());
-    holder.userCreatedTextView.setText("User Created: " + product.getUserCreatedAt());
+    holder.priceTextView.setText("Giá: " + product.getPrice()+" VND");
+
+    String categoryName = myDB.getCategoryNameById(product.getCategoryId());
+    holder.categoryTextView.setText("Danh mục: " + (categoryName != null ? categoryName : "Không tồn tại!"));
+    holder.createdTextView.setText("Ngày khởi tạo: " + product.getCreatedAt());
+    holder.userCreatedTextView.setText("Người khởi tạo: " + product.getUserCreatedAt());
 
     if (product.getImage() != null) {
       Bitmap bitmap = BitmapFactory.decodeByteArray(product.getImage(), 0, product.getImage().length);
