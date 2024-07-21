@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
@@ -28,7 +27,7 @@ public class AddCategoryActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_danh_muc_them);
+    setContentView(R.layout.activity_category_add);
 
     toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);

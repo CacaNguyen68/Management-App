@@ -1,14 +1,14 @@
 <resources>
-    <string name="app_name">COSPLAY APPLICATION</string>
-    <string name="drawer_open">Open</string>
-    <string name="drawer_close">Close</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="app_name">COSPLAY APPLICATION</string>
+  <string name="drawer_open">Open</string>
+  <string name="drawer_close">Close</string>
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string-array name="user_types">
-        <item>Khách hàng</item>
-        <!--    <item>ADMIN</item>-->
-    </string-array>
+  <string-array name="user_types">
+    <item>Khách hàng</item>
+    <!--    <item>ADMIN</item>-->
+  </string-array>
 
-    <string name="user_image">Hình ảnh người dùng</string>
+  <string name="user_image">Hình ảnh người dùng</string>
 </resources>

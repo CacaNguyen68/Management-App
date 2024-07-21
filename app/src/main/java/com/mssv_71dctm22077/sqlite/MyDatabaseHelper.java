@@ -496,10 +496,11 @@ public void updateProduct(int id, String name, double price, int categoryId, Str
 
 //  câu truy vấn vẽ chart pei
 public Cursor getProductCountByCategory() {
-  String query = "SELECT " + TABLE_CATEGORY + "." + COLUMN_NAME_CATEGORY + ", COUNT(" + TABLE_PRODUCT + "." + COLUMN_ID_PRODUCT + ") AS product_count " +
-    "FROM " + TABLE_PRODUCT + " INNER JOIN " + TABLE_CATEGORY +
+  String query = "SELECT " + COLUMN_NAME_CATEGORY + ", COUNT(" + TABLE_PRODUCT + "." + COLUMN_ID_PRODUCT + ") AS product_count " +
+    "FROM " + TABLE_CATEGORY +
+    " LEFT JOIN " + TABLE_PRODUCT +
     " ON " + TABLE_PRODUCT + "." + COLUMN_CATEGORY_ID + " = " + TABLE_CATEGORY + "." + COLUMN_ID_CATEGORY +
-    " GROUP BY " + TABLE_CATEGORY + "." + COLUMN_NAME_CATEGORY;
+    " GROUP BY " + COLUMN_NAME_CATEGORY;
   SQLiteDatabase db = this.getReadableDatabase();
 
   Cursor cursor = null;

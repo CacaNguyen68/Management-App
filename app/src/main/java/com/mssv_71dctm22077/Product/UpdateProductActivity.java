@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,13 +34,14 @@ import java.util.List;
 import java.util.Locale;
 
 public class UpdateProductActivity extends AppCompatActivity {
+
   private EditText editTextProductName, editTextProductPrice;
   private Spinner spinnerCategory;
   private ImageView imageViewProduct;
   private Button buttonSelectImage, buttonUpdateProduct, buttonClearProduct;
   private MyDatabaseHelper db;
   private Bitmap selectedImageBitmap;
-  private int productId;
+  private int productId; // ID sản phẩm
 
   private static final int PICK_IMAGE_REQUEST = 1;
 
@@ -57,11 +59,12 @@ public class UpdateProductActivity extends AppCompatActivity {
     spinnerCategory = findViewById(R.id.spinnerCategory);
     imageViewProduct = findViewById(R.id.imageViewProduct);
     buttonSelectImage = findViewById(R.id.buttonSelectImage);
-    buttonUpdateProduct = findViewById(R.id.buttonUpdateProduct); // sử dụng button "Cập nhật Sản Phẩm"
+    buttonUpdateProduct = findViewById(R.id.buttonUpdateProduct);
     buttonClearProduct = findViewById(R.id.buttonClearProduct);
 
     db = new MyDatabaseHelper(this);
 
+    // Lấy thông tin sản phẩm từ Intent
     Intent intent = getIntent();
     productId = intent.getIntExtra("id", -1);
 
@@ -69,6 +72,7 @@ public class UpdateProductActivity extends AppCompatActivity {
       loadProductDetails(productId);
     }
 
+    // Thiết lập Spinner danh mục
     List<String> categoryList = db.getCategoryList();
     ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_list_category, categoryList);
     categoryAdapter.setDropDownViewResource(R.layout.spinner_item_list_category);
@@ -91,7 +95,7 @@ public class UpdateProductActivity extends AppCompatActivity {
       Date today = new Date();
       SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
       String createdAt = formatter.format(today);
-      String userCreated = "Admin"; // Giá trị mặc định hoặc có thể lấy từ đâu đó khác
+      String userCreated = "Admin";
 
       db.updateProduct(productId, productName, productPrice, categoryId, createdAt, userCreated, getBitmapAsByteArray(selectedImageBitmap));
       Toast.makeText(UpdateProductActivity.this, "Product updated successfully", Toast.LENGTH_SHORT).show();
@@ -107,7 +111,7 @@ public class UpdateProductActivity extends AppCompatActivity {
   }
 
   private void loadProductDetails(int productId) {
-    Cursor cursor = db.getProductById(productId);
+    Cursor cursor = db.getProductById(productId); // Lấy sản phẩm theo ID
     if (cursor.moveToFirst()) {
       String productName = cursor.getString(cursor.getColumnIndex("productName"));
       double productPrice = cursor.getDouble(cursor.getColumnIndex("productPrice"));

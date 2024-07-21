@@ -14,6 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
+import com.mssv_71dctm22077.chart.BarChartCategoryActivity;
 import com.mssv_71dctm22077.chart.ChartCategoryActivity;
 import com.mssv_71dctm22077.user.UserActivity;
 
@@ -87,7 +88,7 @@ public class MenuAdminActivity extends AppCompatActivity {
     });
     statisticFloating = findViewById(R.id.fabStatistics);
     statisticFloating.setOnClickListener(view -> {
-        Intent intent = new Intent(this, ChartCategoryActivity.class);
+        Intent intent = new Intent(this, BarChartCategoryActivity.class);
         startActivity(intent);
     });
     notifiactionFloating = findViewById(R.id.fabNewNotifications);

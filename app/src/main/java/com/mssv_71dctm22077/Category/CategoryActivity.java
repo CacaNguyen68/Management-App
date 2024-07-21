@@ -6,20 +6,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.R;
-import com.mssv_71dctm22077.adapter.CustomAdapter;
+import com.mssv_71dctm22077.adapter.CategoryAdapter;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.util.ArrayList;
@@ -31,12 +29,12 @@ public class CategoryActivity extends AppCompatActivity {
 
   MyDatabaseHelper myDB;
   ArrayList<String> categoryId, categoryName, categoryCreated;
-  CustomAdapter customAdapter;
+  CategoryAdapter customAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_danhmuc);
+    setContentView(R.layout.activity_category);
 
     // Toolbar
     Toolbar toolbar = findViewById(R.id.toolbar);
@@ -54,7 +52,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     // Load data into RecyclerView
     storeDataArrays();
-    customAdapter = new CustomAdapter(CategoryActivity.this, this, categoryId, categoryName, categoryCreated);
+    customAdapter = new CategoryAdapter(CategoryActivity.this, this, categoryId, categoryName, categoryCreated);
     recyclerView.setAdapter(customAdapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(CategoryActivity.this));
 
