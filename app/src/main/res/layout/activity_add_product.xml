@@ -6,7 +6,7 @@
   android:layout_height="match_parent"
   android:padding="16dp"
   android:background="#372C52"
-  tools:context=".Product.AddProductActivity">
+  tools:context=".Product.UpdateProductActivity">
 
   <!-- Toolbar -->
   <androidx.appcompat.widget.Toolbar

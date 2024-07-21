@@ -1,6 +1,7 @@
 package com.mssv_71dctm22077.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mssv_71dctm22077.Product.AddProductActivity;
+import com.mssv_71dctm22077.Product.UpdateProductActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.model.Product;
 import com.mssv_71dctm22077.model.User;
@@ -22,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ProductAdapter  extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
   private Context context;
   private List<Product> productList;
@@ -47,7 +50,7 @@ public class ProductAdapter  extends RecyclerView.Adapter<ProductAdapter.Product
   public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
     Product product = productList.get(position);
     holder.nameTextView.setText(product.getName());
-    holder.priceTextView.setText("Giá: " + product.getPrice()+" VND");
+    holder.priceTextView.setText("Giá: " + product.getPrice() + " VND");
 
     String categoryName = myDB.getCategoryNameById(product.getCategoryId());
     holder.categoryTextView.setText("Danh mục: " + (categoryName != null ? categoryName : "Không tồn tại!"));
@@ -59,7 +62,14 @@ public class ProductAdapter  extends RecyclerView.Adapter<ProductAdapter.Product
       holder.imageView.setImageBitmap(bitmap);
     } else {
       holder.imageView.setImageResource(R.drawable.baseline_yard_24);
+
     }
+
+    holder.itemView.setOnClickListener(v -> {
+      Intent intent = new Intent(context, UpdateProductActivity.class);
+      intent.putExtra("id", product.getId());
+      context.startActivity(intent);
+    });
   }
 
   @Override

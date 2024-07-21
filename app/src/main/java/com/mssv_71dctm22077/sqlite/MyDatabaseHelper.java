@@ -217,7 +217,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return user;
   }
 
-  // Lấy danh sách tất cả users
 // Lấy danh sách tất cả users
   public List<User> getAllUsers() {
     List<User> userList = new ArrayList<>();
@@ -423,6 +422,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return productList;
   }
 
+//  câu truy vấn lấy chi tiết 1 sản phẩm
+  public Cursor getProductById(int id) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    return db.rawQuery("SELECT * FROM products WHERE id = ?", new String[]{String.valueOf(id)});
+  }
+
+
   // Phương thức để thêm một sản phẩm mới vào cơ sở dữ liệu
   public void addProduct(String name, double price, int categoryId, String createdAt, String userCreated, byte[] image) {
     SQLiteDatabase db = this.getWritableDatabase();
@@ -450,6 +456,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
   }
 
+//câu truy vấn cập nhật sản phẩm
+public void updateProduct(int id, String name, double price, int categoryId, String createdAt, String userCreated, byte[] image) {
+  SQLiteDatabase db = this.getWritableDatabase();
+  ContentValues contentValues = new ContentValues();
+  contentValues.put("productName", name);
+  contentValues.put("productPrice", price);
+  contentValues.put("categoryId", categoryId);
+  contentValues.put("createdAt", createdAt);
+  contentValues.put("userCreated", userCreated);
+  contentValues.put("productImage", image);
+
+  db.update("products", contentValues, "id = ?", new String[]{String.valueOf(id)});
+}
+
 
   public List<Product> searchProducts(String query) {
     List<Product> productList = new ArrayList<>();
@@ -472,6 +492,24 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     cursor.close();
     return productList;
   }
+
+
+//  câu truy vấn vẽ chart pei
+public Cursor getProductCountByCategory() {
+  String query = "SELECT " + TABLE_CATEGORY + "." + COLUMN_NAME_CATEGORY + ", COUNT(" + TABLE_PRODUCT + "." + COLUMN_ID_PRODUCT + ") AS product_count " +
+    "FROM " + TABLE_PRODUCT + " INNER JOIN " + TABLE_CATEGORY +
+    " ON " + TABLE_PRODUCT + "." + COLUMN_CATEGORY_ID + " = " + TABLE_CATEGORY + "." + COLUMN_ID_CATEGORY +
+    " GROUP BY " + TABLE_CATEGORY + "." + COLUMN_NAME_CATEGORY;
+  SQLiteDatabase db = this.getReadableDatabase();
+
+  Cursor cursor = null;
+  if (db != null) {
+    cursor = db.rawQuery(query, null);
+  }
+  Log.d("Product count by category", "count = " + cursor.getCount());
+  return cursor;
+}
+
 
   // Lấy ngày hiện tại dd-MM-yyyy
   private String getCurrentDate() {

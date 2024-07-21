@@ -3,6 +3,7 @@ package com.mssv_71dctm22077;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.CompositePageTransformer;
@@ -13,6 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
+import com.mssv_71dctm22077.chart.ChartCategoryActivity;
 import com.mssv_71dctm22077.user.UserActivity;
 
 import java.util.ArrayList;
@@ -84,6 +86,10 @@ public class MenuAdminActivity extends AppCompatActivity {
       startActivity(intent);
     });
     statisticFloating = findViewById(R.id.fabStatistics);
+    statisticFloating.setOnClickListener(view -> {
+        Intent intent = new Intent(this, ChartCategoryActivity.class);
+        startActivity(intent);
+    });
     notifiactionFloating = findViewById(R.id.fabNewNotifications);
     orderFloating = findViewById(R.id.fabInventoryManagement);
 

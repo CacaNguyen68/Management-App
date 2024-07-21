@@ -43,5 +43,5 @@ dependencies {
   implementation 'androidx.appcompat:appcompat:1.4.0'
   implementation 'org.mindrot:jbcrypt:0.4'
   implementation 'androidx.viewpager2:viewpager2:1.0.0'
-
+  implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
