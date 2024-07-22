@@ -1,5 +1,7 @@
 package com.mssv_71dctm22077.adapter;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,11 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Product.AddProductActivity;
 import com.mssv_71dctm22077.Product.UpdateProductActivity;
 import com.mssv_71dctm22077.R;
@@ -25,37 +29,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
+public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHolder> {
 
   private Context context;
-  private List<Product> productList;
-  private List<Product> productListFull;
+  private ArrayList<Product> productList;
+  private Activity activity;
   private MyDatabaseHelper myDB;
 
-  public ProductAdapter(Context context, List<Product> productList) {
+  public ProductAdapter(Activity activity, Context context, ArrayList<Product> productList) {
+    this.activity = activity;
     this.context = context;
     this.productList = productList;
-    this.productListFull = new ArrayList<>(productList);
     this.myDB = new MyDatabaseHelper(context);
   }
 
   @NonNull
   @Override
-  public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    View view = LayoutInflater.from(context).inflate(R.layout.detail_product, parent, false);
-    return new ProductViewHolder(view);
+  public ProductAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    LayoutInflater inflater = LayoutInflater.from(context);
+    View view = inflater.inflate(R.layout.detail_product, parent, false);
+    return new MyViewHolder(view);
   }
 
   @Override
-  public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull ProductAdapter.MyViewHolder holder, final int position) {
     Product product = productList.get(position);
-    holder.nameTextView.setText(product.getName());
-    holder.priceTextView.setText("Giá: " + product.getPrice() + " VND");
+    holder.productName.setText(product.getName());
+    holder.productPrice.setText(String.format("Giá: %s VND", product.getPrice()));
+    String nameCategory = myDB.getCategoryNameById(product.getCategoryId());
 
-    String categoryName = myDB.getCategoryNameById(product.getCategoryId());
-    holder.categoryTextView.setText("Danh mục: " + (categoryName != null ? categoryName : "Không tồn tại!"));
-    holder.createdTextView.setText("Ngày khởi tạo: " + product.getCreatedAt());
-    holder.userCreatedTextView.setText("Người khởi tạo: " + product.getUserCreatedAt());
+    holder.categoryId.setText(String.format("Danh mục: %s", nameCategory));
+    holder.productCreated.setText(String.format("Ngày khởi tạo: %s", product.getCreatedAt()));
 
     if (product.getImage() != null) {
       Bitmap bitmap = BitmapFactory.decodeByteArray(product.getImage(), 0, product.getImage().length);
@@ -64,13 +68,23 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
       holder.imageView.setImageResource(R.drawable.baseline_yard_24);
 
     }
+    holder.floatingDelete.setOnClickListener(v -> confirmDialog(position));
 
-    holder.itemView.setOnClickListener(v -> {
+    holder.floatingUpdate.setOnClickListener(v -> {
       Intent intent = new Intent(context, UpdateProductActivity.class);
-      intent.putExtra("id", product.getId());
-      Log.d("ProductAdapter", "Clicked product ID: " + product.getId());
-      context.startActivity(intent);
+      intent.putExtra("id", String.valueOf(product.getId()));
+      intent.putExtra("name", product.getName());
+      intent.putExtra("price", String.valueOf(product.getPrice()));
+      intent.putExtra("categoryId",String.valueOf(product.getCategoryId()));
+      Log.d("Category AFTER", "categoryId: " + product.getCategoryId());
+//      intent.putExtra("createdAt", product.getCreatedAt());
+      if (product.getImage() != null) {
+        intent.putExtra("image", product.getImage());
+      }
+      activity.startActivityForResult(intent, 1);
     });
+
+//    holder.floatingUpdate.setOnClickListener(v -> );
   }
 
   @Override
@@ -78,33 +92,35 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     return productList.size();
   }
 
-  public static class ProductViewHolder extends RecyclerView.ViewHolder {
-    TextView nameTextView, priceTextView, categoryTextView, createdTextView, userCreatedTextView;
+  public class MyViewHolder extends RecyclerView.ViewHolder {
+    TextView productName, productPrice, categoryId, productCreated, userCreatedProduct;
+    FloatingActionButton floatingDelete, floatingUpdate;
     ImageView imageView;
-
-    public ProductViewHolder(@NonNull View itemView) {
+    
+    public MyViewHolder(@NonNull View itemView) {
       super(itemView);
-      nameTextView = itemView.findViewById(R.id.name_product);
-      priceTextView = itemView.findViewById(R.id.price_product);
-      categoryTextView = itemView.findViewById(R.id.category_id);
-      createdTextView = itemView.findViewById(R.id.created_product);
-      userCreatedTextView = itemView.findViewById(R.id.user_created_product);
+      productName = itemView.findViewById(R.id.name_product);
+      productPrice = itemView.findViewById(R.id.price_product);
+      categoryId = itemView.findViewById(R.id.category_id);
+      productCreated = itemView.findViewById(R.id.created_product);
+      userCreatedProduct = itemView.findViewById(R.id.user_created_product);
       imageView = itemView.findViewById(R.id.product_image);
+      floatingDelete = itemView.findViewById(R.id.floatingDelete);
+      floatingUpdate = itemView.findViewById(R.id.floatingUpdate);
     }
   }
 
-  public void filter(String text) {
-    text = text.toLowerCase(Locale.getDefault());
-    productList.clear();
-    if (text.length() == 0) {
-      productList.addAll(productListFull);
-    } else {
-      for (Product product : productListFull) {
-        if (product.getName().toLowerCase(Locale.getDefault()).contains(text)) {
-          productList.add(product);
-        }
-      }
-    }
-    notifyDataSetChanged();
+  private void confirmDialog(int position) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    builder.setTitle("Xoá sản phẩm " + productList.get(position).getName() + " này?");
+    builder.setMessage("Bạn có muốn xóa sản phẩm " + productList.get(position).getName() + " này?");
+    builder.setPositiveButton("Đồng ý", (dialog, which) -> {
+      myDB.deleteProduct(String.valueOf(productList.get(position).getId()));
+      productList.remove(position);
+      notifyItemRemoved(position);
+      notifyItemRangeChanged(position, productList.size());
+    });
+    builder.setNegativeButton("Hủy bỏ", (dialog, which) -> {});
+    builder.create().show();
   }
 }

@@ -26,9 +26,9 @@ public class ProductActivity extends AppCompatActivity {
 
   private RecyclerView recyclerView;
   private ProductAdapter productAdapter;
-  private List<Product> productList;
+  private ArrayList<Product> productList;
   private MyDatabaseHelper myDB;
-  FloatingActionButton addButton;
+  FloatingActionButton addButton, updateButton, deleteButton;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +77,7 @@ public class ProductActivity extends AppCompatActivity {
   private void loadData() {
     productList.clear();
     productList.addAll(myDB.getAllProducts());
-    productAdapter = new ProductAdapter(this, productList);
+    productAdapter = new ProductAdapter(this,this, productList);
     recyclerView.setAdapter(productAdapter);
   }
 

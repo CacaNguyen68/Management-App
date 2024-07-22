@@ -460,14 +460,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 public void updateProduct(int id, String name, double price, int categoryId, String createdAt, String userCreated, byte[] image) {
   SQLiteDatabase db = this.getWritableDatabase();
   ContentValues contentValues = new ContentValues();
-  contentValues.put("productName", name);
-  contentValues.put("productPrice", price);
-  contentValues.put("categoryId", categoryId);
-  contentValues.put("createdAt", createdAt);
-  contentValues.put("userCreated", userCreated);
-  contentValues.put("productImage", image);
+  contentValues.put(COLUMN_NAME_PRODUCT, name);
+  contentValues.put(COLUMN_PRICE_PRODUCT, price);
+  contentValues.put(COLUMN_CATEGORY_ID, categoryId);
+  contentValues.put(COLUMN_CREATED_PRODUCT, createdAt);
+  contentValues.put(COLUMN_USER_CREATED_PRODUCT, userCreated);
+  contentValues.put(COLUMN_IMAGE_PRODUCT, image);
 
-  db.update("products", contentValues, "id = ?", new String[]{String.valueOf(id)});
+  db.update(TABLE_PRODUCT, contentValues, COLUMN_ID_PRODUCT + " = ?", new String[]{String.valueOf(id)});
 }
 
 
@@ -493,6 +493,21 @@ public void updateProduct(int id, String name, double price, int categoryId, Str
     return productList;
   }
 
+  //  Cau truy van xoa 1 san pham tu id danh muc
+  public void deleteProduct(String row_id) {
+    try {
+      SQLiteDatabase db = this.getWritableDatabase();
+      int result = db.delete(TABLE_PRODUCT, COLUMN_ID_PRODUCT+ "=?", new String[]{row_id});
+      if (result > 0) {
+        Toast.makeText(context, "Xóa sản phẩm thành công!", Toast.LENGTH_SHORT).show();
+      } else {
+        Toast.makeText(context, "Xóa sản phẩm thất bại!", Toast.LENGTH_SHORT).show();
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "Error deleting product: " + e.getMessage());
+      Toast.makeText(context, "Lỗi khi xóa sản phẩm!", Toast.LENGTH_SHORT).show();
+    }
+  }
 
 //  câu truy vấn vẽ chart pei
 public Cursor getProductCountByCategory() {
@@ -510,6 +525,7 @@ public Cursor getProductCountByCategory() {
   Log.d("Product count by category", "count = " + cursor.getCount());
   return cursor;
 }
+
 
 
   // Lấy ngày hiện tại dd-MM-yyyy

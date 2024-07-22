@@ -84,7 +84,33 @@
       app:layout_constraintHorizontal_bias="0.0"
       app:layout_constraintStart_toEndOf="@id/product_image"
       app:layout_constraintTop_toBottomOf="@id/created_product" />
+    <!-- FloatingActionButton for Update -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/floatingUpdate"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="16dp"
+      android:layout_marginBottom="16dp"
+      android:backgroundTint="#FFA000"
+      android:contentDescription="Cập nhật"
+      android:src="@drawable/ic_border"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toStartOf="@+id/floatingDelete"
+      app:tint="@android:color/white" />
 
+    <!-- FloatingActionButton for Delete -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/floatingDelete"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="16dp"
+      android:layout_marginBottom="16dp"
+      android:backgroundTint="#FF0000"
+      android:contentDescription="Xóa"
+      android:src="@drawable/ic_delete"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:tint="@android:color/white" />
   </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
