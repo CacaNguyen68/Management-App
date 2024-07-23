@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Product.ProductActivity;
+import com.mssv_71dctm22077.Product.ProductByCategoryActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.Category.UpdateCategoryActivity;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
@@ -56,11 +57,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     holder.mainLayout.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Intent intent = new Intent(context, ProductActivity.class);
+        Intent intent = new Intent(context, ProductByCategoryActivity.class);
         intent.putExtra("categoryId", String.valueOf(category_id.get(position)));
         context.startActivity(intent);
       }
     });
+
 
     holder.floatingDelete.setOnClickListener(new View.OnClickListener() {
       @Override

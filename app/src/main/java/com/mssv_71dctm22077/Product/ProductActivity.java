@@ -49,13 +49,15 @@ public class ProductActivity extends AppCompatActivity {
 
     // Load data into RecyclerView
     // Nhận Intent
-    Intent intent = getIntent();
-
-    if (intent.hasExtra("categoryId")) {
-      int categoryId = intent.getIntExtra("categoryId", -1);
-      loadProductsByCategory(categoryId);
-    }
-    loadData();
+//    Intent intent = getIntent();
+//    if (intent.hasExtra("categoryId")) {
+//      int categoryId = Integer.parseInt(intent.getStringExtra("categoryId"));
+//      loadProductsByCategory(categoryId);
+//      Log.d("vao ham con","id: "+categoryId);
+//    } else {
+      loadData();
+//      Log.d("ham lon", "khong chinh xac");
+//    }
 
     // Setup SearchView
     SearchView searchView = findViewById(R.id.search_view);
@@ -82,17 +84,10 @@ public class ProductActivity extends AppCompatActivity {
     });
   }
 
-  private void loadProductsByCategory(int id) {
-    productList.clear();
-    productList.addAll(myDB.getProductsByCategoryId(id));
-    productAdapter = new ProductAdapter(this,this, productList);
-    recyclerView.setAdapter(productAdapter);
-  }
-
   private void loadData() {
     productList.clear();
     productList.addAll(myDB.getAllProducts());
-    productAdapter = new ProductAdapter(this,this, productList);
+    productAdapter = new ProductAdapter(this, this, productList);
     recyclerView.setAdapter(productAdapter);
   }
 
@@ -112,6 +107,7 @@ public class ProductActivity extends AppCompatActivity {
       myDB.addProduct("Product 2", 120, 2, formatter.format(today), "Admin", null);
     }
   }
+
   @Override
   public void onResume() {
     super.onResume();

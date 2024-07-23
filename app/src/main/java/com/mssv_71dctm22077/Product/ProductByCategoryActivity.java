@@ -2,6 +2,7 @@ package com.mssv_71dctm22077.Product;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -31,7 +32,8 @@ public class ProductByCategoryActivity extends AppCompatActivity {
   private ProductAdapter productAdapter;
   private ArrayList<Product> productList;
   private MyDatabaseHelper myDB;
-  FloatingActionButton addButton, updateButton, deleteButton;
+  private FloatingActionButton addButton;
+  private int categoryId;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +47,6 @@ public class ProductByCategoryActivity extends AppCompatActivity {
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     myDB = new MyDatabaseHelper(this);
     productList = new ArrayList<>();
-
-    // Load data into RecyclerView
-    loadData();
 
     // Setup SearchView
     SearchView searchView = findViewById(R.id.search_view);
@@ -64,35 +63,48 @@ public class ProductByCategoryActivity extends AppCompatActivity {
       }
     });
 
+    // Handle FloatingActionButton click
+    addButton = findViewById(R.id.add_button);
+    addButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Intent intent = new Intent(ProductByCategoryActivity.this, AddProductActivity.class);
+        startActivity(intent);
+      }
+    });
+
+    // Get the categoryId from Intent
+    Intent intent = getIntent();
+    if (intent.hasExtra("categoryId")) {
+      categoryId = Integer.parseInt(intent.getStringExtra("categoryId"));
+      loadProductsByCategory(categoryId);
+      Log.d("ProductByCategory", "Category ID: " + categoryId);
+    }
   }
 
-  private void loadData() {
+  private void loadProductsByCategory(int id) {
     productList.clear();
-    productList.addAll(myDB.getAllProducts());
-    productAdapter = new ProductAdapter(this,this, productList);
+    productList.addAll(myDB.getProductsByCategoryId(id));
+    productAdapter = new ProductAdapter(this, this, productList);
     recyclerView.setAdapter(productAdapter);
   }
 
   private void loadDataSearch(String query) {
     productList.clear();
-    productList.addAll(myDB.searchProducts(query));
+    productList.addAll(myDB.searchProductsWhereCategoryId(query, categoryId));
     productAdapter.notifyDataSetChanged();
-
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    // Clear old data
-    productList.clear();
-
     // Reload data from the database
-    productList.addAll(myDB.getAllProducts());
-
-    // Notify the adapter about the data change
-    if (productAdapter != null) {
-      productAdapter.notifyDataSetChanged();
+    if (categoryId > 0) {
+      productList.clear();
+      productList.addAll(myDB.getProductsByCategoryId(categoryId));
+      if (productAdapter != null) {
+        productAdapter.notifyDataSetChanged();
+      }
     }
   }
-
 }

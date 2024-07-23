@@ -193,24 +193,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     SQLiteDatabase db = this.getReadableDatabase();
     User user = null;
 
-    Cursor cursor = db.query(TABLE_USER,
-      new String[]{COLUMN_ID_USER, COLUMN_NAME_USER, COLUMN_DOB_USER, COLUMN_PHONE_USER, COLUMN_EMAIL_USER, COLUMN_USER_TYPE, COLUMN_CREATED_USER, COLUMN_IMAGE_USER},
-      COLUMN_ID_USER + "=?",
-      new String[]{String.valueOf(id)}, null, null, null, null);
+    Cursor cursor = db.query(TABLE_USER, new String[]{COLUMN_ID_USER, COLUMN_NAME_USER, COLUMN_DOB_USER, COLUMN_PHONE_USER, COLUMN_EMAIL_USER, COLUMN_USER_TYPE, COLUMN_CREATED_USER, COLUMN_IMAGE_USER}, COLUMN_ID_USER + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
 
     if (cursor != null) {
       if (cursor.moveToFirst()) {
-        user = new User(
-          cursor.getInt(cursor.getColumnIndex(COLUMN_ID_USER)),
-          cursor.getString(cursor.getColumnIndex(COLUMN_NAME_USER)),
-          cursor.getString(cursor.getColumnIndex(COLUMN_DOB_USER)),
-          cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_USER)),
-          cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL_USER)),
-          cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE)),
-          cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_USER)),
-          cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_USER)),
-          cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_USER))
-        );
+        user = new User(cursor.getInt(cursor.getColumnIndex(COLUMN_ID_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_NAME_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_DOB_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE)), cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_USER)), cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_USER)));
       }
       cursor.close();
     }
@@ -323,11 +310,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   public String getCategoryNameById(int categoryId) {
     String categoryName = null;
     SQLiteDatabase db = this.getReadableDatabase();
-    Cursor cursor = db.query(TABLE_CATEGORY,
-      new String[]{COLUMN_NAME_CATEGORY},
-      COLUMN_ID_CATEGORY + "=?",
-      new String[]{String.valueOf(categoryId)},
-      null, null, null, null);
+    Cursor cursor = db.query(TABLE_CATEGORY, new String[]{COLUMN_NAME_CATEGORY}, COLUMN_ID_CATEGORY + "=?", new String[]{String.valueOf(categoryId)}, null, null, null, null);
     if (cursor != null) {
       if (cursor.moveToFirst()) {
         categoryName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_CATEGORY));
@@ -431,26 +414,30 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   // câu truy vấn lấy các sản phẩm theo điều kiện categoryId
   public List<Product> getProductsByCategoryId(int categoryId) {
     List<Product> products = new ArrayList<>();
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor cursor = db.rawQuery("SELECT * FROM products WHERE categoryId = ?", new String[]{String.valueOf(categoryId)});
-    if (cursor.moveToFirst()) {
-      do {
-        Product product = new Product();
-        product.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_ID_PRODUCT)));
-        product.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PRODUCT)));
-        product.setPrice(cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICE_PRODUCT)));
-        product.setCategoryId(cursor.getInt(cursor.getColumnIndex(COLUMN_CATEGORY_ID)));
-        product.setCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_PRODUCT)));
-        product.setUserCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_PRODUCT)));
-        product.setImage(cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_PRODUCT)));
-        products.add(product);
-      } while (cursor.moveToNext());
+    String query = "SELECT * FROM " + TABLE_PRODUCT + " WHERE " + COLUMN_CATEGORY_ID + " = ?";
+
+    try (SQLiteDatabase db = this.getReadableDatabase(); Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(categoryId)})) {
+
+      if (cursor.moveToFirst()) {
+        do {
+          Product product = new Product();
+          product.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_ID_PRODUCT)));
+          product.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PRODUCT)));
+          product.setPrice(cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICE_PRODUCT)));
+          product.setCategoryId(cursor.getInt(cursor.getColumnIndex(COLUMN_CATEGORY_ID)));
+          product.setCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_PRODUCT)));
+          product.setUserCreatedAt(cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_PRODUCT)));
+          product.setImage(cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_PRODUCT)));
+          products.add(product);
+        } while (cursor.moveToNext());
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      // Có thể thêm thông báo lỗi cho người dùng hoặc ghi log ở đây nếu cần
     }
-    cursor.close();
-    db.close();
+
     return products;
   }
-
 
   // Phương thức để thêm một sản phẩm mới vào cơ sở dữ liệu
   public void addProduct(String name, double price, int categoryId, String createdAt, String userCreated, byte[] image) {
@@ -493,7 +480,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.update(TABLE_PRODUCT, contentValues, COLUMN_ID_PRODUCT + " = ?", new String[]{String.valueOf(id)});
   }
 
-
+  // cau truy van search tat ca san pham theo ten san pham
   public List<Product> searchProducts(String query) {
     List<Product> productList = new ArrayList<>();
     String selectQuery = "SELECT * FROM " + TABLE_PRODUCT + " WHERE " + COLUMN_NAME_PRODUCT + " LIKE ?";
@@ -516,6 +503,39 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return productList;
   }
 
+
+  public List<Product> searchProductsWhereCategoryId(String query, int categoryId) {
+    List<Product> products = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+    String sql = "SELECT * FROM " + TABLE_PRODUCT + " WHERE " + COLUMN_CATEGORY_ID + " = ? AND " + COLUMN_NAME_PRODUCT + " LIKE ?";
+    Cursor cursor = db.rawQuery(sql, new String[]{String.valueOf(categoryId), "%" + query + "%"});
+
+    if (cursor.moveToFirst()) {
+      int idIndex = cursor.getColumnIndexOrThrow(COLUMN_ID_PRODUCT);
+      int nameIndex = cursor.getColumnIndexOrThrow(COLUMN_NAME_PRODUCT);
+      int priceIndex = cursor.getColumnIndexOrThrow(COLUMN_PRICE_PRODUCT);
+      int categoryIdIndex = cursor.getColumnIndexOrThrow(COLUMN_CATEGORY_ID);
+      int createdAtIndex = cursor.getColumnIndexOrThrow(COLUMN_CREATED_PRODUCT);
+      int userCreatedAtIndex = cursor.getColumnIndexOrThrow(COLUMN_USER_CREATED_PRODUCT);
+      int imageIndex = cursor.getColumnIndexOrThrow(COLUMN_IMAGE_PRODUCT);
+
+      do {
+        Product product = new Product();
+        product.setId(cursor.getInt(idIndex));
+        product.setName(cursor.getString(nameIndex));
+        product.setPrice(cursor.getDouble(priceIndex));
+        product.setCategoryId(cursor.getInt(categoryIdIndex));
+        product.setCreatedAt(cursor.getString(createdAtIndex));
+        product.setUserCreatedAt(cursor.getString(userCreatedAtIndex));
+        product.setImage(cursor.getBlob(imageIndex));
+        products.add(product);
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    db.close();
+    return products;
+  }
+
   //  Cau truy van xoa 1 san pham tu id danh muc
   public void deleteProduct(String row_id) {
     try {
@@ -534,11 +554,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
   //  câu truy vấn vẽ chart pei
   public Cursor getProductCountByCategory() {
-    String query = "SELECT " + COLUMN_NAME_CATEGORY + ", COUNT(" + TABLE_PRODUCT + "." + COLUMN_ID_PRODUCT + ") AS product_count " +
-      "FROM " + TABLE_CATEGORY +
-      " LEFT JOIN " + TABLE_PRODUCT +
-      " ON " + TABLE_PRODUCT + "." + COLUMN_CATEGORY_ID + " = " + TABLE_CATEGORY + "." + COLUMN_ID_CATEGORY +
-      " GROUP BY " + COLUMN_NAME_CATEGORY;
+    String query = "SELECT " + COLUMN_NAME_CATEGORY + ", COUNT(" + TABLE_PRODUCT + "." + COLUMN_ID_PRODUCT + ") AS product_count " + "FROM " + TABLE_CATEGORY + " LEFT JOIN " + TABLE_PRODUCT + " ON " + TABLE_PRODUCT + "." + COLUMN_CATEGORY_ID + " = " + TABLE_CATEGORY + "." + COLUMN_ID_CATEGORY + " GROUP BY " + COLUMN_NAME_CATEGORY;
     SQLiteDatabase db = this.getReadableDatabase();
 
     Cursor cursor = null;
@@ -556,6 +572,5 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
     return formatter.format(today);
   }
-
 
 }
