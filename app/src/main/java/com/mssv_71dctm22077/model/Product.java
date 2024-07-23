@@ -13,6 +13,9 @@ public class Product {
   private String userCreatedAt;
   private byte[] image;
 
+  public Product() {
+  }
+
   public Product(int id, String name, Double price, int categoryId, String createdAt, String userCreatedAt, byte[] image) {
     this.id = id;
     this.name = name;

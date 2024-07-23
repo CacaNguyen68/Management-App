@@ -2,12 +2,15 @@ package com.mssv_71dctm22077.Product;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,10 +23,9 @@ import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-public class ProductActivity extends AppCompatActivity {
+public class ProductByCategoryActivity extends AppCompatActivity {
 
   private RecyclerView recyclerView;
   private ProductAdapter productAdapter;
@@ -34,7 +36,7 @@ public class ProductActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_product);
+    setContentView(R.layout.activity_product_by_category);
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -44,17 +46,7 @@ public class ProductActivity extends AppCompatActivity {
     myDB = new MyDatabaseHelper(this);
     productList = new ArrayList<>();
 
-    // Initialize data if necessary
-    storeDataArrays();
-
     // Load data into RecyclerView
-    // Nhận Intent
-    Intent intent = getIntent();
-
-    if (intent.hasExtra("categoryId")) {
-      int categoryId = intent.getIntExtra("categoryId", -1);
-      loadProductsByCategory(categoryId);
-    }
     loadData();
 
     // Setup SearchView
@@ -72,21 +64,6 @@ public class ProductActivity extends AppCompatActivity {
       }
     });
 
-    addButton = findViewById(R.id.add_button);
-    addButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Intent intent = new Intent(ProductActivity.this, AddProductActivity.class);
-        startActivity(intent);
-      }
-    });
-  }
-
-  private void loadProductsByCategory(int id) {
-    productList.clear();
-    productList.addAll(myDB.getProductsByCategoryId(id));
-    productAdapter = new ProductAdapter(this,this, productList);
-    recyclerView.setAdapter(productAdapter);
   }
 
   private void loadData() {
@@ -103,15 +80,6 @@ public class ProductActivity extends AppCompatActivity {
 
   }
 
-  private void storeDataArrays() {
-    if (myDB.getAllProducts().isEmpty()) {
-      Date today = new Date();
-      SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-
-      myDB.addProduct("Product 1", 100, 1, formatter.format(today), "Admin", null);
-      myDB.addProduct("Product 2", 120, 2, formatter.format(today), "Admin", null);
-    }
-  }
   @Override
   public void onResume() {
     super.onResume();

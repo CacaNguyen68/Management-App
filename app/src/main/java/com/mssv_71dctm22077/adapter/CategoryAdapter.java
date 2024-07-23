@@ -15,25 +15,29 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.Category.UpdateCategoryActivity;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder> {
 
   private Context context;
-  private ArrayList category_id, category_name, caregory_created;
+  private List<String> category_id, category_name, caregory_created;
+  private List<String> category_name_full;
   Activity activity;
   MyDatabaseHelper myDB;
 
-  public CategoryAdapter(Activity activity, Context context, ArrayList category_id, ArrayList category_name, ArrayList caregory_created) {
+  public CategoryAdapter(Activity activity, Context context, ArrayList<String> category_id, ArrayList<String> category_name, ArrayList<String> caregory_created) {
     this.activity = activity;
     this.context = context;
     this.category_id = category_id;
     this.category_name = category_name;
     this.caregory_created = caregory_created;
+    this.category_name_full = new ArrayList<>(category_name);
   }
 
   @NonNull
@@ -52,12 +56,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     holder.mainLayout.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-//        Intent intent = new Intent(context, UpdateCategoryActivity.class);
-//        intent.putExtra("id", String.valueOf(category_id.get(position)));
-//        intent.putExtra("name", String.valueOf(category_name.get(position)));
-//        intent.putExtra("created", String.valueOf(caregory_created.get(position)));
-//
-//        activity.startActivityForResult(intent, 1);
+        Intent intent = new Intent(context, ProductActivity.class);
+        intent.putExtra("categoryId", String.valueOf(category_id.get(position)));
+        context.startActivity(intent);
       }
     });
 
@@ -82,7 +83,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
 
   @Override
   public int getItemCount() {
-    return category_id.size();
+    return category_name.size();
   }
 
   public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -96,22 +97,35 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
       category_name = itemView.findViewById(R.id.category_name_txt);
       caregory_created = itemView.findViewById(R.id.category_created_txt);
       mainLayout = itemView.findViewById(R.id.mainLayout);
-      floatingDelete = itemView.findViewById(R.id.floatingDelete); // Initialize floatingDelete here
+      floatingDelete = itemView.findViewById(R.id.floatingDelete);
       floatingUpdate = itemView.findViewById(R.id.floatingUpdate);
-      //Animate Recyclerview
     }
   }
 
-  void confirmDialog(int position){
+  public void filter(String text) {
+    category_name.clear();
+    if (text.isEmpty()) {
+      category_name.addAll(category_name_full);
+    } else {
+      text = text.toLowerCase();
+      for (String item : category_name_full) {
+        if (item.toLowerCase().contains(text)) {
+          category_name.add(item);
+        }
+      }
+    }
+    notifyDataSetChanged();
+  }
+
+  void confirmDialog(int position) {
     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle("Xoá danh mục "+category_name.get(position).toString()+" này?");
-    builder.setMessage("Bạn có muốn xóa danh mục "+category_name.get(position).toString()+" này?");
+    builder.setTitle("Xoá danh mục " + category_name.get(position).toString() + " này?");
+    builder.setMessage("Bạn có muốn xóa danh mục " + category_name.get(position).toString() + " này?");
     builder.setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         MyDatabaseHelper myDB = new MyDatabaseHelper(context);
         myDB.deleteCategory(category_id.get(position).toString());
-        // Xóa category khỏi ArrayList
         category_id.remove(position);
         category_name.remove(position);
         caregory_created.remove(position);
@@ -125,7 +139,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
       }
     });
     builder.create().show();
-
   }
 
 }

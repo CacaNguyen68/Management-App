@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -61,20 +62,32 @@ public class CategoryActivity extends AppCompatActivity {
       Intent intent = new Intent(CategoryActivity.this, AddCategoryActivity.class);
       startActivity(intent);
     });
+
+    // Setup SearchView
+    SearchView searchView = findViewById(R.id.search_view);
+    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+      @Override
+      public boolean onQueryTextSubmit(String query) {
+        return false;
+      }
+
+      @Override
+      public boolean onQueryTextChange(String newText) {
+        customAdapter.filter(newText);
+        return true;
+      }
+    });
   }
 
   void storeDataArrays() {
     Cursor cursor = myDB.getAllDanhMuc();
     if (cursor.getCount() == 0) {
-      MyDatabaseHelper myDB = new MyDatabaseHelper(this);
-
       myDB.addDanhMuc("Trẻ em");
       myDB.addDanhMuc("Nhân vật");
       myDB.addDanhMuc("Tóc giả");
       myDB.addDanhMuc("Sexy");
       myDB.addDanhMuc("Phụ kiện");
       myDB.addDanhMuc("Cổ trang");
-
     } else {
       while (cursor.moveToNext()) {
         categoryId.add(cursor.getString(0));
@@ -87,19 +100,12 @@ public class CategoryActivity extends AppCompatActivity {
   @Override
   public void onResume() {
     super.onResume();
-    // Clear old data
     categoryId.clear();
     categoryName.clear();
     categoryCreated.clear();
-
-    // Reload data
     storeDataArrays();
-
-    // Notify adapter about data change
     customAdapter.notifyDataSetChanged();
   }
-
-  //My menu
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -112,19 +118,17 @@ public class CategoryActivity extends AppCompatActivity {
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     int id = item.getItemId();
     if (id == R.id.item1) {
-      // Xử lý khi người dùng chọn mục "Item 1"
       Toast.makeText(this, "Item 1 selected", Toast.LENGTH_SHORT).show();
       return true;
     } else if (id == R.id.item2) {
-      // Xử lý khi người dùng chọn mục "Item 2"
       Toast.makeText(this, "Item 2 selected", Toast.LENGTH_SHORT).show();
       return true;
     } else if (id == R.id.item3) {
-      // Xử lý khi người dùng chọn mục "Item 3"
       Toast.makeText(this, "Item 3 selected", Toast.LENGTH_SHORT).show();
       return true;
     }
     return super.onOptionsItemSelected(item);
   }
+
 
 }

@@ -75,7 +75,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
       intent.putExtra("id", String.valueOf(product.getId()));
       intent.putExtra("name", product.getName());
       intent.putExtra("price", String.valueOf(product.getPrice()));
-      intent.putExtra("categoryId",String.valueOf(product.getCategoryId()));
+      intent.putExtra("categoryId", String.valueOf(product.getCategoryId()));
       Log.d("Category AFTER", "categoryId: " + product.getCategoryId());
 //      intent.putExtra("createdAt", product.getCreatedAt());
       if (product.getImage() != null) {
@@ -96,7 +96,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     TextView productName, productPrice, categoryId, productCreated, userCreatedProduct;
     FloatingActionButton floatingDelete, floatingUpdate;
     ImageView imageView;
-    
+
     public MyViewHolder(@NonNull View itemView) {
       super(itemView);
       productName = itemView.findViewById(R.id.name_product);
@@ -120,7 +120,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
       notifyItemRemoved(position);
       notifyItemRangeChanged(position, productList.size());
     });
-    builder.setNegativeButton("Hủy bỏ", (dialog, which) -> {});
+    builder.setNegativeButton("Hủy bỏ", (dialog, which) -> {
+    });
     builder.create().show();
   }
 }
