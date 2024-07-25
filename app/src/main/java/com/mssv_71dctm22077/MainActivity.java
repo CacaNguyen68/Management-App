@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 import com.mssv_71dctm22077.user.RegisterActivity;
 
@@ -37,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     MyDatabaseHelper myDB = new MyDatabaseHelper(this);
     storeDataArrays();
+//    storeDataArraysCategory();
+//    storeDataArraysProduct();
 
     edPhone = findViewById(R.id.edittext_phone);
     edPassword = findViewById(R.id.edittext_password);
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
       } else {
 // Chuyển sang màn hình chính hoặc làm bất kỳ hành động nào khác sau khi đăng nhập thành công
-        Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
+        Intent intent = new Intent(MainActivity.this, MenuUserActivity.class);
         startActivity(intent);
       }
 
@@ -111,6 +112,25 @@ public class MainActivity extends AppCompatActivity {
       myDB.addUser("Super Admin", formatter.format(today), "012345678", "thubackend2022@gmail.com", BCrypt.hashpw("superadmin", BCrypt.gensalt()), "ADMIN", null);
       myDB.addUser("Join User", formatter.format(today), "88888888", "john.doe@example.com", BCrypt.hashpw("88888888", BCrypt.gensalt()), "USER", null);
       myDB.addUser("Kate Admin", formatter.format(today), "66666666", "kate.doe@example.com", BCrypt.hashpw("66666666", BCrypt.gensalt()), "ADMIN", null);
+
+      myDB.addDanhMuc("Trẻ em");
+      myDB.addDanhMuc("Nhân vật");
+      myDB.addDanhMuc("Tóc giả");
+      myDB.addDanhMuc("Sexy");
+      myDB.addDanhMuc("Phụ kiện");
+      myDB.addDanhMuc("Cổ trang");
+
+      myDB.addProduct("[Kuroko no Basket] Đồng phục trường TEIKO", 650, 1, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("Đồng phục học sinh Nhật Bản – Màu đen", 150, 1, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("Hán Phục HPW26", 180, 6, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("Hán Phục HPW20", 180, 6, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("[JUJUTSU KAISEN] Tóc giả Gojo Satoru", 330, 3, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("[Jigoku Shōjo] Hone Onna", 1000000, 4, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("Vương miện yêu tinh", 40000, 5, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("Cà Vạt (Caravat) Harry Potter", 30000, 5, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("[NARUTO] Costume Naruto", 220000, 2, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("[Naruto] Áo khoác Hokage đệ tứ – Minato", 250000, 2, formatter.format(today), "Super Admin", null);
+
 
     }
   }

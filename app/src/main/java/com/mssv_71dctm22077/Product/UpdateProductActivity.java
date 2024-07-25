@@ -37,6 +37,7 @@ import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -127,7 +128,9 @@ public class UpdateProductActivity extends AppCompatActivity {
 
 //      idProduct = Integer.parseInt(id);
       name_input.setText(name);
-      price_input.setText(price);
+      DecimalFormat decimalFormat = new DecimalFormat("#,###");
+      String formattedPrice = decimalFormat.format(Double.parseDouble(price));
+      price_input.setText(formattedPrice);
 
       // Set selected category in spinner
       List<String> categoryList = mb.getCategoryList();

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -127,12 +128,17 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
       @Override
       public void onClick(DialogInterface dialog, int which) {
         MyDatabaseHelper myDB = new MyDatabaseHelper(context);
-        myDB.deleteCategory(category_id.get(position).toString());
-        category_id.remove(position);
-        category_name.remove(position);
-        caregory_created.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, category_id.size());
+        if (myDB.getDanhMucCountById(Integer.parseInt(category_id.get(position)))==0){
+          myDB.deleteCategory(category_id.get(position).toString());
+          category_id.remove(position);
+          category_name.remove(position);
+          caregory_created.remove(position);
+          notifyItemRemoved(position);
+          notifyItemRangeChanged(position, category_id.size());
+        }else {
+          Toast.makeText(context, "Danh mục không thể xoá!", Toast.LENGTH_SHORT).show();
+        }
+
       }
     });
     builder.setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {

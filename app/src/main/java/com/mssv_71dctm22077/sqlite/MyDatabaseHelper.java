@@ -277,6 +277,16 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return count;
   }
 
+  public int getDanhMucCountById(int categoryId) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    // Thêm điều kiện WHERE để lọc theo ID của danh mục
+    Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_CATEGORY + " WHERE id = ?", new String[]{String.valueOf(categoryId)});
+    cursor.moveToFirst();
+    int count = cursor.getInt(0);
+    cursor.close();
+    return count;
+  }
+
   //
   public List<String> getCategoryList() {
     List<String> categories = new ArrayList<>();

@@ -304,7 +304,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/yard/baseline_yard_24.xml" />
+                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialicons/list_alt/baseline_list_alt_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -314,8 +314,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="ffd385" />
-                            <entry key="outputName" value="baseline_yard_24" />
+                            <entry key="autoMirrored" value="true" />
+                            <entry key="color" value="fcbb3b" />
+                            <entry key="outputName" value="baseline_list_alt_24" />
                           </map>
                         </option>
                       </PersistentState>

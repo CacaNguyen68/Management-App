@@ -1,170 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:orientation="vertical"
-  android:padding="16dp"
   tools:context=".MenuAdminActivity">
 
-  <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    android:layout_marginBottom="16dp"
-    android:text="Cosplay Shop"
-    android:textSize="25sp"
-    android:textStyle="bold" />
-
-  <androidx.viewpager2.widget.ViewPager2
-    android:id="@+id/viewPager"
-    android:layout_width="match_parent"
-    android:layout_height="250dp"
-    android:layout_marginBottom="16dp" />
-
-  <GridLayout
+  <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:alignmentMode="alignMargins"
-    android:columnCount="3"
-    android:columnOrderPreserved="false"
-    android:padding="36dp"
-    android:rowCount="2"
-    android:rowOrderPreserved="false">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <LinearLayout
+    <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_margin="16dp"
-      android:gravity="center"
-      android:orientation="vertical">
+      android:layout_gravity="center_horizontal"
+      android:layout_marginBottom="16dp"
+      android:text="Cosplay Shop"
+      android:textSize="25sp"
+      android:textStyle="bold" />
 
-      <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabManageCategories"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_manage_categories"
-        app:tint="#FFAF10" />
+    <androidx.viewpager2.widget.ViewPager2
+      android:id="@+id/viewPager"
+      android:layout_width="match_parent"
+      android:layout_height="250dp"
+      android:layout_marginBottom="16dp" />
 
-      <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Danh Mục"
-        android:textAlignment="center" />
-    </LinearLayout>
-
-    <LinearLayout
-      android:layout_width="wrap_content"
+    <GridLayout
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_margin="16dp"
-      android:gravity="center"
-      android:orientation="vertical">
+      android:alignmentMode="alignMargins"
+      android:columnCount="3"
+      android:columnOrderPreserved="false"
+      android:padding="36dp"
+      android:rowCount="2"
+      android:rowOrderPreserved="false">
 
-      <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabManageProducts"
+      <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_manage_products"
-        app:tint="#FFAF10" />
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
-      <TextView
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+          android:id="@+id/fabManageCategories"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_manage_categories"
+          app:tint="#FFAF10" />
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="Danh Mục"
+          android:textAlignment="center" />
+      </LinearLayout>
+
+      <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Sản Phẩm"
-        android:textAlignment="center" />
-    </LinearLayout>
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="16dp"
-      android:gravity="center"
-      android:orientation="vertical">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+          android:id="@+id/fabManageProducts"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_manage_products"
+          app:tint="#FFAF10" />
 
-      <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabManageUsers"
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="Sản Phẩm"
+          android:textAlignment="center" />
+      </LinearLayout>
+
+      <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_user"
-        app:tint="#FFAF10" />
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
-      <TextView
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+          android:id="@+id/fabManageUsers"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_user"
+          app:tint="#FFAF10" />
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="Người Dùng"
+          android:textAlignment="center" />
+      </LinearLayout>
+
+      <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Người Dùng"
-        android:textAlignment="center" />
-    </LinearLayout>
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="16dp"
-      android:gravity="center"
-      android:orientation="vertical">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+          android:id="@+id/fabStatistics"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_statistics"
+          app:tint="#FFAF10" />
 
-      <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabStatistics"
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="Thống Kê"
+          android:textAlignment="center" />
+      </LinearLayout>
+
+      <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_statistics"
-        app:tint="#FFAF10" />
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
-      <TextView
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+          android:id="@+id/fabNewNotifications"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_new_notifications"
+          app:tint="#FFAF10" />
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="Thông Báo"
+          android:textAlignment="center" />
+      </LinearLayout>
+
+      <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Thống Kê"
-        android:textAlignment="center" />
-    </LinearLayout>
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="16dp"
-      android:gravity="center"
-      android:orientation="vertical">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+          android:id="@+id/fabInventoryManagement"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/ic_inventory_management"
+          app:tint="#FFAF10" />
 
-      <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabNewNotifications"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_new_notifications"
-        app:tint="#FFAF10" />
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="Đơn Hàng"
+          android:textAlignment="center" />
 
-      <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Thông Báo"
-        android:textAlignment="center" />
-    </LinearLayout>
+      </LinearLayout>
 
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="16dp"
-      android:gravity="center"
-      android:orientation="vertical">
+    </GridLayout>
+  </LinearLayout>
 
-      <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabInventoryManagement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_inventory_management"
-        app:tint="#FFAF10" />
-
-      <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Đơn Hàng"
-        android:textAlignment="center" />
-    </LinearLayout>
-
-  </GridLayout>
-
-</LinearLayout>
+  <com.google.android.material.bottomnavigation.BottomNavigationView
+    android:id="@+id/bottom_navigation"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    app:menu="@menu/bottom_navigation_menu" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

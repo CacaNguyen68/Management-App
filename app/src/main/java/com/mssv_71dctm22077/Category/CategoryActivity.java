@@ -52,7 +52,7 @@ public class CategoryActivity extends AppCompatActivity {
     categoryCreated = new ArrayList<>();
 
     // Load data into RecyclerView
-    storeDataArrays();
+//    storeDataArrays();
     customAdapter = new CategoryAdapter(CategoryActivity.this, this, categoryId, categoryName, categoryCreated);
     recyclerView.setAdapter(customAdapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(CategoryActivity.this));

@@ -3,13 +3,17 @@ package com.mssv_71dctm22077;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
@@ -29,6 +33,7 @@ public class MenuAdminActivity extends AppCompatActivity {
   private ImageSliderAdapter adapter;
   private List<Integer> imageList;
   private FloatingActionButton categoryFloating, productFloating, userFloating, notifiactionFloating, statisticFloating, notificationFloating, orderFloating;
+  private CoordinatorLayout coordinatorLayout;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +93,37 @@ public class MenuAdminActivity extends AppCompatActivity {
     });
     statisticFloating = findViewById(R.id.fabStatistics);
     statisticFloating.setOnClickListener(view -> {
-        Intent intent = new Intent(this, BarChartCategoryActivity.class);
-        startActivity(intent);
+      Intent intent = new Intent(this, BarChartCategoryActivity.class);
+      startActivity(intent);
     });
     notifiactionFloating = findViewById(R.id.fabNewNotifications);
     orderFloating = findViewById(R.id.fabInventoryManagement);
 
+
+    BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+    bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+      @Override
+      public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.navigation_home) {
+          // Điều hướng tới Home
+          Intent homeIntent = new Intent(MenuAdminActivity.this, UserActivity.class);
+          startActivity(homeIntent);
+          return true;
+        } else if (itemId == R.id.navigation_profile) {
+          // Điều hướng tới Profile
+          Intent profileIntent = new Intent(MenuAdminActivity.this, CategoryActivity.class);
+          startActivity(profileIntent);
+          return true;
+        } else if (itemId == R.id.navigation_settings) {
+          // Điều hướng tới Settings
+          Intent settingsIntent = new Intent(MenuAdminActivity.this, ProductActivity.class);
+          startActivity(settingsIntent);
+          return true;
+        }
+        return false;
+      }
+    });
   }
 
   @Override

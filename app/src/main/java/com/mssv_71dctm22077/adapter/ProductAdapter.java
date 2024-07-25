@@ -25,6 +25,7 @@ import com.mssv_71dctm22077.model.Product;
 import com.mssv_71dctm22077.model.User;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -55,7 +56,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
   public void onBindViewHolder(@NonNull ProductAdapter.MyViewHolder holder, final int position) {
     Product product = productList.get(position);
     holder.productName.setText(product.getName());
-    holder.productPrice.setText(String.format("Giá: %s VND", product.getPrice()));
+    // Sử dụng DecimalFormat để định dạng số tiền
+    DecimalFormat decimalFormat = new DecimalFormat("#,###");
+    String formattedPrice = decimalFormat.format(product.getPrice());
+    holder.productPrice.setText(String.format("Giá: %s VND", formattedPrice));
     String nameCategory = myDB.getCategoryNameById(product.getCategoryId());
 
     holder.categoryId.setText(String.format("Danh mục: %s", nameCategory));
