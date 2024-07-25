@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mssv_71dctm22077.Product.ProductByCategoryActivity;
+import com.mssv_71dctm22077.Product.ProductByCategoryForUserActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
@@ -54,7 +55,7 @@ public class CategoryForUserAdapter extends RecyclerView.Adapter<CategoryForUser
     holder.mainLayout.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Intent intent = new Intent(context, ProductByCategoryActivity.class);
+        Intent intent = new Intent(context, ProductByCategoryForUserActivity.class);
         intent.putExtra("categoryId", String.valueOf(category_id.get(position)));
         context.startActivity(intent);
       }
