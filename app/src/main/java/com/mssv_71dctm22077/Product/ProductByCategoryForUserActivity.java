@@ -30,7 +30,6 @@ public class ProductByCategoryForUserActivity extends AppCompatActivity {
   private ProductUserAdapter productAdapter;
   private ArrayList<Product> productList;
   private MyDatabaseHelper myDB;
-  private FloatingActionButton addButton;
   private int categoryId;
 
   @Override
@@ -58,16 +57,6 @@ public class ProductByCategoryForUserActivity extends AppCompatActivity {
       public boolean onQueryTextChange(String newText) {
         loadDataSearch(newText);
         return true;
-      }
-    });
-
-    // Handle FloatingActionButton click
-    addButton = findViewById(R.id.add_button);
-    addButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Intent intent = new Intent(ProductByCategoryForUserActivity.this, AddProductActivity.class);
-        startActivity(intent);
       }
     });
 

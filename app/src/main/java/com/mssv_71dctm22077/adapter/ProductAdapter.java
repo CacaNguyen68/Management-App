@@ -64,7 +64,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
     holder.categoryId.setText(String.format("Danh mục: %s", nameCategory));
     holder.productCreated.setText(String.format("Ngày khởi tạo: %s", product.getCreatedAt()));
-
+    holder.userCreatedProduct.setText(String.format("Người khởi tạo: %s", product.getUserCreatedAt()));
     if (product.getImage() != null) {
       Bitmap bitmap = BitmapFactory.decodeByteArray(product.getImage(), 0, product.getImage().length);
       holder.imageView.setImageBitmap(bitmap);
