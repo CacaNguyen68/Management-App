@@ -40,6 +40,11 @@ public class MenuAdminActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_menu_admin);
 
+    //lay phone ma nhap vao
+    Intent intentProfile = getIntent();
+    String phone = intentProfile.getStringExtra("phone");
+
+
     viewPager = findViewById(R.id.viewPager);
 
     // Thêm các ảnh vào danh sách
@@ -79,11 +84,13 @@ public class MenuAdminActivity extends AppCompatActivity {
     categoryFloating = findViewById(R.id.fabManageCategories);
     categoryFloating.setOnClickListener(view -> {
       Intent intent = new Intent(MenuAdminActivity.this, CategoryActivity.class);
+      intent.putExtra("phone", phone);
       startActivity(intent);
     });
     productFloating = findViewById(R.id.fabManageProducts);
     productFloating.setOnClickListener(view -> {
       Intent intent = new Intent(this, ProductActivity.class);
+      intent.putExtra("phone", phone);
       startActivity(intent);
     });
     userFloating = findViewById(R.id.fabManageUsers);

@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
       if (typeUser.equals("ADMIN")) {
         // Chuyển sang màn hình chính hoặc làm bất kỳ hành động nào khác sau khi đăng nhập thành công
         Intent intent = new Intent(MainActivity.this, MenuAdminActivity.class);
+        intent.putExtra("phone", phone);
         startActivity(intent);
       } else {
 // Chuyển sang màn hình chính hoặc làm bất kỳ hành động nào khác sau khi đăng nhập thành công
