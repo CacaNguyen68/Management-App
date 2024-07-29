@@ -61,6 +61,33 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_IMAGE_USER = "hinh_anh";
 
 
+  //Khoi tao cho table cart
+  private static final String TABLE_CART = "table_cart";
+  private static final String COLUMN_CART_ID = "cart_id";
+  private static final String COLUMN_USER_ID_CART = "user_id";
+  private static final String COLUMN_CREATED_AT_CART = "created_at";
+
+  //Khoi tao cho tung item trong cart
+  private static final String TABLE_CART_ITEM = "table_cart_item";
+  private static final String COLUMN_CART_ITEM_ID = "cart_item_id";
+  private static final String COLUMN_CART_ID_ITEM = "cart_id";
+  private static final String COLUMN_PRODUCT_ID_ITEM = "product_id";
+  private static final String COLUMN_QUANTITY_ITEM = "quantity";
+
+
+  private static final String TABLE_ORDER = "table_order";
+  private static final String COLUMN_ORDER_ID = "order_id";
+  private static final String COLUMN_USER_ID_ORDER = "user_id";
+  private static final String COLUMN_CREATED_AT_ORDER = "created_at";
+
+
+  private static final String TABLE_ORDER_ITEM = "table_order_item";
+  private static final String COLUMN_ORDER_ITEM_ID = "order_item_id";
+  private static final String COLUMN_ORDER_ID_ITEM = "order_id";
+  private static final String COLUMN_PRODUCT_ID_ORDER_ITEM = "product_id";
+  private static final String COLUMN_QUANTITY_ORDER_ITEM = "quantity";
+
+
   public MyDatabaseHelper(@Nullable Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
     this.context = context;
@@ -84,6 +111,17 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 // Thực thi câu lệnh SQL để tạo bảng "user" với trường hình ảnh
     db.execSQL(queryUser);
 
+    String queryCart = "CREATE TABLE " + TABLE_CART + " (" + COLUMN_CART_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_CART + " INTEGER, " + COLUMN_CREATED_AT_CART + " TEXT)";
+    db.execSQL(queryCart);
+
+    String queryCartItem = "CREATE TABLE " + TABLE_CART_ITEM + " (" + COLUMN_CART_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_CART_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ITEM + " INTEGER, " + COLUMN_QUANTITY_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_CART_ID_ITEM + ") REFERENCES " + TABLE_CART + "(" + COLUMN_CART_ID + "))";
+    db.execSQL(queryCartItem);
+
+    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " (" + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_ORDER + " INTEGER, " + COLUMN_CREATED_AT_ORDER + " TEXT)";
+    db.execSQL(queryOrder);
+
+    String queryOrderItem = "CREATE TABLE " + TABLE_ORDER_ITEM + " (" + COLUMN_ORDER_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDER_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ORDER_ITEM + " INTEGER, " + COLUMN_QUANTITY_ORDER_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_ORDER_ID_ITEM + ") REFERENCES " + TABLE_ORDER + "(" + COLUMN_ORDER_ID + "))";
+    db.execSQL(queryOrderItem);
   }
 
   @Override
@@ -91,6 +129,12 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORY);
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCT);
+    db.execSQL("DROP TABLE IF EXISTS " + TABLE_CART);
+    db.execSQL("DROP TABLE IF EXISTS " + TABLE_CART_ITEM);
+    db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER);
+    db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_ITEM);
+
+
     onCreate(db);
   }
 
@@ -138,6 +182,32 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     boolean exists = cursor.getCount() > 0;
     cursor.close();
     return exists;
+  }
+
+  // Thêm phương thức để lấy thông tin người dùng từ số điện thoại
+  public User getUserByPhone(String phone) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    String query = "SELECT * FROM " + TABLE_USER + " WHERE " + COLUMN_PHONE_USER + "=?";
+    Cursor cursor = db.rawQuery(query, new String[]{phone});
+
+    if (cursor != null && cursor.moveToFirst()) {
+      // Lấy thông tin từ cursor và tạo đối tượng User
+      int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID_USER));
+      String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_USER));
+      String dateOfBirth = cursor.getString(cursor.getColumnIndex(COLUMN_DOB_USER));
+      String email = cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL_USER));
+      String userType = cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE));
+      String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_USER));
+      String createdBy = cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_USER));
+      byte[] image = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_USER));
+
+      User user = new User(id, name, dateOfBirth, phone, email, userType, createdAt, createdBy, image);
+      cursor.close();
+      return user;
+    }
+
+    cursor.close();
+    return null; // Nếu không tìm thấy user
   }
 
   // Phương thức để thêm một người dùng mới vào cơ sở dữ liệu
