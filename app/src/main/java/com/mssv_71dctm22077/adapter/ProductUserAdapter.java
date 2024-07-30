@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,17 +70,9 @@ public class ProductUserAdapter extends RecyclerView.Adapter<ProductUserAdapter.
     }
 
     holder.floatingAdd.setOnClickListener(v -> {
-//      Intent intent = new Intent(context, UpdateProductActivity.class);
-//      intent.putExtra("id", String.valueOf(product.getId()));
-//      intent.putExtra("name", product.getName());
-//      intent.putExtra("price", String.valueOf(product.getPrice()));
-//      intent.putExtra("categoryId", String.valueOf(product.getCategoryId()));
-//      Log.d("Category AFTER", "categoryId: " + product.getCategoryId());
-////      intent.putExtra("createdAt", product.getCreatedAt());
-//      if (product.getImage() != null) {
-//        intent.putExtra("image", product.getImage());
-//      }
-//      activity.startActivityForResult(intent, 1);
+      // Add product to cart
+      myDB.addProductToCart(2, product.getId(), 2); // userId là 1 và quantity là 1, bạn có thể thay đổi theo yêu cầu
+      Toast.makeText(context, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
     });
 
 //    holder.floatingUpdate.setOnClickListener(v -> );

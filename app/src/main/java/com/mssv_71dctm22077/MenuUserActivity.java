@@ -18,6 +18,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mssv_71dctm22077.Cart.CartActivity;
 import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.Category.CategoryForUserActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
@@ -35,7 +36,7 @@ public class MenuUserActivity extends AppCompatActivity {
   private Runnable runnable;
   private ImageSliderAdapter adapter;
   private List<Integer> imageList;
-  private FloatingActionButton categoryFloating, productFloating, userFloating, notifiactionFloating, statisticFloating, notificationFloating, orderFloating;
+  private FloatingActionButton categoryFloating, cartFloating, userFloating, notifiactionFloating, statisticFloating, notificationFloating, orderFloating;
   private CoordinatorLayout coordinatorLayout;
 
   @Override
@@ -82,6 +83,13 @@ public class MenuUserActivity extends AppCompatActivity {
     categoryFloating = findViewById(R.id.fabManageCategories);
     categoryFloating.setOnClickListener(view -> {
       Intent intent = new Intent(MenuUserActivity.this, CategoryForUserActivity.class);
+      startActivity(intent);
+    });
+
+    cartFloating = findViewById(R.id.fabPlaceOrder);
+    cartFloating.setOnClickListener(view -> {
+      Intent intent= new Intent(MenuUserActivity.this, CartActivity.class);
+      intent.putExtra("userId", 2);
       startActivity(intent);
     });
 

@@ -121,11 +121,11 @@ public class MainActivity extends AppCompatActivity {
       myDB.addDanhMuc("Phụ kiện");
       myDB.addDanhMuc("Cổ trang");
 
-      myDB.addProduct("[Kuroko no Basket] Đồng phục trường TEIKO", 650, 1, formatter.format(today), "Super Admin", null);
-      myDB.addProduct("Đồng phục học sinh Nhật Bản – Màu đen", 150, 1, formatter.format(today), "Super Admin", null);
-      myDB.addProduct("Hán Phục HPW26", 180, 6, formatter.format(today), "Super Admin", null);
-      myDB.addProduct("Hán Phục HPW20", 180, 6, formatter.format(today), "Super Admin", null);
-      myDB.addProduct("[JUJUTSU KAISEN] Tóc giả Gojo Satoru", 330, 3, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("[Kuroko no Basket] Đồng phục trường TEIKO", 650000, 1, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("Đồng phục học sinh Nhật Bản – Màu đen", 150000, 1, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("Hán Phục HPW26", 180000, 6, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("Hán Phục HPW20", 180000, 6, formatter.format(today), "Super Admin", null);
+      myDB.addProduct("[JUJUTSU KAISEN] Tóc giả Gojo Satoru", 330000, 3, formatter.format(today), "Super Admin", null);
       myDB.addProduct("[Jigoku Shōjo] Hone Onna", 1000000, 4, formatter.format(today), "Super Admin", null);
       myDB.addProduct("Vương miện yêu tinh", 40000, 5, formatter.format(today), "Super Admin", null);
       myDB.addProduct("Cà Vạt (Caravat) Harry Potter", 30000, 5, formatter.format(today), "Super Admin", null);

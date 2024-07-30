@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.mssv_71dctm22077.model.CartItem;
 import com.mssv_71dctm22077.model.Product;
 import com.mssv_71dctm22077.model.User;
 
@@ -645,6 +646,117 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return cursor;
   }
 
+  //them san pham vao gio hang
+  public void addProductToCart(int userId, int productId, int quantity) {
+    SQLiteDatabase db = this.getWritableDatabase();
+
+    // Kiểm tra nếu giỏ hàng đã tồn tại cho người dùng này
+    String selectQuery = "SELECT * FROM " + TABLE_CART + " WHERE " + COLUMN_USER_ID_CART + " = ?";
+    Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(userId)});
+    int cartId;
+    if (cursor.moveToFirst()) {
+      cartId = cursor.getInt(cursor.getColumnIndex(COLUMN_CART_ID));
+    } else {
+      // Tạo giỏ hàng mới nếu chưa tồn tại
+      ContentValues cartValues = new ContentValues();
+      cartValues.put(COLUMN_USER_ID_CART, userId);
+      cartValues.put(COLUMN_CREATED_AT_CART, System.currentTimeMillis());
+      cartId = (int) db.insert(TABLE_CART, null, cartValues);
+    }
+    cursor.close();
+
+    // Thêm sản phẩm vào giỏ hàng
+    ContentValues values = new ContentValues();
+    values.put(COLUMN_CART_ID_ITEM, cartId);
+    values.put(COLUMN_PRODUCT_ID_ITEM, productId);
+    values.put(COLUMN_QUANTITY_ITEM, quantity);
+
+    db.insert(TABLE_CART_ITEM, null, values);
+    db.close();
+  }
+
+  public void updateCartItem(CartItem cartItem) {
+    SQLiteDatabase db = this.getWritableDatabase();
+
+    ContentValues values = new ContentValues();
+    values.put(COLUMN_QUANTITY_ITEM, cartItem.getQuantity());
+
+    db.update(TABLE_CART_ITEM, values, COLUMN_CART_ITEM_ID + " = ?", new String[]{String.valueOf(cartItem.getCartItemId())});
+    db.close();
+  }
+
+  public ArrayList<CartItem> getAllCartItems() {
+    ArrayList<CartItem> cartItemList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    // Truy vấn để lấy thông tin sản phẩm từ giỏ hàng
+    String query = "SELECT " +
+      "ci." + COLUMN_CART_ITEM_ID + ", " +
+      "ci." + COLUMN_PRODUCT_ID_ITEM + ", " +
+      "ci." + COLUMN_QUANTITY_ITEM + ", " +
+      "p." + COLUMN_NAME_PRODUCT + ", " +
+      "p." + COLUMN_IMAGE_PRODUCT + ", " +
+      "p." + COLUMN_PRICE_PRODUCT +
+      " FROM " + TABLE_CART_ITEM + " ci " +
+      " JOIN " + TABLE_PRODUCT + " p ON ci." + COLUMN_PRODUCT_ID_ITEM + " = p." + COLUMN_CATEGORY_ID;
+
+    Cursor cursor = db.rawQuery(query, null);
+
+    if (cursor.moveToFirst()) {
+      do {
+        int cartItemId = cursor.getInt(cursor.getColumnIndex(COLUMN_CART_ITEM_ID));
+        int productId = cursor.getInt(cursor.getColumnIndex(COLUMN_PRODUCT_ID_ITEM));
+        int quantity = cursor.getInt(cursor.getColumnIndex(COLUMN_QUANTITY_ITEM));
+        String productName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PRODUCT));
+        byte[] productImage = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_PRODUCT));
+        double productPrice = cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICE_PRODUCT));
+
+        CartItem cartItem = new CartItem(cartItemId, productName, productImage, productPrice, quantity);
+        cartItemList.add(cartItem);
+      } while (cursor.moveToNext());
+    }
+
+    cursor.close();
+    db.close();
+    return cartItemList;
+  }
+
+
+  public void updateCartItemQuantity(int cartItemId, int quantity) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues contentValues = new ContentValues();
+    contentValues.put(COLUMN_QUANTITY_ITEM, quantity);
+
+    db.update(TABLE_CART_ITEM, contentValues, COLUMN_CART_ITEM_ID + " = ?", new String[]{String.valueOf(cartItemId)});
+    db.close();
+  }
+  public List<CartItem> getCartItemsByUserId(int userId) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    List<CartItem> cartItemList = new ArrayList<>();
+
+    String query = "SELECT ci." + COLUMN_CART_ITEM_ID + ", p." + COLUMN_NAME_PRODUCT + ", p." + COLUMN_IMAGE_PRODUCT + ", p." + COLUMN_PRICE_PRODUCT + ", ci." + COLUMN_QUANTITY_ITEM +
+      " FROM " + TABLE_CART_ITEM + " ci " +
+      "JOIN " + TABLE_PRODUCT + " p ON ci." + COLUMN_PRODUCT_ID_ITEM + " = p." + COLUMN_ID_PRODUCT +
+      " JOIN " + TABLE_CART + " c ON ci." + COLUMN_CART_ID_ITEM + " = c." + COLUMN_CART_ID +
+      " WHERE c." + COLUMN_USER_ID_CART + " = ?";
+
+    Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+    if (cursor != null) {
+      while (cursor.moveToNext()) {
+        int cartItemId = cursor.getInt(cursor.getColumnIndex(COLUMN_CART_ITEM_ID));
+        String productName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PRODUCT));
+        byte[] productImage = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_PRODUCT));
+        double productPrice = cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICE_PRODUCT));
+        int quantity = cursor.getInt(cursor.getColumnIndex(COLUMN_QUANTITY_ITEM));
+
+        CartItem cartItem = new CartItem(cartItemId, productName, productImage, productPrice, quantity);
+        cartItemList.add(cartItem);
+      }
+      cursor.close();
+    }
+
+    return cartItemList;
+  }
 
   // Lấy ngày hiện tại dd-MM-yyyy
   private String getCurrentDate() {
