@@ -758,6 +758,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return cartItemList;
   }
 
+  public void deleteCartItem(int cartItemId) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    db.delete(TABLE_CART_ITEM, COLUMN_CART_ITEM_ID + " = ?", new String[]{String.valueOf(cartItemId)});
+    db.close();
+  }
+
+
   // Lấy ngày hiện tại dd-MM-yyyy
   private String getCurrentDate() {
     Date today = new Date();
