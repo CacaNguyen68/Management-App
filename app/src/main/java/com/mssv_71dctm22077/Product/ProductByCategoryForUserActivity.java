@@ -20,6 +20,7 @@ import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.ProductAdapter;
 import com.mssv_71dctm22077.adapter.ProductUserAdapter;
 import com.mssv_71dctm22077.model.Product;
+import com.mssv_71dctm22077.model.User;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.util.ArrayList;
@@ -31,12 +32,14 @@ public class ProductByCategoryForUserActivity extends AppCompatActivity {
   private ArrayList<Product> productList;
   private MyDatabaseHelper myDB;
   private int categoryId;
+  private String phone;
+  private User user;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_product_by_category_for_user);
-
+    myDB = new MyDatabaseHelper(this);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -64,7 +67,9 @@ public class ProductByCategoryForUserActivity extends AppCompatActivity {
     Intent intent = getIntent();
     if (intent.hasExtra("categoryId")) {
       categoryId = Integer.parseInt(intent.getStringExtra("categoryId"));
-      loadProductsByCategory(categoryId);
+      phone = intent.getStringExtra("phone");
+      user = myDB.getUserByPhone(phone);
+        loadProductsByCategory(categoryId);
       Log.d("ProductByCategory", "Category ID: " + categoryId);
     }
   }
@@ -72,7 +77,7 @@ public class ProductByCategoryForUserActivity extends AppCompatActivity {
   private void loadProductsByCategory(int id) {
     productList.clear();
     productList.addAll(myDB.getProductsByCategoryId(id));
-    productAdapter = new ProductUserAdapter(this, this, productList);
+    productAdapter = new ProductUserAdapter(this, this, productList, user);
     recyclerView.setAdapter(productAdapter);
   }
 

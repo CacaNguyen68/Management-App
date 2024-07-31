@@ -3,6 +3,7 @@ package com.mssv_71dctm22077.Category;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.CategoryAdapter;
 import com.mssv_71dctm22077.adapter.CategoryForUserAdapter;
+import com.mssv_71dctm22077.model.User;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.util.ArrayList;
@@ -28,11 +30,27 @@ public class CategoryForUserActivity extends AppCompatActivity {
   MyDatabaseHelper myDB;
   ArrayList<String> categoryId, categoryName, categoryCreated;
   CategoryForUserAdapter categoryForUserAdapter;
+  User user;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_category_for_user);
+
+    Intent intentProfile = getIntent();
+    String phone = intentProfile.getStringExtra("phone");
+    myDB = new MyDatabaseHelper(this);
+    if (phone != null) {
+      user = myDB.getUserByPhone(phone);
+      if (user != null) {
+        Log.d("Profile user", "User ID: " + user.getId());
+      } else {
+        Log.d("Profile user", "User not found with phone: " + phone);
+      }
+    } else {
+      Log.d("Profile user", "Phone number is null");
+    }
+
 
     // Toolbar
     Toolbar toolbar = findViewById(R.id.toolbar);
@@ -49,7 +67,7 @@ public class CategoryForUserActivity extends AppCompatActivity {
 
     // Load data into RecyclerView
     storeDataArrays();
-    categoryForUserAdapter = new CategoryForUserAdapter(CategoryForUserActivity.this, this, categoryId, categoryName, categoryCreated);
+    categoryForUserAdapter = new CategoryForUserAdapter(CategoryForUserActivity.this, this, categoryId, categoryName, categoryCreated, user);
     recyclerView.setAdapter(categoryForUserAdapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(CategoryForUserActivity.this));
 

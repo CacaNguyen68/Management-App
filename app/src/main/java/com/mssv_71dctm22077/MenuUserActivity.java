@@ -3,7 +3,9 @@ package com.mssv_71dctm22077;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -24,6 +26,8 @@ import com.mssv_71dctm22077.Category.CategoryForUserActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
 import com.mssv_71dctm22077.chart.BarChartCategoryActivity;
+import com.mssv_71dctm22077.model.User;
+import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 import com.mssv_71dctm22077.user.UserActivity;
 
 import java.util.ArrayList;
@@ -38,11 +42,28 @@ public class MenuUserActivity extends AppCompatActivity {
   private List<Integer> imageList;
   private FloatingActionButton categoryFloating, cartFloating, userFloating, notifiactionFloating, statisticFloating, notificationFloating, orderFloating;
   private CoordinatorLayout coordinatorLayout;
+  private String userId;
+  private MyDatabaseHelper db;
+  User user;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_menu_user);
+
+    Intent intentProfile = getIntent();
+    String phone = intentProfile.getStringExtra("phone");
+    db = new MyDatabaseHelper(this);
+    if (phone != null) {
+      user = db.getUserByPhone(phone);
+      if (user != null) {
+        Log.d("Profile user", "User ID: " + user.getId());
+      } else {
+        Log.d("Profile user", "User not found with phone: " + phone);
+      }
+    } else {
+      Log.d("Profile user", "Phone number is null");
+    }
 
     viewPager = findViewById(R.id.viewPager);
 
@@ -83,13 +104,14 @@ public class MenuUserActivity extends AppCompatActivity {
     categoryFloating = findViewById(R.id.fabManageCategories);
     categoryFloating.setOnClickListener(view -> {
       Intent intent = new Intent(MenuUserActivity.this, CategoryForUserActivity.class);
+      intent.putExtra("userId",user.getId());
       startActivity(intent);
     });
 
     cartFloating = findViewById(R.id.fabPlaceOrder);
     cartFloating.setOnClickListener(view -> {
-      Intent intent= new Intent(MenuUserActivity.this, CartActivity.class);
-      intent.putExtra("userId", 2);
+      Intent intent = new Intent(MenuUserActivity.this, CartActivity.class);
+      intent.putExtra("userId", user.getId());
       startActivity(intent);
     });
 

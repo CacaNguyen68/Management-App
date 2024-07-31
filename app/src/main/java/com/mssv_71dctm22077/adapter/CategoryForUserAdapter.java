@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mssv_71dctm22077.Product.ProductByCategoryActivity;
 import com.mssv_71dctm22077.Product.ProductByCategoryForUserActivity;
 import com.mssv_71dctm22077.R;
+import com.mssv_71dctm22077.model.User;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.util.ArrayList;
@@ -29,14 +30,16 @@ public class CategoryForUserAdapter extends RecyclerView.Adapter<CategoryForUser
   private List<String> category_name_full;
   Activity activity;
   MyDatabaseHelper myDB;
+  User user;
 
-  public CategoryForUserAdapter(Activity activity, Context context, ArrayList<String> category_id, ArrayList<String> category_name, ArrayList<String> caregory_created) {
+  public CategoryForUserAdapter(Activity activity, Context context, ArrayList<String> category_id, ArrayList<String> category_name, ArrayList<String> caregory_created, User user) {
     this.activity = activity;
     this.context = context;
     this.category_id = category_id;
     this.category_name = category_name;
     this.caregory_created = caregory_created;
     this.category_name_full = new ArrayList<>(category_name);
+    this.user = user;
   }
 
   @NonNull
@@ -57,6 +60,7 @@ public class CategoryForUserAdapter extends RecyclerView.Adapter<CategoryForUser
       public void onClick(View v) {
         Intent intent = new Intent(context, ProductByCategoryForUserActivity.class);
         intent.putExtra("categoryId", String.valueOf(category_id.get(position)));
+        intent.putExtra("phone",  String.valueOf(user.getPhone()));
         context.startActivity(intent);
       }
     });

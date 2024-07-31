@@ -189,27 +189,34 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   public User getUserByPhone(String phone) {
     SQLiteDatabase db = this.getReadableDatabase();
     String query = "SELECT * FROM " + TABLE_USER + " WHERE " + COLUMN_PHONE_USER + "=?";
-    Cursor cursor = db.rawQuery(query, new String[]{phone});
+    Cursor cursor = null;
+    User user = null;
 
-    if (cursor != null && cursor.moveToFirst()) {
-      // Lấy thông tin từ cursor và tạo đối tượng User
-      int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID_USER));
-      String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_USER));
-      String dateOfBirth = cursor.getString(cursor.getColumnIndex(COLUMN_DOB_USER));
-      String email = cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL_USER));
-      String userType = cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE));
-      String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_USER));
-      String createdBy = cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_USER));
-      byte[] image = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_USER));
+    try {
+      cursor = db.rawQuery(query, new String[]{phone});
+      if (cursor != null && cursor.moveToFirst()) {
+        int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID_USER));
+        String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_USER));
+        String dateOfBirth = cursor.getString(cursor.getColumnIndex(COLUMN_DOB_USER));
+        String email = cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL_USER));
+        String userType = cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE));
+        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_USER));
+        String createdBy = cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_USER));
+        byte[] image = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_USER));
 
-      User user = new User(id, name, dateOfBirth, phone, email, userType, createdAt, createdBy, image);
-      cursor.close();
-      return user;
+        user = new User(id, name, dateOfBirth, phone, email, userType, createdAt, createdBy, image);
+      }
+    } catch (Exception e) {
+      Log.e("Database Error", "Error while getting user by phone", e);
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
     }
 
-    cursor.close();
-    return null; // Nếu không tìm thấy user
+    return user;
   }
+
 
   // Phương thức để thêm một người dùng mới vào cơ sở dữ liệu
   public void addUser(String name, String dob, String phone, String email, String password, String userType, byte[] image) {

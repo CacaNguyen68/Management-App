@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
       } else {
 // Chuyển sang màn hình chính hoặc làm bất kỳ hành động nào khác sau khi đăng nhập thành công
         Intent intent = new Intent(MainActivity.this, MenuUserActivity.class);
+        intent.putExtra("phone", phone);
         startActivity(intent);
       }
 

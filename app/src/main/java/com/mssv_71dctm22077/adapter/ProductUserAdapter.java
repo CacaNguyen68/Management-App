@@ -21,6 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Product.UpdateProductActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.model.Product;
+import com.mssv_71dctm22077.model.User;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.text.DecimalFormat;
@@ -32,12 +33,14 @@ public class ProductUserAdapter extends RecyclerView.Adapter<ProductUserAdapter.
   private ArrayList<Product> productList;
   private Activity activity;
   private MyDatabaseHelper myDB;
+  private User user;
 
-  public ProductUserAdapter(Activity activity, Context context, ArrayList<Product> productList) {
+  public ProductUserAdapter(Activity activity, Context context, ArrayList<Product> productList, User user) {
     this.activity = activity;
     this.context = context;
     this.productList = productList;
     this.myDB = new MyDatabaseHelper(context);
+    this.user = user;
   }
 
   @NonNull
@@ -71,11 +74,10 @@ public class ProductUserAdapter extends RecyclerView.Adapter<ProductUserAdapter.
 
     holder.floatingAdd.setOnClickListener(v -> {
       // Add product to cart
-      myDB.addProductToCart(2, product.getId(), 2); // userId là 1 và quantity là 1, bạn có thể thay đổi theo yêu cầu
+      myDB.addProductToCart(user.getId(), product.getId(), 1); // userId là 1 và quantity là 1, bạn có thể thay đổi theo yêu cầu
       Toast.makeText(context, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
     });
 
-//    holder.floatingUpdate.setOnClickListener(v -> );
   }
 
   @Override
