@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
   private void login() {
     String phone = edPhone.getText().toString().trim();
     String password = edPassword.getText().toString().trim();
-//    Log.d("pass",hashedPassword);
-
     MyDatabaseHelper mb = new MyDatabaseHelper(MainActivity.this);
     mb.getAllUser();
 
@@ -112,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
       SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
 
       myDB.addUser("Super Admin", formatter.format(today), "012345678", "thubackend2022@gmail.com", BCrypt.hashpw("superadmin", BCrypt.gensalt()), "ADMIN", null);
+      myDB.addUser("Join User", formatter.format(today), "88888888", "john.doe@example.com", BCrypt.hashpw("88888888", BCrypt.gensalt()), "USER", null);
+      myDB.addUser("Kim Anh", formatter.format(today), "77777777", "kimanh@example.com", BCrypt.hashpw("77777777", BCrypt.gensalt()), "USER", null);
+      myDB.addUser("Nhat Hung", formatter.format(today), "55555555", "hung234@example.com", BCrypt.hashpw("55555555", BCrypt.gensalt()), "USER", null);
       myDB.addUser("Join User", formatter.format(today), "88888888", "john.doe@example.com", BCrypt.hashpw("88888888", BCrypt.gensalt()), "USER", null);
       myDB.addUser("Kate Admin", formatter.format(today), "66666666", "kate.doe@example.com", BCrypt.hashpw("66666666", BCrypt.gensalt()), "ADMIN", null);
 
