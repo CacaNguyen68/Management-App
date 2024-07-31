@@ -104,14 +104,14 @@ public class MenuUserActivity extends AppCompatActivity {
     categoryFloating = findViewById(R.id.fabManageCategories);
     categoryFloating.setOnClickListener(view -> {
       Intent intent = new Intent(MenuUserActivity.this, CategoryForUserActivity.class);
-      intent.putExtra("userId",user.getId());
+      intent.putExtra("phone",phone);
       startActivity(intent);
     });
 
     cartFloating = findViewById(R.id.fabPlaceOrder);
     cartFloating.setOnClickListener(view -> {
       Intent intent = new Intent(MenuUserActivity.this, CartActivity.class);
-      intent.putExtra("userId", user.getId());
+      intent.putExtra("userId", user.getId()); // truyen thanh cong
       startActivity(intent);
     });
 

@@ -38,7 +38,7 @@ public class CategoryForUserActivity extends AppCompatActivity {
     setContentView(R.layout.activity_category_for_user);
 
     Intent intentProfile = getIntent();
-    String phone = intentProfile.getStringExtra("phone");
+    String phone = intentProfile.getStringExtra("phone");//lay thanh cong
     myDB = new MyDatabaseHelper(this);
     if (phone != null) {
       user = myDB.getUserByPhone(phone);
