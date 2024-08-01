@@ -20,6 +20,7 @@ import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
 import com.mssv_71dctm22077.chart.BarChartCategoryActivity;
 import com.mssv_71dctm22077.chart.ChartCategoryActivity;
+import com.mssv_71dctm22077.order.OrderActivity;
 import com.mssv_71dctm22077.user.UserActivity;
 
 import java.util.ArrayList;
@@ -105,6 +106,10 @@ public class MenuAdminActivity extends AppCompatActivity {
     });
     notifiactionFloating = findViewById(R.id.fabNewNotifications);
     orderFloating = findViewById(R.id.fabInventoryManagement);
+    orderFloating.setOnClickListener(view -> {
+      Intent intent = new Intent(this, OrderActivity.class);
+      startActivity(intent);
+    });
 
 
     BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);

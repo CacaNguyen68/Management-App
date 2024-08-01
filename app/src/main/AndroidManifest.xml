@@ -13,6 +13,12 @@
     android:theme="@style/Theme.ManagementApp"
     tools:targetApi="31">
     <activity
+      android:name=".order.OrderDetailActivity"
+      android:exported="false" />
+    <activity
+      android:name=".order.OrderActivity"
+      android:exported="false" />
+    <activity
       android:name=".Cart.CartActivity"
       android:exported="false" />
     <activity

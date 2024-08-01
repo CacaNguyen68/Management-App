@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.mssv_71dctm22077.model.CartItem;
+import com.mssv_71dctm22077.model.Order;
+import com.mssv_71dctm22077.model.OrderDetail;
 import com.mssv_71dctm22077.model.Product;
 import com.mssv_71dctm22077.model.User;
 
@@ -118,10 +120,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     String queryCartItem = "CREATE TABLE " + TABLE_CART_ITEM + " (" + COLUMN_CART_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_CART_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ITEM + " INTEGER, " + COLUMN_QUANTITY_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_CART_ID_ITEM + ") REFERENCES " + TABLE_CART + "(" + COLUMN_CART_ID + "))";
     db.execSQL(queryCartItem);
 
-    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " (" + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_ORDER + " INTEGER, " + COLUMN_CREATED_AT_ORDER + " TEXT)";
+    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " (" + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_ORDER + " INTEGER, " + COLUMN_CREATED_AT_ORDER + " TEXT, " + "FOREIGN KEY(" + COLUMN_USER_ID_ORDER + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + ")" + ")";
     db.execSQL(queryOrder);
 
-    String queryOrderItem = "CREATE TABLE " + TABLE_ORDER_ITEM + " (" + COLUMN_ORDER_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDER_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ORDER_ITEM + " INTEGER, " + COLUMN_QUANTITY_ORDER_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_ORDER_ID_ITEM + ") REFERENCES " + TABLE_ORDER + "(" + COLUMN_ORDER_ID + "))";
+    String queryOrderItem = "CREATE TABLE " + TABLE_ORDER_ITEM + " (" + COLUMN_ORDER_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDER_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ORDER_ITEM + " INTEGER, " + COLUMN_QUANTITY_ORDER_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_ORDER_ID_ITEM + ") REFERENCES " + TABLE_ORDER + "(" + COLUMN_ORDER_ID + "), " + "FOREIGN KEY(" + COLUMN_PRODUCT_ID_ORDER_ITEM + ") REFERENCES " + TABLE_PRODUCT + "(" + COLUMN_ID_PRODUCT + ")" + ")";
     db.execSQL(queryOrderItem);
   }
 
@@ -494,9 +496,24 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   }
 
   //  câu truy vấn lấy chi tiết 1 sản phẩm
-  public Cursor getProductById(int id) {
+  public Product getProductById(int id) {
     SQLiteDatabase db = this.getReadableDatabase();
-    return db.rawQuery("SELECT * FROM products WHERE id = ?", new String[]{String.valueOf(id)});
+    Cursor cursor = db.rawQuery("SELECT * FROM products WHERE id = ?", new String[]{String.valueOf(id)});
+
+    if (cursor != null && cursor.moveToFirst()) {
+      Product product = new Product();
+      product.setId(cursor.getInt(cursor.getColumnIndex("id")));
+      product.setName(cursor.getString(cursor.getColumnIndex("name")));
+      product.setPrice(cursor.getDouble(cursor.getColumnIndex("price")));
+      product.setCategoryId(cursor.getInt(cursor.getColumnIndex("categoryId")));
+      product.setCreatedAt(cursor.getString(cursor.getColumnIndex("createdAt")));
+      product.setUserCreatedAt(cursor.getString(cursor.getColumnIndex("userCreatedAt")));
+      product.setImage(cursor.getBlob(cursor.getColumnIndex("image")));
+      cursor.close();
+      return product;
+    } else {
+      return null;
+    }
   }
 
   // câu truy vấn lấy các sản phẩm theo điều kiện categoryId
@@ -697,15 +714,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     SQLiteDatabase db = this.getReadableDatabase();
 
     // Truy vấn để lấy thông tin sản phẩm từ giỏ hàng
-    String query = "SELECT " +
-      "ci." + COLUMN_CART_ITEM_ID + ", " +
-      "ci." + COLUMN_PRODUCT_ID_ITEM + ", " +
-      "ci." + COLUMN_QUANTITY_ITEM + ", " +
-      "p." + COLUMN_NAME_PRODUCT + ", " +
-      "p." + COLUMN_IMAGE_PRODUCT + ", " +
-      "p." + COLUMN_PRICE_PRODUCT +
-      " FROM " + TABLE_CART_ITEM + " ci " +
-      " JOIN " + TABLE_PRODUCT + " p ON ci." + COLUMN_PRODUCT_ID_ITEM + " = p." + COLUMN_CATEGORY_ID;
+    String query = "SELECT " + "ci." + COLUMN_CART_ITEM_ID + ", " + "ci." + COLUMN_PRODUCT_ID_ITEM + ", " + "ci." + COLUMN_QUANTITY_ITEM + ", " + "p." + COLUMN_NAME_PRODUCT + ", " + "p." + COLUMN_IMAGE_PRODUCT + ", " + "p." + COLUMN_PRICE_PRODUCT + " FROM " + TABLE_CART_ITEM + " ci " + " JOIN " + TABLE_PRODUCT + " p ON ci." + COLUMN_PRODUCT_ID_ITEM + " = p." + COLUMN_CATEGORY_ID;
 
     Cursor cursor = db.rawQuery(query, null);
 
@@ -737,15 +746,12 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.update(TABLE_CART_ITEM, contentValues, COLUMN_CART_ITEM_ID + " = ?", new String[]{String.valueOf(cartItemId)});
     db.close();
   }
+
   public List<CartItem> getCartItemsByUserId(int userId) {
     SQLiteDatabase db = this.getReadableDatabase();
     List<CartItem> cartItemList = new ArrayList<>();
 
-    String query = "SELECT ci." + COLUMN_CART_ITEM_ID + ", p." + COLUMN_NAME_PRODUCT + ", p." + COLUMN_IMAGE_PRODUCT + ", p." + COLUMN_PRICE_PRODUCT + ", ci." + COLUMN_QUANTITY_ITEM +
-      " FROM " + TABLE_CART_ITEM + " ci " +
-      "JOIN " + TABLE_PRODUCT + " p ON ci." + COLUMN_PRODUCT_ID_ITEM + " = p." + COLUMN_ID_PRODUCT +
-      " JOIN " + TABLE_CART + " c ON ci." + COLUMN_CART_ID_ITEM + " = c." + COLUMN_CART_ID +
-      " WHERE c." + COLUMN_USER_ID_CART + " = ?";
+    String query = "SELECT ci." + COLUMN_CART_ITEM_ID + ", p." + COLUMN_NAME_PRODUCT + ", p." + COLUMN_IMAGE_PRODUCT + ", p." + COLUMN_PRICE_PRODUCT + ", ci." + COLUMN_QUANTITY_ITEM + " FROM " + TABLE_CART_ITEM + " ci " + "JOIN " + TABLE_PRODUCT + " p ON ci." + COLUMN_PRODUCT_ID_ITEM + " = p." + COLUMN_ID_PRODUCT + " JOIN " + TABLE_CART + " c ON ci." + COLUMN_CART_ID_ITEM + " = c." + COLUMN_CART_ID + " WHERE c." + COLUMN_USER_ID_CART + " = ?";
 
     Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
     if (cursor != null) {
@@ -772,11 +778,167 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   }
 
 
+  // Hàm tạo đơn hàng
+  public long createOrder(int userId) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put(COLUMN_USER_ID_ORDER, userId);
+    values.put(COLUMN_CREATED_AT_ORDER, getCurrentDate());
+
+    // Chèn dòng dữ liệu vào bảng order
+    long orderId = db.insert(TABLE_ORDER, null, values);
+    db.close();
+    return orderId;
+  }
+
+  // Hàm tạo mục đơn hàng
+  public void createOrderItem(long orderId, int productId, int quantity) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put(COLUMN_ORDER_ID_ITEM, orderId);
+    values.put(COLUMN_PRODUCT_ID_ORDER_ITEM, productId);
+    values.put(COLUMN_QUANTITY_ORDER_ITEM, quantity);
+
+    // Chèn dòng dữ liệu vào bảng order_item
+    db.insert(TABLE_ORDER_ITEM, null, values);
+    db.close();
+  }
+
+  public int getProductIdByName(String productName) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    String query = "SELECT " + COLUMN_ID_PRODUCT + " FROM " + TABLE_PRODUCT + " WHERE " + COLUMN_NAME_PRODUCT + " = ?";
+    Cursor cursor = db.rawQuery(query, new String[]{productName});
+
+    int productId = -1;
+    if (cursor.moveToFirst()) {
+      productId = cursor.getInt(cursor.getColumnIndex(COLUMN_ID_PRODUCT));
+    }
+    cursor.close();
+    db.close();
+
+    return productId;
+  }
+
+  public List<Order> getAllOrders() {
+    List<Order> orderList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+    Cursor cursor = db.query(TABLE_ORDER, null, null, null, null, null, null);
+
+    if (cursor.moveToFirst()) {
+      do {
+        int orderId = cursor.getInt(cursor.getColumnIndex(COLUMN_ORDER_ID));
+        int userId = cursor.getInt(cursor.getColumnIndex(COLUMN_USER_ID_ORDER));
+        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_ORDER));
+
+        Order order = new Order(orderId, userId, createdAt);
+        orderList.add(order);
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    db.close();
+    return orderList;
+  }
+
+
+  public void clearCart(int userId) {
+    SQLiteDatabase db = this.getWritableDatabase();
+
+    // Xóa tất cả các mục trong giỏ hàng của người dùng
+    db.delete(TABLE_CART_ITEM, COLUMN_CART_ID_ITEM + " IN (SELECT " + COLUMN_CART_ID + " FROM " + TABLE_CART + " WHERE " + COLUMN_USER_ID_CART + " = ?)", new String[]{String.valueOf(userId)});
+
+    // Xóa giỏ hàng của người dùng
+    db.delete(TABLE_CART, COLUMN_USER_ID_CART + " = ?", new String[]{String.valueOf(userId)});
+
+    db.close();
+  }
+
+  public List<OrderDetail> getProductsByOrderId(int orderId) {
+    List<OrderDetail> products = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+    String query = "SELECT p." + COLUMN_NAME_PRODUCT + " AS productName, " + "p." + COLUMN_PRICE_PRODUCT + " AS productPrice, " + "oi." + COLUMN_QUANTITY_ITEM + " AS productQuantity, " + "p." + COLUMN_IMAGE_PRODUCT + " AS productImage " + "FROM " + TABLE_ORDER_ITEM + " oi " + "JOIN " + TABLE_PRODUCT + " p ON oi." + COLUMN_PRODUCT_ID_ITEM + " = p." + COLUMN_ID_PRODUCT + " " + "WHERE oi." + COLUMN_ORDER_ID_ITEM + " = ?";
+
+    Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(orderId)});
+    if (cursor.moveToFirst()) {
+      do {
+        String productName = cursor.getString(cursor.getColumnIndex("productName"));
+        double productPrice = cursor.getDouble(cursor.getColumnIndex("productPrice"));
+        int productQuantity = cursor.getInt(cursor.getColumnIndex("productQuantity"));
+        byte[] productImage = cursor.getBlob(cursor.getColumnIndex("productImage"));
+
+        OrderDetail product = new OrderDetail();
+        product.setName(productName);
+        product.setPrice(productPrice);
+        product.setImage(productImage);
+        product.setQuantity(productQuantity); // Ensure Product class has this method
+
+        products.add(product);
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    db.close();
+    return products;
+  }
+
+
   // Lấy ngày hiện tại dd-MM-yyyy
   private String getCurrentDate() {
     Date today = new Date();
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
     return formatter.format(today);
+  }
+
+
+  public void getAllOrderItems() {
+    SQLiteDatabase db = this.getReadableDatabase();
+    String query = "SELECT * FROM " + TABLE_ORDER_ITEM;
+
+    Cursor cursor = db.rawQuery(query, null);
+    if (cursor.moveToFirst()) {
+      do {
+        int orderId = cursor.getInt(cursor.getColumnIndex(COLUMN_ORDER_ID_ITEM));
+        int productId = cursor.getInt(cursor.getColumnIndex(COLUMN_PRODUCT_ID_ORDER_ITEM));
+        int quantity = cursor.getInt(cursor.getColumnIndex(COLUMN_QUANTITY_ORDER_ITEM));
+
+        // Process each order item as needed
+        System.out.println("Order ID: " + orderId + ", Product ID: " + productId + ", Quantity: " + quantity);
+
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    db.close();
+  }
+
+
+  public List<Product> getProductInOrderItemByOrderId(int orderId) {
+    List<Product> productList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    // Query to get the product details for a specific orderId
+    String query = "SELECT p." + COLUMN_ID_PRODUCT + ", p." + COLUMN_NAME_PRODUCT + ", p." + COLUMN_PRICE_PRODUCT +
+      ", p." + COLUMN_IMAGE_PRODUCT + ", p." + COLUMN_CATEGORY_ID +
+      ", p." + COLUMN_CREATED_PRODUCT + ", p." + COLUMN_USER_CREATED_PRODUCT +
+      " FROM " + TABLE_ORDER_ITEM + " oi" +
+      " JOIN " + TABLE_PRODUCT + " p ON oi." + COLUMN_PRODUCT_ID_ORDER_ITEM + " = p." + COLUMN_ID_PRODUCT +
+      " WHERE oi." + COLUMN_ORDER_ID_ITEM + " = ?";
+
+    Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(orderId)});
+    if (cursor.moveToFirst()) {
+      do {
+        int productId = cursor.getInt(cursor.getColumnIndex(COLUMN_ID_PRODUCT));
+        String productName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PRODUCT));
+        double productPrice = cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICE_PRODUCT));
+        byte[] productImage = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_PRODUCT));
+        int productCategoryId = cursor.getInt(cursor.getColumnIndex(COLUMN_CATEGORY_ID));
+        String productCreatedAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_PRODUCT));
+        String productUserCreatedAt = cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_PRODUCT));
+
+        Product product = new Product(productId, productName, productPrice, productCategoryId, productCreatedAt, productUserCreatedAt, productImage);
+        productList.add(product);
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    db.close();
+    return productList;
   }
 
 }

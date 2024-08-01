@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     MyDatabaseHelper myDB = new MyDatabaseHelper(this);
     storeDataArrays();
+   myDB.getAllOrderItems();
 //    storeDataArraysCategory();
 //    storeDataArraysProduct();
 
