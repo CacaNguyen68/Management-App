@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import com.mssv_71dctm22077.model.CartItem;
 import com.mssv_71dctm22077.model.Order;
 import com.mssv_71dctm22077.model.OrderDetail;
+import com.mssv_71dctm22077.model.OrderStatus;
 import com.mssv_71dctm22077.model.Product;
 import com.mssv_71dctm22077.model.User;
 
@@ -82,6 +83,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_ORDER_ID = "order_id";
   private static final String COLUMN_USER_ID_ORDER = "user_id";
   private static final String COLUMN_CREATED_AT_ORDER = "created_at";
+  private static final String COLUMN_STATUS_ORDER = "status"; // Thêm cột trạng thái vào bảng
 
 
   private static final String TABLE_ORDER_ITEM = "table_order_item";
@@ -120,7 +122,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     String queryCartItem = "CREATE TABLE " + TABLE_CART_ITEM + " (" + COLUMN_CART_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_CART_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ITEM + " INTEGER, " + COLUMN_QUANTITY_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_CART_ID_ITEM + ") REFERENCES " + TABLE_CART + "(" + COLUMN_CART_ID + "))";
     db.execSQL(queryCartItem);
 
-    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " (" + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_ORDER + " INTEGER, " + COLUMN_CREATED_AT_ORDER + " TEXT, " + "FOREIGN KEY(" + COLUMN_USER_ID_ORDER + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + ")" + ")";
+    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " (" + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_ORDER + " INTEGER, " + COLUMN_CREATED_AT_ORDER + " TEXT, " + COLUMN_STATUS_ORDER + " TEXT, " + // Thêm cột trạng thái vào bảng
+      "FOREIGN KEY(" + COLUMN_USER_ID_ORDER + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + "))";
     db.execSQL(queryOrder);
 
     String queryOrderItem = "CREATE TABLE " + TABLE_ORDER_ITEM + " (" + COLUMN_ORDER_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDER_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ORDER_ITEM + " INTEGER, " + COLUMN_QUANTITY_ORDER_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_ORDER_ID_ITEM + ") REFERENCES " + TABLE_ORDER + "(" + COLUMN_ORDER_ID + "), " + "FOREIGN KEY(" + COLUMN_PRODUCT_ID_ORDER_ITEM + ") REFERENCES " + TABLE_PRODUCT + "(" + COLUMN_ID_PRODUCT + ")" + ")";
@@ -784,6 +787,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     ContentValues values = new ContentValues();
     values.put(COLUMN_USER_ID_ORDER, userId);
     values.put(COLUMN_CREATED_AT_ORDER, getCurrentDate());
+    values.put(COLUMN_STATUS_ORDER, OrderStatus.PLACED.toString()); // Trạng thái đơn hàng là "Đơn hàng đã đặt"
+
 
     // Chèn dòng dữ liệu vào bảng order
     long orderId = db.insert(TABLE_ORDER, null, values);
@@ -822,7 +827,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   public List<Order> getAllOrders() {
     List<Order> orderList = new ArrayList<>();
     SQLiteDatabase db = this.getReadableDatabase();
-    Cursor cursor = db.query(TABLE_ORDER, null, null, null, null, null, null);
+
+    // Add the status column to your query
+    Cursor cursor = db.query(TABLE_ORDER, new String[] {
+      COLUMN_ORDER_ID,
+      COLUMN_USER_ID_ORDER,
+      COLUMN_CREATED_AT_ORDER,
+      COLUMN_STATUS_ORDER // Make sure this column exists
+    }, null, null, null, null, null);
 
     if (cursor.moveToFirst()) {
       do {
@@ -830,7 +842,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         int userId = cursor.getInt(cursor.getColumnIndex(COLUMN_USER_ID_ORDER));
         String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_ORDER));
 
-        Order order = new Order(orderId, userId, createdAt);
+        // Read status from cursor and convert it to OrderStatus
+        String statusString = cursor.getString(cursor.getColumnIndex(COLUMN_STATUS_ORDER));
+        OrderStatus status = OrderStatus.valueOf(statusString);
+
+        Order order = new Order(orderId, userId, createdAt, status);
         orderList.add(order);
       } while (cursor.moveToNext());
     }
@@ -838,6 +854,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.close();
     return orderList;
   }
+
 
 
   public void clearCart(int userId) {
@@ -914,12 +931,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     SQLiteDatabase db = this.getReadableDatabase();
 
     // Query to get the product details for a specific orderId
-    String query = "SELECT p." + COLUMN_ID_PRODUCT + ", p." + COLUMN_NAME_PRODUCT + ", p." + COLUMN_PRICE_PRODUCT +
-      ", p." + COLUMN_IMAGE_PRODUCT + ", p." + COLUMN_CATEGORY_ID +
-      ", p." + COLUMN_CREATED_PRODUCT + ", p." + COLUMN_USER_CREATED_PRODUCT +
-      " FROM " + TABLE_ORDER_ITEM + " oi" +
-      " JOIN " + TABLE_PRODUCT + " p ON oi." + COLUMN_PRODUCT_ID_ORDER_ITEM + " = p." + COLUMN_ID_PRODUCT +
-      " WHERE oi." + COLUMN_ORDER_ID_ITEM + " = ?";
+    String query = "SELECT p." + COLUMN_ID_PRODUCT + ", p." + COLUMN_NAME_PRODUCT + ", p." + COLUMN_PRICE_PRODUCT + ", p." + COLUMN_IMAGE_PRODUCT + ", p." + COLUMN_CATEGORY_ID + ", p." + COLUMN_CREATED_PRODUCT + ", p." + COLUMN_USER_CREATED_PRODUCT + " FROM " + TABLE_ORDER_ITEM + " oi" + " JOIN " + TABLE_PRODUCT + " p ON oi." + COLUMN_PRODUCT_ID_ORDER_ITEM + " = p." + COLUMN_ID_PRODUCT + " WHERE oi." + COLUMN_ORDER_ID_ITEM + " = ?";
 
     Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(orderId)});
     if (cursor.moveToFirst()) {

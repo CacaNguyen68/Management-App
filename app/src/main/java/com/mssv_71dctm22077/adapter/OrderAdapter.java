@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,19 +48,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
     private TextView orderIdTextView;
     private TextView orderDateTextView;
+    private TextView orderStatusTextView;  // Add this line
 
     public OrderViewHolder(@NonNull View itemView) {
       super(itemView);
       orderIdTextView = itemView.findViewById(R.id.order_id);
       orderDateTextView = itemView.findViewById(R.id.order_date);
+      orderStatusTextView = itemView.findViewById(R.id.order_status);  // Add this line
 
       itemView.setOnClickListener(v -> {
         int position = getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
           Order order = orderList.get(position);
           Intent intent = new Intent(context, OrderDetailActivity.class);
-          intent.putExtra("orderId", order.getOrderId());  // Truyền orderId dưới dạng int
-          System.out.println("Order ID: " + order.getOrderId());  // In ra để kiểm tra
+          intent.putExtra("orderId", order.getOrderId());
           context.startActivity(intent);
         }
       });
@@ -68,6 +70,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     public void bind(Order order) {
       orderIdTextView.setText("Order ID: " + order.getOrderId());
       orderDateTextView.setText("Date: " + order.getCreatedAt());
+      orderStatusTextView.setText(order.getStatus().getDisplayName());  // Update status display
+      orderStatusTextView.setTextColor(order.getStatus().getColor());  // Set color based on status
     }
   }
 }
