@@ -84,6 +84,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_USER_ID_ORDER = "user_id";
   private static final String COLUMN_CREATED_AT_ORDER = "created_at";
   private static final String COLUMN_STATUS_ORDER = "status"; // Thêm cột trạng thái vào bảng
+  private static final String COLUMN_ADDRESS_ORDER = "address"; // New address column
 
 
   private static final String TABLE_ORDER_ITEM = "table_order_item";
@@ -122,7 +123,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     String queryCartItem = "CREATE TABLE " + TABLE_CART_ITEM + " (" + COLUMN_CART_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_CART_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ITEM + " INTEGER, " + COLUMN_QUANTITY_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_CART_ID_ITEM + ") REFERENCES " + TABLE_CART + "(" + COLUMN_CART_ID + "))";
     db.execSQL(queryCartItem);
 
-    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " (" + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_ORDER + " INTEGER, " + COLUMN_CREATED_AT_ORDER + " TEXT, " + COLUMN_STATUS_ORDER + " TEXT, " + // Thêm cột trạng thái vào bảng
+    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " (" + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_ORDER + " INTEGER, " + COLUMN_CREATED_AT_ORDER + " TEXT, " + COLUMN_STATUS_ORDER + " TEXT, " + COLUMN_ADDRESS_ORDER + " TEXT, " + // Thêm cột trạng thái vào bảng
       "FOREIGN KEY(" + COLUMN_USER_ID_ORDER + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + "))";
     db.execSQL(queryOrder);
 
@@ -782,12 +783,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
 
   // Hàm tạo đơn hàng
-  public long createOrder(int userId) {
+  public long createOrder(int userId, String address) {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
     values.put(COLUMN_USER_ID_ORDER, userId);
     values.put(COLUMN_CREATED_AT_ORDER, getCurrentDate());
     values.put(COLUMN_STATUS_ORDER, OrderStatus.PLACED.toString()); // Trạng thái đơn hàng là "Đơn hàng đã đặt"
+    values.put(COLUMN_ADDRESS_ORDER, address); // Include address
 
 
     // Chèn dòng dữ liệu vào bảng order
