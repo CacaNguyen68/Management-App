@@ -830,13 +830,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     List<Order> orderList = new ArrayList<>();
     SQLiteDatabase db = this.getReadableDatabase();
 
-    // Add the status column to your query
-    Cursor cursor = db.query(TABLE_ORDER, new String[] {
+    // Add the status column to your query and sort by orderId in descending order
+    Cursor cursor = db.query(TABLE_ORDER, new String[]{
       COLUMN_ORDER_ID,
       COLUMN_USER_ID_ORDER,
       COLUMN_CREATED_AT_ORDER,
       COLUMN_STATUS_ORDER // Make sure this column exists
-    }, null, null, null, null, null);
+    }, null, null, null, null, COLUMN_ORDER_ID + " DESC"); // Add the sorting order here
 
     if (cursor.moveToFirst()) {
       do {
@@ -856,8 +856,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.close();
     return orderList;
   }
-
-
 
   public void clearCart(int userId) {
     SQLiteDatabase db = this.getWritableDatabase();
