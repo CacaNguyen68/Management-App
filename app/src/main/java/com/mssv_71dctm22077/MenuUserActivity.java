@@ -5,15 +5,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
@@ -25,8 +20,9 @@ import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.Category.CategoryForUserActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
-import com.mssv_71dctm22077.chart.BarChartCategoryActivity;
 import com.mssv_71dctm22077.model.User;
+import com.mssv_71dctm22077.order.OrderActivity;
+import com.mssv_71dctm22077.order.OrderByAdminActivity;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 import com.mssv_71dctm22077.user.UserActivity;
 
@@ -40,7 +36,7 @@ public class MenuUserActivity extends AppCompatActivity {
   private Runnable runnable;
   private ImageSliderAdapter adapter;
   private List<Integer> imageList;
-  private FloatingActionButton categoryFloating, cartFloating, userFloating, notifiactionFloating, statisticFloating, notificationFloating, orderFloating;
+  private FloatingActionButton categoryFloating, cartFloating, orderFloating;
   private CoordinatorLayout coordinatorLayout;
   private String userId;
   private MyDatabaseHelper db;
@@ -115,6 +111,12 @@ public class MenuUserActivity extends AppCompatActivity {
       startActivity(intent);
     });
 
+    orderFloating = findViewById(R.id.fabListOrders);
+    orderFloating.setOnClickListener(view -> {
+      Intent intent = new Intent(MenuUserActivity.this, OrderActivity.class);
+      intent.putExtra("userId", user.getId()); // truyen thanh cong
+      startActivity(intent);
+    });
     BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
     bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
       @Override

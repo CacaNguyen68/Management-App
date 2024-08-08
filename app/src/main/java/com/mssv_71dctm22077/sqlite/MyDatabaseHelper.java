@@ -857,6 +857,63 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return orderList;
   }
 
+  // danh sach cac don hang theo user va chi o trang thai dat hang,xac nhan don hang va cho van chuyen
+  public List<Order> getOrderByUserId(int userId) {
+    List<Order> orderList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    // Define the selection criteria and arguments
+    String selection = COLUMN_USER_ID_ORDER + " = ? AND " + COLUMN_STATUS_ORDER + " IN (?, ?, ?)";
+    String[] selectionArgs = {
+      String.valueOf(userId),
+      OrderStatus.PLACED.name(),
+      OrderStatus.CONFIRMED.name(),
+      OrderStatus.SHIPPED.name()
+    };
+
+    // Query the database with the specified criteria
+    Cursor cursor = db.query(
+      TABLE_ORDER,
+      new String[]{
+        COLUMN_ORDER_ID,
+        COLUMN_USER_ID_ORDER,
+        COLUMN_CREATED_AT_ORDER,
+        COLUMN_STATUS_ORDER
+      },
+      selection,
+      selectionArgs,
+      null,
+      null,
+      COLUMN_ORDER_ID + " DESC" // Sort by orderId in descending order
+    );
+
+    if (cursor.moveToFirst()) {
+      do {
+        int orderId = cursor.getInt(cursor.getColumnIndex(COLUMN_ORDER_ID));
+        int userIdFromCursor = cursor.getInt(cursor.getColumnIndex(COLUMN_USER_ID_ORDER));
+        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_ORDER));
+
+        // Read status from cursor and convert it to OrderStatus
+        String statusString = cursor.getString(cursor.getColumnIndex(COLUMN_STATUS_ORDER));
+        OrderStatus status = OrderStatus.valueOf(statusString);
+
+        Order order = new Order(orderId, userIdFromCursor, createdAt, status);
+        orderList.add(order);
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    db.close();
+    return orderList;
+  }
+  public void updateOrderStatus(int orderId, OrderStatus newStatus) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put(COLUMN_STATUS_ORDER, newStatus.name());
+
+    db.update(TABLE_ORDER, values, COLUMN_ORDER_ID + " = ?", new String[]{String.valueOf(orderId)});
+    db.close();
+  }
+
   public void clearCart(int userId) {
     SQLiteDatabase db = this.getWritableDatabase();
 

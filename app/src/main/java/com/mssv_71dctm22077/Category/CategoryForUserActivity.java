@@ -51,7 +51,6 @@ public class CategoryForUserActivity extends AppCompatActivity {
       Log.d("Profile user", "Phone number is null");
     }
 
-
     // Toolbar
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);

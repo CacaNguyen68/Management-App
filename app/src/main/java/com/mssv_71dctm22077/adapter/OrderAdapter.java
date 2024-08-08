@@ -68,8 +68,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     }
 
     public void bind(Order order) {
-      orderIdTextView.setText("Order ID: " + order.getOrderId());
-      orderDateTextView.setText("Date: " + order.getCreatedAt());
+      orderIdTextView.setText("MA2024 " + order.getOrderId());
+      orderDateTextView.setText("Ngày tạo: " + order.getCreatedAt());
       orderStatusTextView.setText(order.getStatus().getDisplayName());  // Update status display
       orderStatusTextView.setTextColor(order.getStatus().getColor());  // Set color based on status
     }
