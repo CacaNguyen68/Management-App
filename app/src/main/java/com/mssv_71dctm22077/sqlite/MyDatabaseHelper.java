@@ -1104,4 +1104,59 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return reviewList;
   }
 
+  public List<Product> getTop5ProductsSold() {
+    List<Product> productList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    // Câu truy vấn SQL để lấy danh sách top 5 sản phẩm bán chạy nhất với trạng thái DELIVERED
+    String query = "SELECT p." + COLUMN_ID_PRODUCT + ", p." + COLUMN_NAME_PRODUCT + ", p." + COLUMN_PRICE_PRODUCT + ", p." + COLUMN_IMAGE_PRODUCT + ", p." + COLUMN_CATEGORY_ID + ", p." + COLUMN_CREATED_PRODUCT + ", p." + COLUMN_USER_CREATED_PRODUCT + ", SUM(oi." + COLUMN_QUANTITY_ORDER_ITEM + ") AS total_sold " +
+      "FROM " + TABLE_ORDER_ITEM + " oi " +
+      "JOIN " + TABLE_ORDER + " o ON oi." + COLUMN_ORDER_ID_ITEM + " = o." + COLUMN_ORDER_ID + " " +
+      "JOIN " + TABLE_PRODUCT + " p ON oi." + COLUMN_PRODUCT_ID_ORDER_ITEM + " = p." + COLUMN_ID_PRODUCT + " " +
+      "WHERE o." + COLUMN_STATUS_ORDER + " = 'DELIVERED' " +
+      "GROUP BY p." + COLUMN_ID_PRODUCT + " " +
+      "ORDER BY total_sold DESC " +
+      "LIMIT 5";
+
+    Cursor cursor = null;
+    try {
+      cursor = db.rawQuery(query, null);
+
+      if (cursor.moveToFirst()) {
+        do {
+          int productId = cursor.getInt(cursor.getColumnIndex(COLUMN_ID_PRODUCT));
+          String productName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PRODUCT));
+          double productPrice = cursor.getDouble(cursor.getColumnIndex(COLUMN_PRICE_PRODUCT));
+          byte[] productImage = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_PRODUCT));
+          int productCategoryId = cursor.getInt(cursor.getColumnIndex(COLUMN_CATEGORY_ID));
+          String productCreatedAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_PRODUCT));
+          String productUserCreatedAt = cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_PRODUCT));
+          int totalSold = cursor.getInt(cursor.getColumnIndex("total_sold"));
+
+          // Log thông tin sản phẩm để kiểm tra kết quả
+          Log.d("Top5ProductsSold", "Product ID: " + productId +
+            ", Name: " + productName +
+            ", Price: " + productPrice +
+            ", Category ID: " + productCategoryId +
+            ", Created At: " + productCreatedAt +
+            ", User Created At: " + productUserCreatedAt +
+            ", Total Sold: " + totalSold);
+
+          Product product = new Product(productId, productName, productPrice, productCategoryId, productCreatedAt, productUserCreatedAt, productImage);
+          productList.add(product);
+        } while (cursor.moveToNext());
+      } else {
+        Log.d("Top5ProductsSold", "No products found.");
+      }
+    } catch (Exception e) {
+      Log.e("Top5ProductsSold", "Error retrieving top 5 products sold", e);
+    } finally {
+      if (cursor != null && !cursor.isClosed()) {
+        cursor.close();
+      }
+      db.close();
+    }
+    return productList;
+  }
+
 }

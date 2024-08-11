@@ -101,5 +101,4 @@ public class ProductUserAdapter extends RecyclerView.Adapter<ProductUserAdapter.
       floatingAdd = itemView.findViewById(R.id.floatingAdd);
     }
   }
-
 }

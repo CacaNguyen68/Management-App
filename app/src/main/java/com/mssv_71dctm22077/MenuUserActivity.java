@@ -18,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Cart.CartActivity;
 import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.Category.CategoryForUserActivity;
+import com.mssv_71dctm22077.Product.FavoriteProductActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
 import com.mssv_71dctm22077.model.User;
@@ -120,6 +121,9 @@ public class MenuUserActivity extends AppCompatActivity {
 
     starFloating = findViewById(R.id.fabStar);
     starFloating.setOnClickListener(view -> {
+      Intent intent = new Intent(MenuUserActivity.this, FavoriteProductActivity.class);
+      intent.putExtra("phone",phone); // truyen thanh cong
+      startActivity(intent);
     });
 
     BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);

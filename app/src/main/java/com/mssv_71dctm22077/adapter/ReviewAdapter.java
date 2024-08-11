@@ -1,6 +1,5 @@
 package com.mssv_71dctm22077.adapter;
 
-import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -19,7 +18,6 @@ import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.model.Product;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
