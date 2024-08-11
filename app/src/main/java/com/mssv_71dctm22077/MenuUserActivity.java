@@ -36,7 +36,7 @@ public class MenuUserActivity extends AppCompatActivity {
   private Runnable runnable;
   private ImageSliderAdapter adapter;
   private List<Integer> imageList;
-  private FloatingActionButton categoryFloating, cartFloating, orderFloating;
+  private FloatingActionButton categoryFloating, cartFloating, orderFloating, starFloating;
   private CoordinatorLayout coordinatorLayout;
   private String userId;
   private MyDatabaseHelper db;
@@ -117,6 +117,11 @@ public class MenuUserActivity extends AppCompatActivity {
       intent.putExtra("userId", user.getId()); // truyen thanh cong
       startActivity(intent);
     });
+
+    starFloating = findViewById(R.id.fabStar);
+    starFloating.setOnClickListener(view -> {
+    });
+
     BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
     bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
       @Override

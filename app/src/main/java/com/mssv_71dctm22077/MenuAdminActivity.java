@@ -17,6 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
+import com.mssv_71dctm22077.Review.ReviewByAdminActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
 import com.mssv_71dctm22077.chart.BarChartCategoryActivity;
 import com.mssv_71dctm22077.chart.ChartCategoryActivity;
@@ -34,7 +35,7 @@ public class MenuAdminActivity extends AppCompatActivity {
   private Runnable runnable;
   private ImageSliderAdapter adapter;
   private List<Integer> imageList;
-  private FloatingActionButton categoryFloating, productFloating, userFloating, notifiactionFloating, statisticFloating, notificationFloating, orderFloating;
+  private FloatingActionButton categoryFloating, productFloating, userFloating, reviewsFloating, statisticFloating, notificationFloating, orderFloating;
   private CoordinatorLayout coordinatorLayout;
 
   @Override
@@ -105,7 +106,12 @@ public class MenuAdminActivity extends AppCompatActivity {
       Intent intent = new Intent(this, BarChartCategoryActivity.class);
       startActivity(intent);
     });
-    notifiactionFloating = findViewById(R.id.fabNewNotifications);
+    reviewsFloating = findViewById(R.id.fabNewReviews);
+    reviewsFloating.setOnClickListener(view -> {
+      Intent intent = new Intent(this, ReviewByAdminActivity.class);
+      startActivity(intent);
+    });
+
     orderFloating = findViewById(R.id.fabInventoryManagement);
     orderFloating.setOnClickListener(view -> {
       Intent intent = new Intent(this, OrderByAdminActivity.class);

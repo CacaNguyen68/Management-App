@@ -133,17 +133,17 @@
         android:orientation="vertical">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-          android:id="@+id/fabNewNotifications"
+          android:id="@+id/fabNewReviews"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          app:srcCompat="@drawable/ic_new_notifications"
+          app:srcCompat="@drawable/baseline_stars_24"
           app:tint="#FFAF10" />
 
         <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:text="Thông Báo"
+          android:text="Đánh giá"
           android:textAlignment="center" />
       </LinearLayout>
 

@@ -18,6 +18,7 @@ import com.mssv_71dctm22077.model.Order;
 import com.mssv_71dctm22077.model.OrderDetail;
 import com.mssv_71dctm22077.model.OrderStatus;
 import com.mssv_71dctm22077.model.Product;
+import com.mssv_71dctm22077.model.Review;
 import com.mssv_71dctm22077.model.User;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -93,6 +94,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_PRODUCT_ID_ORDER_ITEM = "product_id";
   private static final String COLUMN_QUANTITY_ORDER_ITEM = "quantity";
 
+  // Tên bảng và các cột của bảng review
+  private static final String TABLE_REVIEW = "review";
+  private static final String COLUMN_REVIEW_ID = "review_id";
+  private static final String COLUMN_ORDER_ID_REVIEW = "order_id";
+  private static final String COLUMN_PRODUCT_ID_REVIEW = "product_id";
+  private static final String COLUMN_RATING = "rating";
+  private static final String COLUMN_REVIEW_TEXT = "review_text";
+  private static final String COLUMN_CREATED_AT_REVIEW = "created_at";
 
   public MyDatabaseHelper(@Nullable Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -129,6 +138,19 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     String queryOrderItem = "CREATE TABLE " + TABLE_ORDER_ITEM + " (" + COLUMN_ORDER_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDER_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ORDER_ITEM + " INTEGER, " + COLUMN_QUANTITY_ORDER_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_ORDER_ID_ITEM + ") REFERENCES " + TABLE_ORDER + "(" + COLUMN_ORDER_ID + "), " + "FOREIGN KEY(" + COLUMN_PRODUCT_ID_ORDER_ITEM + ") REFERENCES " + TABLE_PRODUCT + "(" + COLUMN_ID_PRODUCT + ")" + ")";
     db.execSQL(queryOrderItem);
+
+
+    String queryReview = "CREATE TABLE " + TABLE_REVIEW + " (" +
+      COLUMN_REVIEW_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+      COLUMN_ORDER_ID_REVIEW + " INTEGER NOT NULL, " +
+      COLUMN_PRODUCT_ID_REVIEW + " INTEGER NOT NULL, " +
+      COLUMN_RATING + " REAL NOT NULL, " +
+      COLUMN_REVIEW_TEXT + " TEXT, " +
+      COLUMN_CREATED_AT_REVIEW + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+      ");";
+
+    db.execSQL(queryReview);
+
   }
 
   @Override
@@ -140,7 +162,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_CART_ITEM);
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER);
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_ITEM);
-
+    db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW);
 
     onCreate(db);
   }
@@ -498,28 +520,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     cursor.close();
     return productList;
   }
-
-  //  câu truy vấn lấy chi tiết 1 sản phẩm
-  public Product getProductById(int id) {
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor cursor = db.rawQuery("SELECT * FROM products WHERE id = ?", new String[]{String.valueOf(id)});
-
-    if (cursor != null && cursor.moveToFirst()) {
-      Product product = new Product();
-      product.setId(cursor.getInt(cursor.getColumnIndex("id")));
-      product.setName(cursor.getString(cursor.getColumnIndex("name")));
-      product.setPrice(cursor.getDouble(cursor.getColumnIndex("price")));
-      product.setCategoryId(cursor.getInt(cursor.getColumnIndex("categoryId")));
-      product.setCreatedAt(cursor.getString(cursor.getColumnIndex("createdAt")));
-      product.setUserCreatedAt(cursor.getString(cursor.getColumnIndex("userCreatedAt")));
-      product.setImage(cursor.getBlob(cursor.getColumnIndex("image")));
-      cursor.close();
-      return product;
-    } else {
-      return null;
-    }
-  }
-
   // câu truy vấn lấy các sản phẩm theo điều kiện categoryId
   public List<Product> getProductsByCategoryId(int categoryId) {
     List<Product> products = new ArrayList<>();
@@ -611,6 +611,25 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     cursor.close();
     return productList;
   }
+
+  public String getProductNameById(int idProduct) {
+    String productName = null;
+    String query = "SELECT " + COLUMN_NAME_PRODUCT + " FROM " + TABLE_PRODUCT + " WHERE " + COLUMN_ID_PRODUCT + " = ?";
+
+    try (SQLiteDatabase db = this.getReadableDatabase();
+         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idProduct)})) {
+
+      if (cursor.moveToFirst()) {
+        productName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PRODUCT));
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      // Có thể thêm thông báo lỗi cho người dùng hoặc ghi log ở đây nếu cần
+    }
+
+    return productName;
+  }
+
 
 
   public List<Product> searchProductsWhereCategoryId(String query, int categoryId) {
@@ -831,11 +850,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     SQLiteDatabase db = this.getReadableDatabase();
 
     // Add the status column to your query and sort by orderId in descending order
-    Cursor cursor = db.query(TABLE_ORDER, new String[]{
-      COLUMN_ORDER_ID,
-      COLUMN_USER_ID_ORDER,
-      COLUMN_CREATED_AT_ORDER,
-      COLUMN_STATUS_ORDER // Make sure this column exists
+    Cursor cursor = db.query(TABLE_ORDER, new String[]{COLUMN_ORDER_ID, COLUMN_USER_ID_ORDER, COLUMN_CREATED_AT_ORDER, COLUMN_STATUS_ORDER // Make sure this column exists
     }, null, null, null, null, COLUMN_ORDER_ID + " DESC"); // Add the sorting order here
 
     if (cursor.moveToFirst()) {
@@ -864,27 +879,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     // Define the selection criteria and arguments
     String selection = COLUMN_USER_ID_ORDER + " = ? AND " + COLUMN_STATUS_ORDER + " IN (?, ?, ?)";
-    String[] selectionArgs = {
-      String.valueOf(userId),
-      OrderStatus.PLACED.name(),
-      OrderStatus.CONFIRMED.name(),
-      OrderStatus.SHIPPED.name()
-    };
+    String[] selectionArgs = {String.valueOf(userId), OrderStatus.PLACED.name(), OrderStatus.CONFIRMED.name(), OrderStatus.SHIPPED.name()};
 
     // Query the database with the specified criteria
-    Cursor cursor = db.query(
-      TABLE_ORDER,
-      new String[]{
-        COLUMN_ORDER_ID,
-        COLUMN_USER_ID_ORDER,
-        COLUMN_CREATED_AT_ORDER,
-        COLUMN_STATUS_ORDER
-      },
-      selection,
-      selectionArgs,
-      null,
-      null,
-      COLUMN_ORDER_ID + " DESC" // Sort by orderId in descending order
+    Cursor cursor = db.query(TABLE_ORDER, new String[]{COLUMN_ORDER_ID, COLUMN_USER_ID_ORDER, COLUMN_CREATED_AT_ORDER, COLUMN_STATUS_ORDER}, selection, selectionArgs, null, null, COLUMN_ORDER_ID + " DESC" // Sort by orderId in descending order
     );
 
     if (cursor.moveToFirst()) {
@@ -905,6 +903,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.close();
     return orderList;
   }
+
   public void updateOrderStatus(int orderId, OrderStatus newStatus) {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
@@ -1008,6 +1007,101 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     cursor.close();
     db.close();
     return productList;
+  }
+
+  public List<Review> getReviewsByOrderId(int orderId) {
+    List<Review> reviews = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+    String query = "SELECT * FROM " + TABLE_REVIEW + " WHERE " + COLUMN_ORDER_ID_REVIEW + " = ?";
+    Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(orderId)});
+
+    if (cursor.moveToFirst()) {
+      do {
+        int reviewId = cursor.getInt(cursor.getColumnIndex(COLUMN_REVIEW_ID));
+        int productId = cursor.getInt(cursor.getColumnIndex(COLUMN_PRODUCT_ID_REVIEW));
+        float rating = cursor.getFloat(cursor.getColumnIndex(COLUMN_RATING));
+        String reviewText = cursor.getString(cursor.getColumnIndex(COLUMN_REVIEW_TEXT));
+        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_REVIEW));
+
+        reviews.add(new Review(reviewId, orderId, productId, rating, reviewText, createdAt));
+      } while (cursor.moveToNext());
+    }
+
+    cursor.close();
+    db.close();
+    return reviews;
+  }
+
+
+  public boolean addReview(int orderId, int productId, float rating, String reviewText) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put(COLUMN_ORDER_ID_REVIEW, orderId);
+    values.put(COLUMN_PRODUCT_ID_REVIEW, productId);
+    values.put(COLUMN_RATING, rating);
+    values.put(COLUMN_REVIEW_TEXT, reviewText);
+
+    long result = db.insert(TABLE_REVIEW, null, values);
+    db.close();
+
+    if (result == -1) {
+      Log.e("DatabaseError", "Failed to insert review. Order ID: " + orderId + ", Product ID: " + productId);
+      return false;
+    } else {
+      Log.d("DatabaseSuccess", "Review inserted successfully. Order ID: " + orderId + ", Product ID: " + productId);
+      return true;
+    }
+  }
+
+
+  public boolean updateReview(int orderId, int productId, float rating, String reviewText) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put(COLUMN_RATING, rating);
+    values.put(COLUMN_REVIEW_TEXT, reviewText);
+
+    // Tạo điều kiện để xác định dòng cần cập nhật
+    String whereClause = COLUMN_ORDER_ID_REVIEW + " = ? AND " + COLUMN_PRODUCT_ID_REVIEW + " = ?";
+    String[] whereArgs = { String.valueOf(orderId), String.valueOf(productId) };
+
+    // Thực hiện cập nhật
+    int rowsAffected = db.update(TABLE_REVIEW, values, whereClause, whereArgs);
+    db.close();
+
+    if (rowsAffected > 0) {
+      Log.d("DatabaseSuccess", "Review updated successfully. Order ID: " + orderId + ", Product ID: " + productId);
+      return true;
+    } else {
+      Log.e("DatabaseError", "Failed to update review. Order ID: " + orderId + ", Product ID: " + productId);
+      return false;
+    }
+  }
+
+  public List<Review> getAllReviewsSortedByDate() {
+    List<Review> reviewList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    String selectQuery = "SELECT * FROM " + TABLE_REVIEW + " ORDER BY " + COLUMN_CREATED_AT_REVIEW + " DESC";
+    Cursor cursor = db.rawQuery(selectQuery, null);
+
+    if (cursor.moveToFirst()) {
+      do {
+        int id = cursor.getInt(cursor.getColumnIndex(COLUMN_REVIEW_ID));
+        int orderId = cursor.getInt(cursor.getColumnIndex(COLUMN_ORDER_ID_REVIEW));
+        int productId = cursor.getInt(cursor.getColumnIndex(COLUMN_PRODUCT_ID_REVIEW));
+        float rating = cursor.getFloat(cursor.getColumnIndex(COLUMN_RATING));
+        String reviewText = cursor.getString(cursor.getColumnIndex(COLUMN_REVIEW_TEXT));
+        String reviewDate = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_REVIEW));
+
+        Review review = new Review(id,orderId, productId, rating, reviewText, reviewDate);
+        reviewList.add(review);
+      } while (cursor.moveToNext());
+    }
+
+    cursor.close();
+    db.close();
+
+    return reviewList;
   }
 
 }

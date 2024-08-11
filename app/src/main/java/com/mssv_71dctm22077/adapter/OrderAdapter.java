@@ -2,6 +2,7 @@ package com.mssv_71dctm22077.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.mssv_71dctm22077.model.Order;
 import com.mssv_71dctm22077.order.OrderDetailActivity;
 
 import java.util.List;
+import java.util.Locale;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
   private Context context;
@@ -62,6 +64,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
           Order order = orderList.get(position);
           Intent intent = new Intent(context, OrderDetailActivity.class);
           intent.putExtra("orderId", order.getOrderId());
+          intent.putExtra("status", order.getStatus().ordinal());
+          Log.d("STATUS", "giatri: "+order.getStatus());
           context.startActivity(intent);
         }
       });

@@ -102,6 +102,7 @@
           android:text="Đơn Hàng"
           android:textAlignment="center" />
       </LinearLayout>
+
       <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -121,6 +122,50 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
           android:text="Lịch Sử"
+          android:textAlignment="center" />
+      </LinearLayout>
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+          android:id="@+id/fabStar"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/baseline_stars_24"
+          app:tint="#FFAF10" />
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="Nổi bật"
+          android:textAlignment="center" />
+      </LinearLayout>
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+          android:id="@+id/fabContent"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:srcCompat="@drawable/content"
+          app:tint="#FFAF10" />
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="Bài viết"
           android:textAlignment="center" />
       </LinearLayout>
     </GridLayout>
