@@ -16,6 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Category.CategoryActivity;
+import com.mssv_71dctm22077.Content.ContentActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.Review.ReviewByAdminActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
@@ -134,9 +135,9 @@ public class MenuAdminActivity extends AppCompatActivity {
           Intent profileIntent = new Intent(MenuAdminActivity.this, CategoryActivity.class);
           startActivity(profileIntent);
           return true;
-        } else if (itemId == R.id.navigation_settings) {
+        } else if (itemId == R.id.navigation_contents) {
           // Điều hướng tới Settings
-          Intent settingsIntent = new Intent(MenuAdminActivity.this, ProductActivity.class);
+          Intent settingsIntent = new Intent(MenuAdminActivity.this, ContentActivity.class);
           startActivity(settingsIntent);
           return true;
         }

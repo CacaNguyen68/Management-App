@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.mssv_71dctm22077.model.CartItem;
+import com.mssv_71dctm22077.model.Content;
 import com.mssv_71dctm22077.model.Order;
 import com.mssv_71dctm22077.model.OrderDetail;
 import com.mssv_71dctm22077.model.OrderStatus;
@@ -95,13 +96,21 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_QUANTITY_ORDER_ITEM = "quantity";
 
   // Tên bảng và các cột của bảng review
-  private static final String TABLE_REVIEW = "review";
+  private static final String TABLE_REVIEW = "table_review";
   private static final String COLUMN_REVIEW_ID = "review_id";
   private static final String COLUMN_ORDER_ID_REVIEW = "order_id";
   private static final String COLUMN_PRODUCT_ID_REVIEW = "product_id";
   private static final String COLUMN_RATING = "rating";
   private static final String COLUMN_REVIEW_TEXT = "review_text";
   private static final String COLUMN_CREATED_AT_REVIEW = "created_at";
+
+  private static final String TABLE_CONTENT = "table_content";
+  private static final String COLUMN_CONTENT_ID = "id";
+  private static final String COLUMN_IMAGE_CONTENT = "image";
+  private static final String COLUMN_TEXT_CONTENT = "content";
+  private static final String COLUMN_TITLE_CONTENT = "title";
+  private static final String COLUMN_CREATED_AT_CONTENT = "createdAt";
+  private static final String COLUMN_CLICK_CONTENT = "click";
 
   public MyDatabaseHelper(@Nullable Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -151,6 +160,16 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     db.execSQL(queryReview);
 
+    String queryContent = "CREATE TABLE " + TABLE_CONTENT + "("
+      + COLUMN_CONTENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+      + COLUMN_IMAGE_CONTENT + " BLOB, "
+      + COLUMN_TEXT_CONTENT + " TEXT NOT NULL, "
+      + COLUMN_TITLE_CONTENT + " TEXT NOT NULL, "
+      + COLUMN_CREATED_AT_CONTENT + " TEXT, "
+      + COLUMN_CLICK_CONTENT + " INTEGER"
+      + ")";
+
+    db.execSQL(queryContent);
   }
 
   @Override
@@ -163,6 +182,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER);
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_ITEM);
     db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW);
+    db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTENT);
 
     onCreate(db);
   }
@@ -1157,6 +1177,145 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
       db.close();
     }
     return productList;
+  }
+
+  public boolean addContent(String title, String content, byte[] image) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put("title", title);
+    values.put("content", content);
+    values.put("image", image);
+    values.put("createdAt", getCurrentDate());
+    values.put("click", 0);
+
+    long result = db.insert("table_content", null, values);
+    db.close();
+
+    return result != -1;
+  }
+
+  public boolean updateContent(int id, byte[] image, String content, String title, String createdAt, int click) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues values = new ContentValues();
+
+    values.put(COLUMN_IMAGE_CONTENT, image);
+    values.put(COLUMN_TEXT_CONTENT, content);
+    values.put(COLUMN_TITLE_CONTENT, title);
+    values.put(COLUMN_CREATED_AT_CONTENT, createdAt);
+    values.put(COLUMN_CLICK_CONTENT, click);
+
+    // Updating row
+    int result = db.update(TABLE_CONTENT, values, COLUMN_CONTENT_ID + " = ?", new String[]{String.valueOf(id)});
+    db.close();
+
+    if (result == 0) {
+      Log.e("DatabaseError", "Failed to update content. ID: " + id);
+      return false;
+    } else {
+      Log.d("DatabaseSuccess", "Content updated successfully. ID: " + id);
+      return true;
+    }
+  }
+  public boolean deleteContent(int id) {
+    SQLiteDatabase db = this.getWritableDatabase();
+
+    // Deleting row
+    int result = db.delete(TABLE_CONTENT, COLUMN_CONTENT_ID + " = ?", new String[]{String.valueOf(id)});
+    db.close();
+
+    if (result == 0) {
+      Log.e("DatabaseError", "Failed to delete content. ID: " + id);
+      return false;
+    } else {
+      Log.d("DatabaseSuccess", "Content deleted successfully. ID: " + id);
+      return true;
+    }
+  }
+  public List<Content> getAllContents() {
+    List<Content> contentList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    // Select All Query
+    String selectQuery = "SELECT * FROM " + TABLE_CONTENT;
+    Cursor cursor = db.rawQuery(selectQuery, null);
+
+    // Looping through all rows and adding to list
+    if (cursor.moveToFirst()) {
+      do {
+        int id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CONTENT_ID));
+        byte[] image = cursor.getBlob(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_CONTENT));
+        String content = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TEXT_CONTENT));
+        String title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE_CONTENT));
+        String createdAt = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT_CONTENT));
+        int click = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CLICK_CONTENT));
+
+        Content contentItem = new Content(image, content, title, createdAt, click);
+        contentItem.setId(id); // Assuming the Content class has a setId method
+        contentList.add(contentItem);
+      } while (cursor.moveToNext());
+    }
+
+    cursor.close();
+    db.close();
+    return contentList;
+  }
+  public Content getContentById(int id) {
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    // Query to get content by ID
+    String selectQuery = "SELECT * FROM " + TABLE_CONTENT + " WHERE " + COLUMN_CONTENT_ID + " = ?";
+    Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+
+    if (cursor != null) {
+      cursor.moveToFirst();
+
+      byte[] image = cursor.getBlob(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_CONTENT));
+      String content = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TEXT_CONTENT));
+      String title = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE_CONTENT));
+      String createdAt = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT_CONTENT));
+      int click = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CLICK_CONTENT));
+
+      Content contentItem = new Content(image, content, title, createdAt, click);
+      contentItem.setId(id); // Assuming the Content class has a setId method
+
+      cursor.close();
+      db.close();
+      return contentItem;
+    } else {
+      db.close();
+      return null; // Return null if the content with the given ID is not found
+    }
+  }
+  public List<Content> searchContents(String query) {
+    List<Content> contentList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    // Sử dụng câu lệnh SELECT với LIKE để tìm kiếm theo tiêu đề hoặc nội dung
+    String sql = "SELECT * FROM " + TABLE_CONTENT +
+      " WHERE " + COLUMN_TITLE_CONTENT + " LIKE ? OR " + COLUMN_TEXT_CONTENT + " LIKE ?";
+    String[] selectionArgs = new String[]{"%" + query + "%", "%" + query + "%"};
+
+    Cursor cursor = db.rawQuery(sql, selectionArgs);
+
+    if (cursor.moveToFirst()) {
+      do {
+        // Lấy dữ liệu từ cursor và thêm vào danh sách
+        Content content = new Content();
+        content.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CONTENT_ID)));
+        content.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE_CONTENT)));
+        content.setContent(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TEXT_CONTENT)));
+        content.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT_CONTENT)));
+        content.setClick(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_CLICK_CONTENT)));
+        content.setImage(cursor.getBlob(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_CONTENT)));
+
+        contentList.add(content);
+      } while (cursor.moveToNext());
+    }
+
+    cursor.close();
+    db.close();
+
+    return contentList;
   }
 
 }

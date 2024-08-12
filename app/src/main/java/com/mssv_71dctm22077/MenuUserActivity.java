@@ -141,7 +141,7 @@ public class MenuUserActivity extends AppCompatActivity {
           Intent profileIntent = new Intent(MenuUserActivity.this, CategoryActivity.class);
           startActivity(profileIntent);
           return true;
-        } else if (itemId == R.id.navigation_settings) {
+        } else if (itemId == R.id.navigation_contents) {
           // Điều hướng tới Settings
           Intent settingsIntent = new Intent(MenuUserActivity.this, ProductActivity.class);
           startActivity(settingsIntent);
