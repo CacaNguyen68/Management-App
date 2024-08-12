@@ -18,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Cart.CartActivity;
 import com.mssv_71dctm22077.Category.CategoryActivity;
 import com.mssv_71dctm22077.Category.CategoryForUserActivity;
+import com.mssv_71dctm22077.Content.ContentForUserActivity;
 import com.mssv_71dctm22077.Product.FavoriteProductActivity;
 import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
@@ -143,7 +144,7 @@ public class MenuUserActivity extends AppCompatActivity {
           return true;
         } else if (itemId == R.id.navigation_contents) {
           // Điều hướng tới Settings
-          Intent settingsIntent = new Intent(MenuUserActivity.this, ProductActivity.class);
+          Intent settingsIntent = new Intent(MenuUserActivity.this, ContentForUserActivity.class);
           startActivity(settingsIntent);
           return true;
         }

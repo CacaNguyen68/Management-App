@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:padding="8dp">
+
+  <!-- Image of the content -->
+  <ImageView
+    android:id="@+id/content_image"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:scaleType="fitCenter"
+    android:src="@drawable/baseline_yard_24" />
+
+
+  <!-- Title of the content -->
+  <TextView
+    android:id="@+id/title_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Title"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    android:textColor="@android:color/black"
+    android:paddingTop="8dp" />
+
+  <!-- Created date of the content -->
+  <TextView
+    android:id="@+id/created_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Created At"
+    android:textSize="14sp"
+    android:textColor="@android:color/darker_gray"
+    android:paddingTop="4dp" />
+
+  <!-- Number of clicks on the content -->
+  <TextView
+    android:id="@+id/click_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Clicks"
+    android:textSize="14sp"
+    android:textColor="@android:color/darker_gray"
+    android:paddingTop="4dp"
+    android:paddingBottom="8dp" />
+
+</LinearLayout>
