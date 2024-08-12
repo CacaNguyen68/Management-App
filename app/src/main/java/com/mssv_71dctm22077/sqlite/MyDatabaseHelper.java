@@ -1308,4 +1308,29 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return contentList;
   }
 
+  public void incrementClickCount(int contentId) {
+    SQLiteDatabase db = this.getWritableDatabase();
+
+    // Truy vấn số lượt click hiện tại từ cơ sở dữ liệu
+    Cursor cursor = db.query("table_content",
+      new String[]{"click"},
+      "id = ?",
+      new String[]{String.valueOf(contentId)},
+      null, null, null);
+
+    int currentClickCount = 0;
+    if (cursor.moveToFirst()) {
+      currentClickCount = cursor.getInt(cursor.getColumnIndexOrThrow("click"));
+    }
+    cursor.close();
+
+    // Tăng số lượt click lên 1
+    ContentValues values = new ContentValues();
+    values.put("click", currentClickCount + 1);
+
+    // Cập nhật vào cơ sở dữ liệu
+    db.update("table_content", values, "id = ?", new String[]{String.valueOf(contentId)});
+    db.close();
+  }
+
 }

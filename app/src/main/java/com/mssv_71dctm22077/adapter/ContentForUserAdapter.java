@@ -15,6 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mssv_71dctm22077.Content.ContentDetailActivity;
+import com.mssv_71dctm22077.Content.ContentForUserActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.model.Content;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
@@ -55,7 +57,11 @@ public class ContentForUserAdapter extends RecyclerView.Adapter<ContentForUserAd
     } else {
       holder.imageView.setImageResource(R.drawable.baseline_yard_24);
     }
-
+    holder.itemView.setOnClickListener(v -> {
+      Intent intent = new Intent(context, ContentDetailActivity.class);
+      intent.putExtra("contentId", content.getId());
+      context.startActivity(intent);
+    });
   }
 
   @Override
@@ -73,6 +79,7 @@ public class ContentForUserAdapter extends RecyclerView.Adapter<ContentForUserAd
       contentCreatedAt = itemView.findViewById(R.id.created_content);
       contentClick = itemView.findViewById(R.id.click_content);
       imageView = itemView.findViewById(R.id.content_image);
+
     }
   }
 }
