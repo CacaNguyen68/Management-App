@@ -1,10 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  tools:context=".Content.UpdateContentActivity">
+
+  <!-- Toolbar -->
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/toolbar_update_content"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    android:elevation="4dp"
+    android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+    app:layout_constraintTop_toTopOf="parent"
+    app:navigationContentDescription="Back"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    app:title="CẬP NHẬT BÀI VIẾT" />
+
+  <!-- ScrollView for form elements -->
+  <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Content.UpdateContentActivity">
+    android:layout_below="@id/toolbar_update_content"
+    android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical">
+
+      <!-- Title input -->
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textStyle="bold" />
+
+      <EditText
+        android:id="@+id/et_update_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter title" />
+
+      <!-- Content input -->
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Content"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+      <EditText
+        android:id="@+id/et_update_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter content"
+        android:minHeight="100dp"
+        android:maxLines="5"
+        android:scrollbars="vertical"
+        android:gravity="top"
+        android:inputType="textMultiLine" />
+
+      <!-- Image upload -->
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upload Image"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+      <!-- Reset button -->
+
+      <ImageView
+        android:id="@+id/iv_update_image"
+        android:layout_width="181dp"
+        android:layout_height="178dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/baseline_yard_24"
+        android:contentDescription="Image Preview"
+        android:scaleType="centerCrop"
+        android:src="@drawable/baseline_yard_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_gravity="center"
+        app:layout_constraintStart_toStartOf="parent" />
+
+      <Button
+        android:id="@+id/btn_choose_update_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Choose Image" />
+
+      <Button
+        android:id="@+id/btn_reset_update_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reset"
+        android:layout_marginTop="24dp" />
+
+      <!-- Save button -->
+      <Button
+        android:id="@+id/btn_save_update_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+  </ScrollView>
+
+</RelativeLayout>

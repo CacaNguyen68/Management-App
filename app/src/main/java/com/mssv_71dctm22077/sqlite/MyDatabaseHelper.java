@@ -1194,28 +1194,18 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return result != -1;
   }
 
-  public boolean updateContent(int id, byte[] image, String content, String title, String createdAt, int click) {
+  public boolean updateContent(int id, String title, String content, byte[] image) {
     SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues values = new ContentValues();
+    ContentValues contentValues = new ContentValues();
+    contentValues.put("title", title);
+    contentValues.put("content", content);
+    contentValues.put("image", image);
 
-    values.put(COLUMN_IMAGE_CONTENT, image);
-    values.put(COLUMN_TEXT_CONTENT, content);
-    values.put(COLUMN_TITLE_CONTENT, title);
-    values.put(COLUMN_CREATED_AT_CONTENT, createdAt);
-    values.put(COLUMN_CLICK_CONTENT, click);
-
-    // Updating row
-    int result = db.update(TABLE_CONTENT, values, COLUMN_CONTENT_ID + " = ?", new String[]{String.valueOf(id)});
-    db.close();
-
-    if (result == 0) {
-      Log.e("DatabaseError", "Failed to update content. ID: " + id);
-      return false;
-    } else {
-      Log.d("DatabaseSuccess", "Content updated successfully. ID: " + id);
-      return true;
-    }
+    int result = db.update("table_content", contentValues, "id = ?", new String[]{String.valueOf(id)});
+    return result > 0;
   }
+
+
   public boolean deleteContent(int id) {
     SQLiteDatabase db = this.getWritableDatabase();
 
