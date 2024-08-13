@@ -32,6 +32,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Category.UpdateCategoryActivity;
+import com.mssv_71dctm22077.MenuAdminActivity;
+import com.mssv_71dctm22077.MenuUserActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
@@ -184,6 +186,23 @@ public class UpdateProductActivity extends AppCompatActivity {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
     return outputStream.toByteArray();
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_user, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    if (item.getItemId() == R.id.action_home) {
+      // Xử lý khi nhấn vào mục menu
+      Intent intent = new Intent(this, MenuAdminActivity.class);
+      startActivity(intent);
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }
 

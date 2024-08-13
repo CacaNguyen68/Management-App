@@ -2,9 +2,12 @@ package com.mssv_71dctm22077.Content;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.Category.AddCategoryActivity;
 import com.mssv_71dctm22077.Category.CategoryActivity;
+import com.mssv_71dctm22077.MenuAdminActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.ContentAdapter;
 import com.mssv_71dctm22077.model.Content;
@@ -109,5 +113,21 @@ public class ContentActivity extends AppCompatActivity {
     if (contentAdapter != null) {
       contentAdapter.notifyDataSetChanged();
     }
+  }
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_user, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    if (item.getItemId() == R.id.action_home) {
+      // Xử lý khi nhấn vào mục menu
+      Intent intent = new Intent(this, MenuAdminActivity.class);
+      startActivity(intent);
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }

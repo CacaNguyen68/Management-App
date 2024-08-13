@@ -16,6 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mssv_71dctm22077.MenuUserActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.CategoryAdapter;
 import com.mssv_71dctm22077.adapter.CategoryForUserAdapter;
@@ -117,26 +118,18 @@ public class CategoryForUserActivity extends AppCompatActivity {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.my_menu, menu);
+    getMenuInflater().inflate(R.menu.menu_user, menu);
     return true;
   }
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    int id = item.getItemId();
-    if (id == R.id.item1) {
-      Toast.makeText(this, "Item 1 selected", Toast.LENGTH_SHORT).show();
-      return true;
-    } else if (id == R.id.item2) {
-      Toast.makeText(this, "Item 2 selected", Toast.LENGTH_SHORT).show();
-      return true;
-    } else if (id == R.id.item3) {
-      Toast.makeText(this, "Item 3 selected", Toast.LENGTH_SHORT).show();
+    if (item.getItemId() == R.id.action_home) {
+      // Xử lý khi nhấn vào mục menu
+      Intent intent = new Intent(this, MenuUserActivity.class);
+      startActivity(intent);
       return true;
     }
     return super.onOptionsItemSelected(item);
   }
-
-
 }

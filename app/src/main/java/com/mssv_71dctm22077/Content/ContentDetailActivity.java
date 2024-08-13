@@ -1,17 +1,23 @@
 package com.mssv_71dctm22077.Content;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.mssv_71dctm22077.MenuAdminActivity;
+import com.mssv_71dctm22077.MenuUserActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.model.Content;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
@@ -59,5 +65,22 @@ public class ContentDetailActivity extends AppCompatActivity {
         contentImageView.setImageResource(R.drawable.baseline_yard_24);
       }
     }
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_user, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    if (item.getItemId() == R.id.action_home) {
+      // Xử lý khi nhấn vào mục menu
+      Intent intent = new Intent(this, MenuUserActivity.class);
+      startActivity(intent);
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }

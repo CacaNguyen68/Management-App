@@ -1,13 +1,18 @@
 package com.mssv_71dctm22077.order;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mssv_71dctm22077.MenuAdminActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.OrderAdminAdapter;
 import com.mssv_71dctm22077.model.Order;
@@ -43,5 +48,21 @@ public class OrderByAdminActivity extends AppCompatActivity {
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     OrderAdminAdapter adapter = new OrderAdminAdapter(this, orders);
     recyclerView.setAdapter(adapter);
+  }
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_user, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    if (item.getItemId() == R.id.action_home) {
+      // Xử lý khi nhấn vào mục menu
+      Intent intent = new Intent(this, MenuAdminActivity.class);
+      startActivity(intent);
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }

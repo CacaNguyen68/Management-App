@@ -2,6 +2,7 @@ package com.mssv_71dctm22077.Category;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mssv_71dctm22077.MenuAdminActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
@@ -124,25 +126,16 @@ public class UpdateCategoryActivity extends AppCompatActivity {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.my_menu, menu);
+    getMenuInflater().inflate(R.menu.menu_user, menu);
     return true;
   }
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    int id = item.getItemId();
-    if (id == R.id.item1) {
-      // Xử lý khi người dùng chọn mục "Item 1"
-      Toast.makeText(this, "Item 1 selected", Toast.LENGTH_SHORT).show();
-      return true;
-    } else if (id == R.id.item2) {
-      // Xử lý khi người dùng chọn mục "Item 2"
-      Toast.makeText(this, "Item 2 selected", Toast.LENGTH_SHORT).show();
-      return true;
-    } else if (id == R.id.item3) {
-      // Xử lý khi người dùng chọn mục "Item 3"
-      Toast.makeText(this, "Item 3 selected", Toast.LENGTH_SHORT).show();
+    if (item.getItemId() == R.id.action_home) {
+      // Xử lý khi nhấn vào mục menu
+      Intent intent = new Intent(this, MenuAdminActivity.class);
+      startActivity(intent);
       return true;
     }
     return super.onOptionsItemSelected(item);
