@@ -53,7 +53,7 @@
       android:id="@+id/user_email"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:text="Email"
+      android:text="Địa chỉ"
       android:textSize="14sp"
       android:textColor="@color/black"
       app:layout_constraintStart_toEndOf="@id/user_image"

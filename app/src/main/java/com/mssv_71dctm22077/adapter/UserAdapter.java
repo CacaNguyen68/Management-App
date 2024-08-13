@@ -42,7 +42,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     User user = userList.get(position);
     holder.nameTextView.setText(user.getName());
     holder.phoneTextView.setText("Số điện thoại: "+user.getPhone());
-    holder.emailTextView.setText("Email: "+user.getEmail());
+    holder.emailTextView.setText("Địa chỉ: "+user.getEmail());
     holder.userTypeTextView.setText("Loại tài khoản: "+user.getUserType());
     // Hiển thị ngày sinh
     holder.birthTextView.setText("Ngày sinh: "+ user.getDob());

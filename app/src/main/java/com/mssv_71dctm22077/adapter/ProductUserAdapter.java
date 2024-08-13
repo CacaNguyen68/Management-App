@@ -1,5 +1,7 @@
 package com.mssv_71dctm22077.adapter;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -18,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.mssv_71dctm22077.Cart.CartActivity;
 import com.mssv_71dctm22077.Product.UpdateProductActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.model.Product;
@@ -76,6 +79,11 @@ public class ProductUserAdapter extends RecyclerView.Adapter<ProductUserAdapter.
       // Add product to cart
       myDB.addProductToCart(user.getId(), product.getId(), 1); // userId là 1 và quantity là 1, bạn có thể thay đổi theo yêu cầu
       Toast.makeText(context, "Đã thêm vào giỏ hàng", Toast.LENGTH_SHORT).show();
+
+      // Chuyển đến CartActivity sau khi thêm vào giỏ hàng thành công
+      Intent intent = new Intent(context, CartActivity.class);
+      intent.putExtra("userId", user.getId());
+      context.startActivity(intent);
     });
 
   }
