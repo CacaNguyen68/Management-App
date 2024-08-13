@@ -46,6 +46,7 @@ public class ReviewAdminAdapter extends RecyclerView.Adapter<ReviewAdminAdapter.
     holder.ratingBar.setRating(review.getRating());
     holder.reviewTextView.setText(review.getReviewText());
     holder.reviewDateTextView.setText(review.getCreatedAt());
+    holder.reviewByTextView.setText(review.getCreatedBy());
   }
 
   @Override
@@ -57,7 +58,7 @@ public class ReviewAdminAdapter extends RecyclerView.Adapter<ReviewAdminAdapter.
     TextView productNameTextView;
     RatingBar ratingBar;
     TextView reviewTextView;
-    TextView reviewDateTextView;
+    TextView reviewDateTextView, reviewByTextView;
 
     public ReviewViewHolder(@NonNull View itemView) {
       super(itemView);
@@ -65,6 +66,7 @@ public class ReviewAdminAdapter extends RecyclerView.Adapter<ReviewAdminAdapter.
       ratingBar = itemView.findViewById(R.id.ratingBarProduct);
       reviewTextView = itemView.findViewById(R.id.textViewReviewText);
       reviewDateTextView = itemView.findViewById(R.id.textViewReviewDate);
+      reviewByTextView = itemView.findViewById(R.id.textViewReviewBy);
     }
   }
 }

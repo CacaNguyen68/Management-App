@@ -103,6 +103,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_RATING = "rating";
   private static final String COLUMN_REVIEW_TEXT = "review_text";
   private static final String COLUMN_CREATED_AT_REVIEW = "created_at";
+  private static final String COLUMN_CREATED_BY_REVIEW = "created_by";
 
   private static final String TABLE_CONTENT = "table_content";
   private static final String COLUMN_CONTENT_ID = "id";
@@ -154,7 +155,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
       COLUMN_ORDER_ID_REVIEW + " INTEGER NOT NULL, " +
       COLUMN_PRODUCT_ID_REVIEW + " INTEGER NOT NULL, " +
       COLUMN_RATING + " REAL NOT NULL, " +
-      COLUMN_REVIEW_TEXT + " TEXT, " +
+      COLUMN_REVIEW_TEXT + " TEXT, " + COLUMN_CREATED_BY_REVIEW + " TEXT, " +
       COLUMN_CREATED_AT_REVIEW + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
       ");";
 
@@ -315,18 +316,35 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   }
 
   // Lấy user theo ID
-  public User getUser(long id) {
+  public User getUserById(int userId) {
     SQLiteDatabase db = this.getReadableDatabase();
+    String query = "SELECT * FROM " + TABLE_USER + " WHERE " + COLUMN_ID_USER + "=?";
+    Cursor cursor = null;
     User user = null;
 
-    Cursor cursor = db.query(TABLE_USER, new String[]{COLUMN_ID_USER, COLUMN_NAME_USER, COLUMN_DOB_USER, COLUMN_PHONE_USER, COLUMN_EMAIL_USER, COLUMN_USER_TYPE, COLUMN_CREATED_USER, COLUMN_IMAGE_USER}, COLUMN_ID_USER + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
+    try {
+      cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+      if (cursor != null && cursor.moveToFirst()) {
+        int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID_USER));
+        String name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_USER));
+        String dateOfBirth = cursor.getString(cursor.getColumnIndex(COLUMN_DOB_USER));
+        String phone = cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_USER));
+        String email = cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL_USER));
+        String userType = cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE));
+        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_USER));
+        String createdBy = cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_USER));
+        byte[] image = cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_USER));
 
-    if (cursor != null) {
-      if (cursor.moveToFirst()) {
-        user = new User(cursor.getInt(cursor.getColumnIndex(COLUMN_ID_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_NAME_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_DOB_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_USER_TYPE)), cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_USER)), cursor.getString(cursor.getColumnIndex(COLUMN_USER_CREATED_USER)), cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE_USER)));
+        user = new User(id, name, dateOfBirth, phone, email, userType, createdAt, createdBy, image);
       }
-      cursor.close();
+    } catch (Exception e) {
+      Log.e("Database Error", "Error while getting user by ID", e);
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
     }
+
     return user;
   }
 
@@ -714,6 +732,34 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   }
 
   //them san pham vao gio hang
+//  public void addProductToCart(int userId, int productId, int quantity) {
+//    SQLiteDatabase db = this.getWritableDatabase();
+//
+//    // Kiểm tra nếu giỏ hàng đã tồn tại cho người dùng này
+//    String selectQuery = "SELECT * FROM " + TABLE_CART + " WHERE " + COLUMN_USER_ID_CART + " = ?";
+//    Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(userId)});
+//    int cartId;
+//    if (cursor.moveToFirst()) {
+//      cartId = cursor.getInt(cursor.getColumnIndex(COLUMN_CART_ID));
+//    } else {
+//      // Tạo giỏ hàng mới nếu chưa tồn tại
+//      ContentValues cartValues = new ContentValues();
+//      cartValues.put(COLUMN_USER_ID_CART, userId);
+//      cartValues.put(COLUMN_CREATED_AT_CART, System.currentTimeMillis());
+//      cartId = (int) db.insert(TABLE_CART, null, cartValues);
+//    }
+//    cursor.close();
+//
+//    // Thêm sản phẩm vào giỏ hàng
+//    ContentValues values = new ContentValues();
+//    values.put(COLUMN_CART_ID_ITEM, cartId);
+//    values.put(COLUMN_PRODUCT_ID_ITEM, productId);
+//    values.put(COLUMN_QUANTITY_ITEM, quantity);
+//
+//    db.insert(TABLE_CART_ITEM, null, values);
+//    db.close();
+//  }
+
   public void addProductToCart(int userId, int productId, int quantity) {
     SQLiteDatabase db = this.getWritableDatabase();
 
@@ -732,13 +778,29 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
     cursor.close();
 
-    // Thêm sản phẩm vào giỏ hàng
-    ContentValues values = new ContentValues();
-    values.put(COLUMN_CART_ID_ITEM, cartId);
-    values.put(COLUMN_PRODUCT_ID_ITEM, productId);
-    values.put(COLUMN_QUANTITY_ITEM, quantity);
+    // Kiểm tra nếu sản phẩm đã tồn tại trong giỏ hàng
+    String checkProductQuery = "SELECT * FROM " + TABLE_CART_ITEM + " WHERE " + COLUMN_CART_ID_ITEM + " = ? AND " + COLUMN_PRODUCT_ID_ITEM + " = ?";
+    Cursor productCursor = db.rawQuery(checkProductQuery, new String[]{String.valueOf(cartId), String.valueOf(productId)});
 
-    db.insert(TABLE_CART_ITEM, null, values);
+    if (productCursor.moveToFirst()) {
+      // Sản phẩm đã tồn tại, cập nhật số lượng
+      int currentQuantity = productCursor.getInt(productCursor.getColumnIndex(COLUMN_QUANTITY_ITEM));
+      int newQuantity = currentQuantity + quantity;
+
+      ContentValues updateValues = new ContentValues();
+      updateValues.put(COLUMN_QUANTITY_ITEM, newQuantity);
+
+      db.update(TABLE_CART_ITEM, updateValues, COLUMN_CART_ID_ITEM + " = ? AND " + COLUMN_PRODUCT_ID_ITEM + " = ?", new String[]{String.valueOf(cartId), String.valueOf(productId)});
+    } else {
+      // Sản phẩm chưa tồn tại, thêm mới vào giỏ hàng
+      ContentValues values = new ContentValues();
+      values.put(COLUMN_CART_ID_ITEM, cartId);
+      values.put(COLUMN_PRODUCT_ID_ITEM, productId);
+      values.put(COLUMN_QUANTITY_ITEM, quantity);
+
+      db.insert(TABLE_CART_ITEM, null, values);
+    }
+    productCursor.close();
     db.close();
   }
 
@@ -933,6 +995,30 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.close();
   }
 
+  public boolean isOrderStatusUpdated(int orderId, OrderStatus expectedStatus) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    String query = "SELECT " + COLUMN_STATUS_ORDER + " FROM " + TABLE_ORDER + " WHERE " + COLUMN_ORDER_ID + " = ?";
+    Cursor cursor = null;
+    boolean isUpdated = false;
+
+    try {
+      cursor = db.rawQuery(query, new String[]{String.valueOf(orderId)});
+      if (cursor != null && cursor.moveToFirst()) {
+        String status = cursor.getString(cursor.getColumnIndex(COLUMN_STATUS_ORDER));
+        isUpdated = expectedStatus.name().equals(status);
+      }
+    } catch (Exception e) {
+      Log.e("Database Error", "Error checking order status", e);
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
+
+    return isUpdated;
+  }
+
+
   public void clearCart(int userId) {
     SQLiteDatabase db = this.getWritableDatabase();
 
@@ -1029,36 +1115,37 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return productList;
   }
 
-  public List<Review> getReviewsByOrderId(int orderId) {
-    List<Review> reviews = new ArrayList<>();
-    SQLiteDatabase db = this.getReadableDatabase();
-    String query = "SELECT * FROM " + TABLE_REVIEW + " WHERE " + COLUMN_ORDER_ID_REVIEW + " = ?";
-    Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(orderId)});
+//  public List<Review> getReviewsByOrderId(int orderId) {
+//    List<Review> reviews = new ArrayList<>();
+//    SQLiteDatabase db = this.getReadableDatabase();
+//    String query = "SELECT * FROM " + TABLE_REVIEW + " WHERE " + COLUMN_ORDER_ID_REVIEW + " = ?";
+//    Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(orderId)});
+//
+//    if (cursor.moveToFirst()) {
+//      do {
+//        int reviewId = cursor.getInt(cursor.getColumnIndex(COLUMN_REVIEW_ID));
+//        int productId = cursor.getInt(cursor.getColumnIndex(COLUMN_PRODUCT_ID_REVIEW));
+//        float rating = cursor.getFloat(cursor.getColumnIndex(COLUMN_RATING));
+//        String reviewText = cursor.getString(cursor.getColumnIndex(COLUMN_REVIEW_TEXT));
+//        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_REVIEW));
+//
+//        reviews.add(new Review(reviewId, orderId, productId, rating, reviewText, createdAt));
+//      } while (cursor.moveToNext());
+//    }
+//
+//    cursor.close();
+//    db.close();
+//    return reviews;
+//  }
 
-    if (cursor.moveToFirst()) {
-      do {
-        int reviewId = cursor.getInt(cursor.getColumnIndex(COLUMN_REVIEW_ID));
-        int productId = cursor.getInt(cursor.getColumnIndex(COLUMN_PRODUCT_ID_REVIEW));
-        float rating = cursor.getFloat(cursor.getColumnIndex(COLUMN_RATING));
-        String reviewText = cursor.getString(cursor.getColumnIndex(COLUMN_REVIEW_TEXT));
-        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_REVIEW));
 
-        reviews.add(new Review(reviewId, orderId, productId, rating, reviewText, createdAt));
-      } while (cursor.moveToNext());
-    }
-
-    cursor.close();
-    db.close();
-    return reviews;
-  }
-
-
-  public boolean addReview(int orderId, int productId, float rating, String reviewText) {
+  public boolean addReview(int orderId, int productId, float rating, String reviewText,String reviewCreatedBy) {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
     values.put(COLUMN_ORDER_ID_REVIEW, orderId);
     values.put(COLUMN_PRODUCT_ID_REVIEW, productId);
     values.put(COLUMN_RATING, rating);
+    values.put(COLUMN_CREATED_BY_REVIEW, reviewCreatedBy);
     values.put(COLUMN_REVIEW_TEXT, reviewText);
 
     long result = db.insert(TABLE_REVIEW, null, values);
@@ -1111,9 +1198,10 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         int productId = cursor.getInt(cursor.getColumnIndex(COLUMN_PRODUCT_ID_REVIEW));
         float rating = cursor.getFloat(cursor.getColumnIndex(COLUMN_RATING));
         String reviewText = cursor.getString(cursor.getColumnIndex(COLUMN_REVIEW_TEXT));
+        String reviewBy = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_BY_REVIEW));
         String reviewDate = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_REVIEW));
 
-        Review review = new Review(id,orderId, productId, rating, reviewText, reviewDate);
+        Review review = new Review(id,orderId, productId, rating, reviewText, reviewDate, reviewBy);
         reviewList.add(review);
       } while (cursor.moveToNext());
     }

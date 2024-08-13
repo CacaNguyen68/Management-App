@@ -65,6 +65,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
           Intent intent = new Intent(context, OrderDetailActivity.class);
           intent.putExtra("orderId", order.getOrderId());
           intent.putExtra("status", order.getStatus().ordinal());
+          intent.putExtra("userId", order.getUserId());
           Log.d("STATUS", "giatri: "+order.getStatus());
           context.startActivity(intent);
         }

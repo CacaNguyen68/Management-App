@@ -7,14 +7,16 @@ public class Review {
   private float rating;
   private String reviewText;
   private String createdAt;
+  private String createdBy;
 
-  public Review(int reviewId, int orderId, int productId, float rating, String reviewText, String createdAt) {
+  public Review(int reviewId, int orderId, int productId, float rating, String reviewText, String createdAt, String createdBy) {
     this.reviewId = reviewId;
     this.orderId = orderId;
     this.productId = productId;
     this.rating = rating;
     this.reviewText = reviewText;
     this.createdAt = createdAt;
+    this.createdBy = createdBy;
   }
 
   public int getReviewId() {
@@ -48,5 +50,13 @@ public class Review {
 
   public String getCreatedAt() {
     return createdAt;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
   }
 }

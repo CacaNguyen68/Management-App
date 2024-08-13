@@ -18,6 +18,7 @@ import com.mssv_71dctm22077.adapter.OrderDetailAdapter;
 import com.mssv_71dctm22077.adapter.ProductAdapter;
 import com.mssv_71dctm22077.model.OrderStatus;
 import com.mssv_71dctm22077.model.Product;
+import com.mssv_71dctm22077.model.User;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class OrderDetailActivity extends AppCompatActivity {
 
@@ -32,6 +34,8 @@ public class OrderDetailActivity extends AppCompatActivity {
   private RecyclerView recyclerViewOrderDetails;
   private MyDatabaseHelper databaseHelper;
   private int orderId;
+  private User user;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +45,14 @@ public class OrderDetailActivity extends AppCompatActivity {
 
     orderId = getIntent().getIntExtra("orderId", -1);
     int statusCode = getIntent().getIntExtra("status", -1);
+    int userId = getIntent().getIntExtra("userId", -1);
+    Log.d("asad","dadfa"+userId);
+
     OrderStatus status = OrderStatus.values()[statusCode];
 
     databaseHelper = new MyDatabaseHelper(this);
 
+    user = databaseHelper.getUserById(userId);
     if (status == OrderStatus.SHIPPED) {
       confirmButton.setVisibility(View.VISIBLE);
     } else {
@@ -52,28 +60,35 @@ public class OrderDetailActivity extends AppCompatActivity {
     }
 
     confirmButton.setOnClickListener(view -> {
-      // Hiển thị hộp thoại xác nhận
       new AlertDialog.Builder(OrderDetailActivity.this)
         .setTitle("Xác nhận")
         .setMessage("Bạn có chắc chắn đã nhận đơn hàng này không?")
         .setPositiveButton("Có", (dialog, which) -> {
-          // Người dùng nhấn "Có", cập nhật trạng thái trong cơ sở dữ liệu
           if (databaseHelper != null) {
+            // Cập nhật trạng thái đơn hàng
             databaseHelper.updateOrderStatus(orderId, OrderStatus.DELIVERED);
+
+            // Tạo đánh giá mẫu (nếu cần thiết)
             createSampleReviews(orderId);
 
-            // Khởi động ReviewActivity để hiển thị danh sách đánh giá
-            Intent intent = new Intent(OrderDetailActivity.this, ReviewActivity.class);
-            intent.putExtra("orderId", orderId);
-            startActivity(intent);
+            // Kiểm tra xem trạng thái có được cập nhật thành công hay không
+            boolean isUpdated = databaseHelper.isOrderStatusUpdated(orderId, OrderStatus.DELIVERED);
+            if (isUpdated) {
+              Toast.makeText(OrderDetailActivity.this, "Đơn hàng đã được xác nhận", Toast.LENGTH_SHORT).show();
+
+              // Khởi động ReviewActivity
+              Intent intent = new Intent(OrderDetailActivity.this, ReviewActivity.class);
+              intent.putExtra("orderId", orderId);
+              startActivity(intent);
+            } else {
+              Toast.makeText(OrderDetailActivity.this, "Cập nhật trạng thái đơn hàng thất bại", Toast.LENGTH_SHORT).show();
+            }
           }
         })
-        .setNegativeButton("Không", (dialog, which) -> {
-          // Người dùng nhấn "Không", không làm gì cả
-          dialog.dismiss();
-        })
+        .setNegativeButton("Không", (dialog, which) -> dialog.dismiss())
         .show();
     });
+
 
     recyclerViewOrderDetails = findViewById(R.id.recyclerViewProducts);
 
@@ -92,7 +107,7 @@ public class OrderDetailActivity extends AppCompatActivity {
 
     for (Product product : products) {
       // Tạo đánh giá mẫu
-      boolean result = databaseHelper.addReview(orderId, product.getId(), 0, null);
+      boolean result = databaseHelper.addReview(orderId, product.getId(), 0, null,user.getName());
 
       if (result == true) {
         Log.e("ReviewCreation", "Lỗi khi lưu đánh giá. Order ID = " + orderId + ", Product ID = " + product.getId());

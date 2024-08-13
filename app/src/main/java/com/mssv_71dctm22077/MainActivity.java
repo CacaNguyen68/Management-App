@@ -110,12 +110,12 @@ public class MainActivity extends AppCompatActivity {
       Date today = new Date();
       SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
 
-      myDB.addUser("Super Admin", formatter.format(today), "012345678", "thubackend2022@gmail.com", BCrypt.hashpw("superadmin", BCrypt.gensalt()), "ADMIN", null);
-      myDB.addUser("Join User", formatter.format(today), "88888888", "john.doe@example.com", BCrypt.hashpw("88888888", BCrypt.gensalt()), "USER", null);
-      myDB.addUser("Kim Anh", formatter.format(today), "77777777", "kimanh@example.com", BCrypt.hashpw("77777777", BCrypt.gensalt()), "USER", null);
-      myDB.addUser("Nhat Hung", formatter.format(today), "55555555", "hung234@example.com", BCrypt.hashpw("55555555", BCrypt.gensalt()), "USER", null);
-      myDB.addUser("Join User", formatter.format(today), "88888888", "john.doe@example.com", BCrypt.hashpw("88888888", BCrypt.gensalt()), "USER", null);
-      myDB.addUser("Kate Admin", formatter.format(today), "66666666", "kate.doe@example.com", BCrypt.hashpw("66666666", BCrypt.gensalt()), "ADMIN", null);
+      myDB.addUser("Super Admin", formatter.format(today), "012345678", "Quan 1, Ho Chi Minh", BCrypt.hashpw("superadmin", BCrypt.gensalt()), "ADMIN", null);
+      myDB.addUser("Join User", formatter.format(today), "88888888", "Quan 6, Ho Chi Minh", BCrypt.hashpw("88888888", BCrypt.gensalt()), "USER", null);
+      myDB.addUser("Kim Anh", formatter.format(today), "77777777", "Quan 7, Ho Chi Minh", BCrypt.hashpw("77777777", BCrypt.gensalt()), "USER", null);
+      myDB.addUser("Nhat Hung", formatter.format(today), "55555555", "Quan 5, Ho Chi Minh", BCrypt.hashpw("55555555", BCrypt.gensalt()), "USER", null);
+      myDB.addUser("Join User", formatter.format(today), "88888888", "Quan 3, Ho Chi Minh", BCrypt.hashpw("88888888", BCrypt.gensalt()), "USER", null);
+      myDB.addUser("Kate Admin", formatter.format(today), "66666666", "Quan 2, Ho Chi Minh", BCrypt.hashpw("66666666", BCrypt.gensalt()), "ADMIN", null);
 
       myDB.addDanhMuc("Trẻ em");
       myDB.addDanhMuc("Nhân vật");

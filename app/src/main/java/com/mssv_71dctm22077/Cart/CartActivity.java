@@ -2,6 +2,7 @@ package com.mssv_71dctm22077.Cart;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.CartAdapter;
 import com.mssv_71dctm22077.model.CartItem;
 import com.mssv_71dctm22077.model.Product;
+import com.mssv_71dctm22077.model.User;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.text.DecimalFormat;
@@ -37,6 +39,7 @@ public class CartActivity extends AppCompatActivity {
   private Button buttonPlaceOrder;
   EditText addressInput;
   String address;
+  User user;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +50,14 @@ public class CartActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
 
     addressInput = findViewById(R.id.address_input);
-    address = addressInput.getText().toString().trim();
 
     userId = getIntent().getIntExtra("userId", -1);
     databaseHelper = new MyDatabaseHelper(this);
+    user = databaseHelper.getUserById(userId);
+    Log.d("dadasd","sasad"+user.getEmail());
+
+    address = user.getEmail();  // Lấy địa chỉ từ user
+    addressInput.setText(address);
 
     recyclerViewCart = findViewById(R.id.recyclerViewCart);
     totalPrice = findViewById(R.id.total_price);
@@ -104,8 +111,7 @@ public class CartActivity extends AppCompatActivity {
     databaseHelper.clearCart(userId);
     cartItemList.clear();
     cartAdapter.notifyDataSetChanged();
-    addressInput.setText(""); // Reset the input field to empty
-    addressInput.setError(null); // Remove any error messages
+    addressInput.setText(address = user.getEmail().toString()); // Reset the input field to empty
     updateTotalPrice();
     Toast.makeText(this, "Đơn hàng đã được đặt thành công!", Toast.LENGTH_SHORT).show();
   }
