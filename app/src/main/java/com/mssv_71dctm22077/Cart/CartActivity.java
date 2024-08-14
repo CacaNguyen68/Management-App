@@ -16,9 +16,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mssv_71dctm22077.Category.CategoryForUserActivity;
 import com.mssv_71dctm22077.MenuUserActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.CartAdapter;
+import com.mssv_71dctm22077.adapter.CategoryForUserAdapter;
 import com.mssv_71dctm22077.model.CartItem;
 import com.mssv_71dctm22077.model.Product;
 import com.mssv_71dctm22077.model.User;
@@ -31,7 +33,7 @@ import java.util.List;
 public class CartActivity extends AppCompatActivity {
 
   private RecyclerView recyclerViewCart;
-  private TextView totalPrice;
+  private TextView totalPrice, text_total_item;
   private List<CartItem> cartItemList;
   private CartAdapter cartAdapter;
   private MyDatabaseHelper databaseHelper;
@@ -40,6 +42,7 @@ public class CartActivity extends AppCompatActivity {
   EditText addressInput;
   String address;
   User user;
+  double total = 0.0;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,7 @@ public class CartActivity extends AppCompatActivity {
     userId = getIntent().getIntExtra("userId", -1);
     databaseHelper = new MyDatabaseHelper(this);
     user = databaseHelper.getUserById(userId);
-    Log.d("dadasd","sasad"+user.getEmail());
+    Log.d("dadasd", "sasad" + user.getEmail());
 
     address = user.getEmail();  // Lấy địa chỉ từ user
     addressInput.setText(address);
@@ -62,7 +65,7 @@ public class CartActivity extends AppCompatActivity {
     recyclerViewCart = findViewById(R.id.recyclerViewCart);
     totalPrice = findViewById(R.id.total_price);
     buttonPlaceOrder = findViewById(R.id.button_place_order);
-
+    text_total_item = findViewById(R.id.text_total_item);
     cartItemList = databaseHelper.getCartItemsByUserId(userId);
 
     cartAdapter = new CartAdapter(this, cartItemList, databaseHelper);
@@ -72,16 +75,16 @@ public class CartActivity extends AppCompatActivity {
     updateTotalPrice();
 
     buttonPlaceOrder.setOnClickListener(v ->
-
       placeOrder());
   }
 
   public void updateTotalPrice() {
-    double total = 0.0;
+
     for (CartItem item : cartItemList) {
       total += item.getProductPrice() * item.getQuantity();
     }
-    totalPrice.setText("Tổng giá: " + total + " VND");
+//    totalPrice.setText("Tổng giá: " + total + " VND");
+//    text_total_item.setText("của "+ "");
   }
 
   private void placeOrder() {
@@ -119,15 +122,15 @@ public class CartActivity extends AppCompatActivity {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_user, menu);
+    getMenuInflater().inflate(R.menu.menu_product, menu);
     return true;
   }
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    if (item.getItemId() == R.id.action_home) {
+    if (item.getItemId() == R.id.action_category) {
       // Xử lý khi nhấn vào mục menu
-      Intent intent = new Intent(this, MenuUserActivity.class);
+      Intent intent = new Intent(this, CategoryForUserActivity.class);
       startActivity(intent);
       return true;
     }

@@ -87,6 +87,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_CREATED_AT_ORDER = "created_at";
   private static final String COLUMN_STATUS_ORDER = "status"; // Thêm cột trạng thái vào bảng
   private static final String COLUMN_ADDRESS_ORDER = "address"; // New address column
+ private static final String COLUMN_TOTAL_AMOUNT = "total+amount"; // New address column
 
 
   private static final String TABLE_ORDER_ITEM = "table_order_item";
@@ -142,7 +143,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     String queryCartItem = "CREATE TABLE " + TABLE_CART_ITEM + " (" + COLUMN_CART_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_CART_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ITEM + " INTEGER, " + COLUMN_QUANTITY_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_CART_ID_ITEM + ") REFERENCES " + TABLE_CART + "(" + COLUMN_CART_ID + "))";
     db.execSQL(queryCartItem);
 
-    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " (" + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_ORDER + " INTEGER, " + COLUMN_CREATED_AT_ORDER + " TEXT, " + COLUMN_STATUS_ORDER + " TEXT, " + COLUMN_ADDRESS_ORDER + " TEXT, " + // Thêm cột trạng thái vào bảng
+    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " (" + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_ORDER + " INTEGER, " + COLUMN_CREATED_AT_ORDER + " TEXT, " + COLUMN_STATUS_ORDER + " TEXT, " + COLUMN_ADDRESS_ORDER + " TEXT, " + //COLUMN_PRICE_PRODUCT + " DOUBLE, " + // Thêm cột trạng thái vào bảng
       "FOREIGN KEY(" + COLUMN_USER_ID_ORDER + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + "))";
     db.execSQL(queryOrder);
 
@@ -150,25 +151,11 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.execSQL(queryOrderItem);
 
 
-    String queryReview = "CREATE TABLE " + TABLE_REVIEW + " (" +
-      COLUMN_REVIEW_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-      COLUMN_ORDER_ID_REVIEW + " INTEGER NOT NULL, " +
-      COLUMN_PRODUCT_ID_REVIEW + " INTEGER NOT NULL, " +
-      COLUMN_RATING + " REAL NOT NULL, " +
-      COLUMN_REVIEW_TEXT + " TEXT, " + COLUMN_CREATED_BY_REVIEW + " TEXT, " +
-      COLUMN_CREATED_AT_REVIEW + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
-      ");";
+    String queryReview = "CREATE TABLE " + TABLE_REVIEW + " (" + COLUMN_REVIEW_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDER_ID_REVIEW + " INTEGER NOT NULL, " + COLUMN_PRODUCT_ID_REVIEW + " INTEGER NOT NULL, " + COLUMN_RATING + " REAL NOT NULL, " + COLUMN_REVIEW_TEXT + " TEXT, " + COLUMN_CREATED_BY_REVIEW + " TEXT, " + COLUMN_CREATED_AT_REVIEW + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" + ");";
 
     db.execSQL(queryReview);
 
-    String queryContent = "CREATE TABLE " + TABLE_CONTENT + "("
-      + COLUMN_CONTENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-      + COLUMN_IMAGE_CONTENT + " BLOB, "
-      + COLUMN_TEXT_CONTENT + " TEXT NOT NULL, "
-      + COLUMN_TITLE_CONTENT + " TEXT NOT NULL, "
-      + COLUMN_CREATED_AT_CONTENT + " TEXT, "
-      + COLUMN_CLICK_CONTENT + " INTEGER"
-      + ")";
+    String queryContent = "CREATE TABLE " + TABLE_CONTENT + "(" + COLUMN_CONTENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_IMAGE_CONTENT + " BLOB, " + COLUMN_TEXT_CONTENT + " TEXT NOT NULL, " + COLUMN_TITLE_CONTENT + " TEXT NOT NULL, " + COLUMN_CREATED_AT_CONTENT + " TEXT, " + COLUMN_CLICK_CONTENT + " INTEGER" + ")";
 
     db.execSQL(queryContent);
   }
@@ -187,6 +174,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     onCreate(db);
   }
+  // Phương thức thêm cột total_amount
 
   //  Câu truy vấn lay type user tu phone
   public String getTypeUserByPhone(String phone) {
@@ -558,6 +546,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     cursor.close();
     return productList;
   }
+
   // câu truy vấn lấy các sản phẩm theo điều kiện categoryId
   public List<Product> getProductsByCategoryId(int categoryId) {
     List<Product> products = new ArrayList<>();
@@ -654,8 +643,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     String productName = null;
     String query = "SELECT " + COLUMN_NAME_PRODUCT + " FROM " + TABLE_PRODUCT + " WHERE " + COLUMN_ID_PRODUCT + " = ?";
 
-    try (SQLiteDatabase db = this.getReadableDatabase();
-         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idProduct)})) {
+    try (SQLiteDatabase db = this.getReadableDatabase(); Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(idProduct)})) {
 
       if (cursor.moveToFirst()) {
         productName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PRODUCT));
@@ -667,7 +655,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     return productName;
   }
-
 
 
   public List<Product> searchProductsWhereCategoryId(String query, int categoryId) {
@@ -891,6 +878,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     values.put(COLUMN_CREATED_AT_ORDER, getCurrentDate());
     values.put(COLUMN_STATUS_ORDER, OrderStatus.PLACED.toString()); // Trạng thái đơn hàng là "Đơn hàng đã đặt"
     values.put(COLUMN_ADDRESS_ORDER, address); // Include address
+//    values.put(COLUMN_PRICE_PRODUCT, total);
 
 
     // Chèn dòng dữ liệu vào bảng order
@@ -1139,7 +1127,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 //  }
 
 
-  public boolean addReview(int orderId, int productId, float rating, String reviewText,String reviewCreatedBy) {
+  public boolean addReview(int orderId, int productId, float rating, String reviewText, String reviewCreatedBy) {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
     values.put(COLUMN_ORDER_ID_REVIEW, orderId);
@@ -1169,7 +1157,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     // Tạo điều kiện để xác định dòng cần cập nhật
     String whereClause = COLUMN_ORDER_ID_REVIEW + " = ? AND " + COLUMN_PRODUCT_ID_REVIEW + " = ?";
-    String[] whereArgs = { String.valueOf(orderId), String.valueOf(productId) };
+    String[] whereArgs = {String.valueOf(orderId), String.valueOf(productId)};
 
     // Thực hiện cập nhật
     int rowsAffected = db.update(TABLE_REVIEW, values, whereClause, whereArgs);
@@ -1201,7 +1189,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         String reviewBy = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_BY_REVIEW));
         String reviewDate = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_REVIEW));
 
-        Review review = new Review(id,orderId, productId, rating, reviewText, reviewDate, reviewBy);
+        Review review = new Review(id, orderId, productId, rating, reviewText, reviewDate, reviewBy);
         reviewList.add(review);
       } while (cursor.moveToNext());
     }
@@ -1217,14 +1205,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     SQLiteDatabase db = this.getReadableDatabase();
 
     // Câu truy vấn SQL để lấy danh sách top 5 sản phẩm bán chạy nhất với trạng thái DELIVERED
-    String query = "SELECT p." + COLUMN_ID_PRODUCT + ", p." + COLUMN_NAME_PRODUCT + ", p." + COLUMN_PRICE_PRODUCT + ", p." + COLUMN_IMAGE_PRODUCT + ", p." + COLUMN_CATEGORY_ID + ", p." + COLUMN_CREATED_PRODUCT + ", p." + COLUMN_USER_CREATED_PRODUCT + ", SUM(oi." + COLUMN_QUANTITY_ORDER_ITEM + ") AS total_sold " +
-      "FROM " + TABLE_ORDER_ITEM + " oi " +
-      "JOIN " + TABLE_ORDER + " o ON oi." + COLUMN_ORDER_ID_ITEM + " = o." + COLUMN_ORDER_ID + " " +
-      "JOIN " + TABLE_PRODUCT + " p ON oi." + COLUMN_PRODUCT_ID_ORDER_ITEM + " = p." + COLUMN_ID_PRODUCT + " " +
-      "WHERE o." + COLUMN_STATUS_ORDER + " = 'DELIVERED' " +
-      "GROUP BY p." + COLUMN_ID_PRODUCT + " " +
-      "ORDER BY total_sold DESC " +
-      "LIMIT 5";
+    String query = "SELECT p." + COLUMN_ID_PRODUCT + ", p." + COLUMN_NAME_PRODUCT + ", p." + COLUMN_PRICE_PRODUCT + ", p." + COLUMN_IMAGE_PRODUCT + ", p." + COLUMN_CATEGORY_ID + ", p." + COLUMN_CREATED_PRODUCT + ", p." + COLUMN_USER_CREATED_PRODUCT + ", SUM(oi." + COLUMN_QUANTITY_ORDER_ITEM + ") AS total_sold " + "FROM " + TABLE_ORDER_ITEM + " oi " + "JOIN " + TABLE_ORDER + " o ON oi." + COLUMN_ORDER_ID_ITEM + " = o." + COLUMN_ORDER_ID + " " + "JOIN " + TABLE_PRODUCT + " p ON oi." + COLUMN_PRODUCT_ID_ORDER_ITEM + " = p." + COLUMN_ID_PRODUCT + " " + "WHERE o." + COLUMN_STATUS_ORDER + " = 'DELIVERED' " + "GROUP BY p." + COLUMN_ID_PRODUCT + " " + "ORDER BY total_sold DESC " + "LIMIT 5";
 
     Cursor cursor = null;
     try {
@@ -1242,13 +1223,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
           int totalSold = cursor.getInt(cursor.getColumnIndex("total_sold"));
 
           // Log thông tin sản phẩm để kiểm tra kết quả
-          Log.d("Top5ProductsSold", "Product ID: " + productId +
-            ", Name: " + productName +
-            ", Price: " + productPrice +
-            ", Category ID: " + productCategoryId +
-            ", Created At: " + productCreatedAt +
-            ", User Created At: " + productUserCreatedAt +
-            ", Total Sold: " + totalSold);
+          Log.d("Top5ProductsSold", "Product ID: " + productId + ", Name: " + productName + ", Price: " + productPrice + ", Category ID: " + productCategoryId + ", Created At: " + productCreatedAt + ", User Created At: " + productUserCreatedAt + ", Total Sold: " + totalSold);
 
           Product product = new Product(productId, productName, productPrice, productCategoryId, productCreatedAt, productUserCreatedAt, productImage);
           productList.add(product);
@@ -1309,6 +1284,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
       return true;
     }
   }
+
   public List<Content> getAllContents() {
     List<Content> contentList = new ArrayList<>();
     SQLiteDatabase db = this.getReadableDatabase();
@@ -1337,6 +1313,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.close();
     return contentList;
   }
+
   public Content getContentById(int id) {
     SQLiteDatabase db = this.getReadableDatabase();
 
@@ -1364,13 +1341,13 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
       return null; // Return null if the content with the given ID is not found
     }
   }
+
   public List<Content> searchContents(String query) {
     List<Content> contentList = new ArrayList<>();
     SQLiteDatabase db = this.getReadableDatabase();
 
     // Sử dụng câu lệnh SELECT với LIKE để tìm kiếm theo tiêu đề hoặc nội dung
-    String sql = "SELECT * FROM " + TABLE_CONTENT +
-      " WHERE " + COLUMN_TITLE_CONTENT + " LIKE ? OR " + COLUMN_TEXT_CONTENT + " LIKE ?";
+    String sql = "SELECT * FROM " + TABLE_CONTENT + " WHERE " + COLUMN_TITLE_CONTENT + " LIKE ? OR " + COLUMN_TEXT_CONTENT + " LIKE ?";
     String[] selectionArgs = new String[]{"%" + query + "%", "%" + query + "%"};
 
     Cursor cursor = db.rawQuery(sql, selectionArgs);
@@ -1400,11 +1377,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     SQLiteDatabase db = this.getWritableDatabase();
 
     // Truy vấn số lượt click hiện tại từ cơ sở dữ liệu
-    Cursor cursor = db.query("table_content",
-      new String[]{"click"},
-      "id = ?",
-      new String[]{String.valueOf(contentId)},
-      null, null, null);
+    Cursor cursor = db.query("table_content", new String[]{"click"}, "id = ?", new String[]{String.valueOf(contentId)}, null, null, null);
 
     int currentClickCount = 0;
     if (cursor.moveToFirst()) {
@@ -1420,5 +1393,116 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.update("table_content", values, "id = ?", new String[]{String.valueOf(contentId)});
     db.close();
   }
+
+  public Cursor getOrderCountByStatus() {
+    // Câu lệnh SQL để đếm số lượng đơn hàng theo trạng thái
+    String query = "SELECT " + COLUMN_STATUS_ORDER + ", COUNT(" + COLUMN_ORDER_ID + ") AS order_count " +
+      "FROM " + TABLE_ORDER + " " +
+      "GROUP BY " + COLUMN_STATUS_ORDER;
+
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    Cursor cursor = null;
+    if (db != null) {
+      cursor = db.rawQuery(query, null);
+    }
+
+    // Kiểm tra nếu cursor không null và ghi log số lượng bản ghi
+    if (cursor != null) {
+      Log.d("Order count by status", "count = " + cursor.getCount());
+    } else {
+      Log.d("Order count by status", "No data found");
+    }
+
+    return cursor;
+  }
+
+
+  public Cursor getRevenueByDate() {
+    // Câu lệnh SQL để tính doanh thu theo ngày cho trạng thái 'DELIVERED'
+    String query = "SELECT strftime('%Y-%m-%d', date(substr(" + COLUMN_CREATED_AT_ORDER + ", 7, 4) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 4, 2) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 1, 2))) AS date, " +
+      "SUM(total_amount) AS total_revenue " +
+      "FROM " + TABLE_ORDER + " " +
+      "WHERE " + COLUMN_STATUS_ORDER + " = 'DELIVERED' " +
+      "GROUP BY date " +
+      "ORDER BY date";
+
+    SQLiteDatabase db = this.getReadableDatabase();
+    Cursor cursor = null;
+
+    try {
+      if (db != null) {
+        cursor = db.rawQuery(query, null);
+      }
+    } catch (Exception e) {
+      Log.e("DatabaseError", "Error executing query: " + e.getMessage());
+    }
+
+    if (cursor != null) {
+      Log.d("Revenue by Date", "count = " + cursor.getCount());
+    } else {
+      Log.d("Revenue by Date", "No data found");
+    }
+
+    return cursor;
+  }
+
+  public Cursor getRevenueByMonth() {
+    // Câu lệnh SQL để tính doanh thu theo tháng cho trạng thái 'DELIVERED'
+    String query = "SELECT strftime('%Y-%m', date(substr(" + COLUMN_CREATED_AT_ORDER + ", 7, 4) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 4, 2) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 1, 2))) AS month, " +
+      "SUM(total_amount) AS total_revenue " +
+      "FROM " + TABLE_ORDER + " " +
+      "WHERE " + COLUMN_STATUS_ORDER + " = 'DELIVERED' " +
+      "GROUP BY month " +
+      "ORDER BY month";
+
+    SQLiteDatabase db = this.getReadableDatabase();
+    Cursor cursor = null;
+
+    try {
+      if (db != null) {
+        cursor = db.rawQuery(query, null);
+      }
+    } catch (Exception e) {
+      Log.e("DatabaseError", "Error executing query: " + e.getMessage());
+    }
+
+    if (cursor != null) {
+      Log.d("Revenue by Month", "count = " + cursor.getCount());
+    } else {
+      Log.d("Revenue by Month", "No data found");
+    }
+
+    return cursor;
+  }
+
+//  public Cursor getRevenueByYear() {
+//    // Câu lệnh SQL để tính doanh thu theo năm cho trạng thái 'DELIVERED'
+//    String query = "SELECT strftime('%Y', date(substr(" + COLUMN_CREATED_AT_ORDER + ", 7, 4) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 4, 2) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 1, 2))) AS year, " +
+//      "SUM(total_amount) AS total_revenue " +
+//      "FROM " + TABLE_ORDER + " " +
+//      "WHERE " + COLUMN_STATUS_ORDER + " = 'DELIVERED' " +
+//      "GROUP BY year " +
+//      "ORDER BY year";
+//
+//    SQLiteDatabase db = this.getReadableDatabase();
+//    Cursor cursor = null;
+//
+//    try {
+//      if (db != null) {
+//        cursor = db.rawQuery(query, null);
+//      }
+//    } catch (Exception e) {
+//      Log.e("DatabaseError", "Error executing query: " + e.getMessage());
+//    }
+//
+//    if (cursor != null) {
+//      Log.d("Revenue by Year", "count = " + cursor.getCount());
+//    } else {
+//      Log.d("Revenue by Year", "No data found");
+//    }
+//
+//    return cursor;
+//  }
 
 }

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,8 +20,7 @@ import com.mssv_71dctm22077.Product.ProductActivity;
 import com.mssv_71dctm22077.Review.ReviewByAdminActivity;
 import com.mssv_71dctm22077.adapter.ImageSliderAdapter;
 import com.mssv_71dctm22077.chart.BarChartCategoryActivity;
-import com.mssv_71dctm22077.chart.ChartCategoryActivity;
-import com.mssv_71dctm22077.order.OrderActivity;
+import com.mssv_71dctm22077.chart.ChartActivity;
 import com.mssv_71dctm22077.order.OrderByAdminActivity;
 import com.mssv_71dctm22077.user.UserActivity;
 
@@ -104,7 +102,7 @@ public class MenuAdminActivity extends AppCompatActivity {
     });
     statisticFloating = findViewById(R.id.fabStatistics);
     statisticFloating.setOnClickListener(view -> {
-      Intent intent = new Intent(this, BarChartCategoryActivity.class);
+      Intent intent = new Intent(this, ChartActivity.class);
       startActivity(intent);
     });
     reviewsFloating = findViewById(R.id.fabNewReviews);

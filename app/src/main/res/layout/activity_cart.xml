@@ -32,37 +32,56 @@
     android:id="@+id/footer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="40dp"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/white"
     app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent">
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="1.0"
+    app:layout_constraintStart_toStartOf="parent">
 
     <EditText
       android:id="@+id/address_input"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:hint="Nhập địa chỉ giao hàng"
-      android:padding="12dp"
       android:background="@drawable/status_shipped"
-      android:inputType="text"/>
+      android:hint="Nhập địa chỉ giao hàng"
+      android:inputType="text"
+      android:padding="12dp" />
 
-    <TextView
-      android:id="@+id/total_price"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Tổng giá: 0 VND"
-      android:textSize="18sp"
-      android:layout_marginBottom="8dp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+      <TextView
+        android:id="@+id/total_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tổng giá: 0 VND"
+        android:textSize="18sp" />
+
+      <TextView
+        android:id="@+id/text_total_item"
+        android:layout_width="84dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="64dp"
+        android:text="Số lượng sản phẩm: "
+        android:textColor="#808080"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/total_price"
+        app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
       android:id="@+id/button_place_order"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:background="?attr/colorAccent"
       android:text="Đặt hàng"
-      android:textColor="@android:color/white"
-      android:background="?attr/colorAccent" />
+      android:textColor="@android:color/white" />
   </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
