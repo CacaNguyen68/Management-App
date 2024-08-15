@@ -52,7 +52,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_CREATED_PRODUCT = "ngay_khoi_tao";
   private static final String COLUMN_USER_CREATED_PRODUCT = "nguoi_khoi_tao";
 
-
   //  Khoi tao cho table nguoi dung
   private static final String TABLE_USER = "table_user";
   private static final String COLUMN_ID_USER = "id";
@@ -87,7 +86,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
   private static final String COLUMN_CREATED_AT_ORDER = "created_at";
   private static final String COLUMN_STATUS_ORDER = "status"; // Thêm cột trạng thái vào bảng
   private static final String COLUMN_ADDRESS_ORDER = "address"; // New address column
- private static final String COLUMN_TOTAL_AMOUNT = "total+amount"; // New address column
+ private static final String COLUMN_TOTAL_ORDER = "total"; // New address column
 
 
   private static final String TABLE_ORDER_ITEM = "table_order_item";
@@ -143,8 +142,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     String queryCartItem = "CREATE TABLE " + TABLE_CART_ITEM + " (" + COLUMN_CART_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_CART_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ITEM + " INTEGER, " + COLUMN_QUANTITY_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_CART_ID_ITEM + ") REFERENCES " + TABLE_CART + "(" + COLUMN_CART_ID + "))";
     db.execSQL(queryCartItem);
 
-    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " (" + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_USER_ID_ORDER + " INTEGER, " + COLUMN_CREATED_AT_ORDER + " TEXT, " + COLUMN_STATUS_ORDER + " TEXT, " + COLUMN_ADDRESS_ORDER + " TEXT, " + //COLUMN_PRICE_PRODUCT + " DOUBLE, " + // Thêm cột trạng thái vào bảng
-      "FOREIGN KEY(" + COLUMN_USER_ID_ORDER + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + "))";
+    String queryOrder = "CREATE TABLE " + TABLE_ORDER + " ("
+      + COLUMN_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+      + COLUMN_USER_ID_ORDER + " INTEGER, "
+      + COLUMN_CREATED_AT_ORDER + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+      + COLUMN_STATUS_ORDER + " TEXT, "
+      + COLUMN_ADDRESS_ORDER + " TEXT, "
+      + COLUMN_TOTAL_ORDER + " DOUBLE, "
+      + "FOREIGN KEY(" + COLUMN_USER_ID_ORDER + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + "))";
     db.execSQL(queryOrder);
 
     String queryOrderItem = "CREATE TABLE " + TABLE_ORDER_ITEM + " (" + COLUMN_ORDER_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_ORDER_ID_ITEM + " INTEGER, " + COLUMN_PRODUCT_ID_ORDER_ITEM + " INTEGER, " + COLUMN_QUANTITY_ORDER_ITEM + " INTEGER, " + "FOREIGN KEY(" + COLUMN_ORDER_ID_ITEM + ") REFERENCES " + TABLE_ORDER + "(" + COLUMN_ORDER_ID + "), " + "FOREIGN KEY(" + COLUMN_PRODUCT_ID_ORDER_ITEM + ") REFERENCES " + TABLE_PRODUCT + "(" + COLUMN_ID_PRODUCT + ")" + ")";
@@ -868,17 +873,14 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     db.delete(TABLE_CART_ITEM, COLUMN_CART_ITEM_ID + " = ?", new String[]{String.valueOf(cartItemId)});
     db.close();
   }
-
-
   // Hàm tạo đơn hàng
-  public long createOrder(int userId, String address) {
+  public long createOrder(int userId, String address, double total) {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
     values.put(COLUMN_USER_ID_ORDER, userId);
-    values.put(COLUMN_CREATED_AT_ORDER, getCurrentDate());
     values.put(COLUMN_STATUS_ORDER, OrderStatus.PLACED.toString()); // Trạng thái đơn hàng là "Đơn hàng đã đặt"
     values.put(COLUMN_ADDRESS_ORDER, address); // Include address
-//    values.put(COLUMN_PRICE_PRODUCT, total);
+    values.put(COLUMN_TOTAL_ORDER, total);
 
 
     // Chèn dòng dữ liệu vào bảng order
@@ -915,32 +917,84 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return productId;
   }
 
-  public List<Order> getAllOrders() {
-    List<Order> orderList = new ArrayList<>();
-    SQLiteDatabase db = this.getReadableDatabase();
+//  public List<Order> getAllOrders() {
+//    List<Order> orderList = new ArrayList<>();
+//    SQLiteDatabase db = this.getReadableDatabase();
+//
+//    // Add the status column to your query and sort by orderId in descending order
+//    Cursor cursor = db.query(TABLE_ORDER, new String[]{COLUMN_ORDER_ID, COLUMN_USER_ID_ORDER, COLUMN_CREATED_AT_ORDER, COLUMN_STATUS_ORDER // Make sure this column exists
+//    }, null, null, null, null, COLUMN_ORDER_ID + " DESC"); // Add the sorting order here
+//
+//    if (cursor.moveToFirst()) {
+//      do {
+//        int orderId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ORDER_ID));
+//        int userIdFromCursor = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_ID_ORDER));
+//        String createdAt = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT_ORDER));
+//
+//        // Read status from cursor and convert it to OrderStatus
+//        String statusString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_STATUS_ORDER));
+//        OrderStatus status = OrderStatus.valueOf(statusString);
+//        double total = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_TOTAL_ORDER));
+//
+//        Order order = new Order(orderId, userIdFromCursor, createdAt, status, total);
+//        orderList.add(order);
+//      } while (cursor.moveToNext());
+//    }
+//    cursor.close();
+//    db.close();
+//    return orderList;
+//  }
+public List<Order> getAllOrders() {
+  List<Order> orderList = new ArrayList<>();
+  SQLiteDatabase db = this.getReadableDatabase();
 
-    // Add the status column to your query and sort by orderId in descending order
-    Cursor cursor = db.query(TABLE_ORDER, new String[]{COLUMN_ORDER_ID, COLUMN_USER_ID_ORDER, COLUMN_CREATED_AT_ORDER, COLUMN_STATUS_ORDER // Make sure this column exists
-    }, null, null, null, null, COLUMN_ORDER_ID + " DESC"); // Add the sorting order here
+  // Define the columns you want to retrieve from the database
+  String[] columns = {
+    COLUMN_ORDER_ID,
+    COLUMN_USER_ID_ORDER,
+    COLUMN_CREATED_AT_ORDER,
+    COLUMN_STATUS_ORDER,
+    COLUMN_TOTAL_ORDER
+  };
 
-    if (cursor.moveToFirst()) {
-      do {
-        int orderId = cursor.getInt(cursor.getColumnIndex(COLUMN_ORDER_ID));
-        int userId = cursor.getInt(cursor.getColumnIndex(COLUMN_USER_ID_ORDER));
-        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_ORDER));
+  // Execute the query, sorting by created_at in descending order
+  Cursor cursor = db.query(
+    TABLE_ORDER,
+    columns,
+    null,
+    null,
+    null,
+    null,
+    COLUMN_CREATED_AT_ORDER + " DESC" // Sorting by creation date in descending order
+  );
 
-        // Read status from cursor and convert it to OrderStatus
-        String statusString = cursor.getString(cursor.getColumnIndex(COLUMN_STATUS_ORDER));
-        OrderStatus status = OrderStatus.valueOf(statusString);
+  // Check if the cursor has data and loop through each row
+  if (cursor.moveToFirst()) {
+    do {
+      int orderId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ORDER_ID));
+      int userIdFromCursor = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_ID_ORDER));
+      String createdAt = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT_ORDER));
 
-        Order order = new Order(orderId, userId, createdAt, status);
-        orderList.add(order);
-      } while (cursor.moveToNext());
-    }
-    cursor.close();
-    db.close();
-    return orderList;
+      // Read the status from the cursor and convert it to OrderStatus enum
+      String statusString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_STATUS_ORDER));
+      OrderStatus status = OrderStatus.valueOf(statusString);
+
+      // Get the total amount for the order
+      double total = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_TOTAL_ORDER));
+
+      // Create an Order object and add it to the list
+      Order order = new Order(orderId, userIdFromCursor, createdAt, status, total);
+      orderList.add(order);
+    } while (cursor.moveToNext());
   }
+
+  // Close the cursor and the database to free resources
+  cursor.close();
+  db.close();
+
+  // Return the list of orders
+  return orderList;
+}
 
   // danh sach cac don hang theo user va chi o trang thai dat hang,xac nhan don hang va cho van chuyen
   public List<Order> getOrderByUserId(int userId) {
@@ -951,10 +1005,17 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     String selection = COLUMN_USER_ID_ORDER + " = ? AND " + COLUMN_STATUS_ORDER + " IN (?, ?, ?)";
     String[] selectionArgs = {String.valueOf(userId), OrderStatus.PLACED.name(), OrderStatus.CONFIRMED.name(), OrderStatus.SHIPPED.name()};
 
-    // Query the database with the specified criteria
-    Cursor cursor = db.query(TABLE_ORDER, new String[]{COLUMN_ORDER_ID, COLUMN_USER_ID_ORDER, COLUMN_CREATED_AT_ORDER, COLUMN_STATUS_ORDER}, selection, selectionArgs, null, null, COLUMN_ORDER_ID + " DESC" // Sort by orderId in descending order
+// Query the database with the specified criteria
+    Cursor cursor = db.query(
+      TABLE_ORDER,
+      new String[]{COLUMN_ORDER_ID, COLUMN_USER_ID_ORDER, COLUMN_CREATED_AT_ORDER, COLUMN_STATUS_ORDER, COLUMN_TOTAL_ORDER},
+      selection,
+      selectionArgs,
+      null,
+      null,
+      COLUMN_ORDER_ID + " DESC" // Sort by orderId in descending order
     );
-
+    // Query the database with the specified criteria
     if (cursor.moveToFirst()) {
       do {
         int orderId = cursor.getInt(cursor.getColumnIndex(COLUMN_ORDER_ID));
@@ -964,8 +1025,47 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         // Read status from cursor and convert it to OrderStatus
         String statusString = cursor.getString(cursor.getColumnIndex(COLUMN_STATUS_ORDER));
         OrderStatus status = OrderStatus.valueOf(statusString);
+        Double total = cursor.getDouble(cursor.getColumnIndex(COLUMN_TOTAL_ORDER));
 
-        Order order = new Order(orderId, userIdFromCursor, createdAt, status);
+        Order order = new Order(orderId, userIdFromCursor, createdAt, status,total);
+        orderList.add(order);
+      } while (cursor.moveToNext());
+    }
+    cursor.close();
+    db.close();
+    return orderList;
+  }
+
+  public List<Order> getOrderByUserIdStatusDeli(int userId) {
+    List<Order> orderList = new ArrayList<>();
+    SQLiteDatabase db = this.getReadableDatabase();
+
+    // Define the selection criteria and arguments
+    String selection = COLUMN_USER_ID_ORDER + " = ? AND " + COLUMN_STATUS_ORDER + " IN (?, ?, ?)";
+    String[] selectionArgs = {String.valueOf(userId), OrderStatus.PLACED.name(), OrderStatus.CONFIRMED.name(), OrderStatus.SHIPPED.name()};
+
+    // Query the database with the specified criteria
+    Cursor cursor = db.query(TABLE_ORDER,
+      new String[]{COLUMN_ORDER_ID, COLUMN_USER_ID_ORDER, COLUMN_CREATED_AT_ORDER, COLUMN_STATUS_ORDER, COLUMN_TOTAL_ORDER}, // Include COLUMN_TOTAL_ORDER
+      selection,
+      selectionArgs,
+      null,
+      null,
+      COLUMN_ORDER_ID + " DESC");
+
+
+    if (cursor.moveToFirst()) {
+      do {
+        int orderId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ORDER_ID));
+        int userIdFromCursor = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_ID_ORDER));
+        String createdAt = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CREATED_AT_ORDER));
+
+        // Read status from cursor and convert it to OrderStatus
+        String statusString = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_STATUS_ORDER));
+        OrderStatus status = OrderStatus.valueOf(statusString);
+        double total = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_TOTAL_ORDER));
+
+        Order order = new Order(orderId, userIdFromCursor, createdAt, status, total);
         orderList.add(order);
       } while (cursor.moveToNext());
     }
@@ -1476,33 +1576,33 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return cursor;
   }
 
-//  public Cursor getRevenueByYear() {
-//    // Câu lệnh SQL để tính doanh thu theo năm cho trạng thái 'DELIVERED'
-//    String query = "SELECT strftime('%Y', date(substr(" + COLUMN_CREATED_AT_ORDER + ", 7, 4) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 4, 2) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 1, 2))) AS year, " +
-//      "SUM(total_amount) AS total_revenue " +
-//      "FROM " + TABLE_ORDER + " " +
-//      "WHERE " + COLUMN_STATUS_ORDER + " = 'DELIVERED' " +
-//      "GROUP BY year " +
-//      "ORDER BY year";
-//
-//    SQLiteDatabase db = this.getReadableDatabase();
-//    Cursor cursor = null;
-//
-//    try {
-//      if (db != null) {
-//        cursor = db.rawQuery(query, null);
-//      }
-//    } catch (Exception e) {
-//      Log.e("DatabaseError", "Error executing query: " + e.getMessage());
-//    }
-//
-//    if (cursor != null) {
-//      Log.d("Revenue by Year", "count = " + cursor.getCount());
-//    } else {
-//      Log.d("Revenue by Year", "No data found");
-//    }
-//
-//    return cursor;
-//  }
+  public Cursor getRevenueByYear() {
+    // Câu lệnh SQL để tính doanh thu theo năm cho trạng thái 'DELIVERED'
+    String query = "SELECT strftime('%Y', date(substr(" + COLUMN_CREATED_AT_ORDER + ", 7, 4) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 4, 2) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 1, 2))) AS year, " +
+      "SUM(total_amount) AS total_revenue " +
+      "FROM " + TABLE_ORDER + " " +
+      "WHERE " + COLUMN_STATUS_ORDER + " = 'DELIVERED' " +
+      "GROUP BY year " +
+      "ORDER BY year";
+
+    SQLiteDatabase db = this.getReadableDatabase();
+    Cursor cursor = null;
+
+    try {
+      if (db != null) {
+        cursor = db.rawQuery(query, null);
+      }
+    } catch (Exception e) {
+      Log.e("DatabaseError", "Error executing query: " + e.getMessage());
+    }
+
+    if (cursor != null) {
+      Log.d("Revenue by Year", "count = " + cursor.getCount());
+    } else {
+      Log.d("Revenue by Year", "No data found");
+    }
+
+    return cursor;
+  }
 
 }

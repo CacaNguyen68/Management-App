@@ -33,7 +33,7 @@ import java.util.List;
 public class CartActivity extends AppCompatActivity {
 
   private RecyclerView recyclerViewCart;
-  private TextView totalPrice, text_total_item;
+  private TextView totalPrice;
   private List<CartItem> cartItemList;
   private CartAdapter cartAdapter;
   private MyDatabaseHelper databaseHelper;
@@ -42,7 +42,7 @@ public class CartActivity extends AppCompatActivity {
   EditText addressInput;
   String address;
   User user;
-  double total = 0.0;
+  double tong ;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,6 @@ public class CartActivity extends AppCompatActivity {
     recyclerViewCart = findViewById(R.id.recyclerViewCart);
     totalPrice = findViewById(R.id.total_price);
     buttonPlaceOrder = findViewById(R.id.button_place_order);
-    text_total_item = findViewById(R.id.text_total_item);
     cartItemList = databaseHelper.getCartItemsByUserId(userId);
 
     cartAdapter = new CartAdapter(this, cartItemList, databaseHelper);
@@ -79,12 +78,14 @@ public class CartActivity extends AppCompatActivity {
   }
 
   public void updateTotalPrice() {
-
+    int soluong = 0;
+    int total = 0 ;
     for (CartItem item : cartItemList) {
       total += item.getProductPrice() * item.getQuantity();
+      soluong++;
     }
-//    totalPrice.setText("Tổng giá: " + total + " VND");
-//    text_total_item.setText("của "+ "");
+    totalPrice.setText("Tổng giá "+soluong+" sản phẩm: " + total + " VND");
+    tong = total;
   }
 
   private void placeOrder() {
@@ -98,7 +99,7 @@ public class CartActivity extends AppCompatActivity {
       addressInput.setError("Địa chỉ không được bỏ trống");
       return;
     }
-    long orderId = databaseHelper.createOrder(userId, address);
+    long orderId = databaseHelper.createOrder(userId, address, tong);
 
     for (CartItem cartItem : cartItemList) {
       int productId = databaseHelper.getProductIdByName(cartItem.getProductName());
@@ -131,6 +132,7 @@ public class CartActivity extends AppCompatActivity {
     if (item.getItemId() == R.id.action_category) {
       // Xử lý khi nhấn vào mục menu
       Intent intent = new Intent(this, CategoryForUserActivity.class);
+      intent.putExtra("phone", user.getPhone());
       startActivity(intent);
       return true;
     }

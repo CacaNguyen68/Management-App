@@ -5,12 +5,14 @@ public class Order {
   private int userId;
   private String createdAt;
   private OrderStatus status;  // Add this line
+  private double total;
 
-  public Order(int orderId, int userId, String createdAt, OrderStatus status) {  // Update constructor
+  public Order(int orderId, int userId, String createdAt, OrderStatus status, double total) {  // Update constructor
     this.orderId = orderId;
     this.userId = userId;
     this.createdAt = createdAt;
     this.status = status;
+    this.total = total;
   }
 
   public int getOrderId() {
@@ -43,5 +45,13 @@ public class Order {
 
   public void setStatus(OrderStatus status) {  // Add setter for status
     this.status = status;
+  }
+
+  public double getTotal() {
+    return total;
+  }
+
+  public void setTotal(double total) {
+    this.total = total;
   }
 }

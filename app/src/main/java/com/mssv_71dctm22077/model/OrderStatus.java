@@ -1,7 +1,7 @@
 package com.mssv_71dctm22077.model;
 
 public enum OrderStatus {
-  PLACED("Đơn hàng đã đặt", "#FFAF10"), // Gold
+  PLACED("Đơn hàng đã đặt", "#000000"), // Gold
   CONFIRMED("Đã xác nhận đơn hàng", "#FF6F00"), // Orange
   SHIPPED("Đơn hàng đang vận chuyển", "#4CAF50"), // Green
   DELIVERED("Giao thành công", "#2196F3"), // Blue

@@ -40,6 +40,7 @@ public class CategoryForUserActivity extends AppCompatActivity {
 
     Intent intentProfile = getIntent();
     String phone = intentProfile.getStringExtra("phone");//lay thanh cong
+
     myDB = new MyDatabaseHelper(this);
     if (phone != null) {
       user = myDB.getUserByPhone(phone);

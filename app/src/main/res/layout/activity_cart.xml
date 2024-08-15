@@ -58,21 +58,10 @@
       <TextView
         android:id="@+id/total_price"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="28dp"
         android:text="Tổng giá: 0 VND"
         android:textSize="18sp" />
-
-      <TextView
-        android:id="@+id/text_total_item"
-        android:layout_width="84dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="64dp"
-        android:text="Số lượng sản phẩm: "
-        android:textColor="#808080"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/total_price"
-        app:layout_constraintTop_toTopOf="parent" />
+      
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
