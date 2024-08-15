@@ -42,21 +42,22 @@ public class FavoriteProductActivity extends AppCompatActivity {
 
     userId = getIntent().getIntExtra("userId", -1);
     Log.d("cac don cua id ", "ID:" + userId);
-
-
-    Intent intentProfile = getIntent();
-    String phone = intentProfile.getStringExtra("phone");//lay thanh cong
     myDB = new MyDatabaseHelper(this);
-    if (phone != null) {
-      user = myDB.getUserByPhone(phone);
-      if (user != null) {
-        Log.d("Profile user", "User ID: " + user.getId());
-      } else {
-        Log.d("Profile user", "User not found with phone: " + phone);
-      }
-    } else {
-      Log.d("Profile user", "Phone number is null");
-    }
+    user = myDB.getUserById(userId);
+
+//    Intent intentProfile = getIntent();
+//    String phone = intentProfile.getStringExtra("phone");//lay thanh cong
+
+//    if (phone != null) {
+//      user = myDB.getUserByPhone(phone);
+//      if (user != null) {
+//        Log.d("Profile user", "User ID: " + user.getId());
+//      } else {
+//        Log.d("Profile user", "User not found with phone: " + phone);
+//      }
+//    } else {
+//      Log.d("Profile user", "Phone number is null");
+//    }
 
 
     // Set up padding for system bars
@@ -103,6 +104,7 @@ public class FavoriteProductActivity extends AppCompatActivity {
     if (item.getItemId() == R.id.action_home) {
       // Xử lý khi nhấn vào mục menu
       Intent intent = new Intent(this, MenuUserActivity.class);
+      intent.putExtra("userId", user.getId());
       startActivity(intent);
       return true;
     }

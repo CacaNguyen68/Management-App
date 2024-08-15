@@ -38,20 +38,11 @@ public class CategoryForUserActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_category_for_user);
 
-    Intent intentProfile = getIntent();
-    String phone = intentProfile.getStringExtra("phone");//lay thanh cong
-
+//    Intent intentProfile = getIntent();
+//    String phone = intentProfile.getStringExtra("phone");//lay thanh cong
+    int userId = getIntent().getIntExtra("userId", -1);
     myDB = new MyDatabaseHelper(this);
-    if (phone != null) {
-      user = myDB.getUserByPhone(phone);
-      if (user != null) {
-        Log.d("Profile user", "User ID: " + user.getId());
-      } else {
-        Log.d("Profile user", "User not found with phone: " + phone);
-      }
-    } else {
-      Log.d("Profile user", "Phone number is null");
-    }
+    user = myDB.getUserById(userId);
 
     // Toolbar
     Toolbar toolbar = findViewById(R.id.toolbar);
@@ -128,6 +119,7 @@ public class CategoryForUserActivity extends AppCompatActivity {
     if (item.getItemId() == R.id.action_home) {
       // Xử lý khi nhấn vào mục menu
       Intent intent = new Intent(this, MenuUserActivity.class);
+      intent.putExtra("userId", user.getId());
       startActivity(intent);
       return true;
     }

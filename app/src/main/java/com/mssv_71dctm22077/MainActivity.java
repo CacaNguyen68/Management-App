@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.mssv_71dctm22077.model.User;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 import com.mssv_71dctm22077.user.RegisterActivity;
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
   EditText edPhone, edPassword;
 
   MyDatabaseHelper myDB;
+  User user;
 
 
   @Override
@@ -36,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     MyDatabaseHelper myDB = new MyDatabaseHelper(this);
     storeDataArrays();
-   myDB.getAllOrderItems();
+    myDB.getAllOrderItems();
+    myDB.getAllUser();
+    user = new User();
 //    storeDataArraysCategory();
 //    storeDataArraysProduct();
 
@@ -67,21 +71,26 @@ public class MainActivity extends AppCompatActivity {
     String phone = edPhone.getText().toString().trim();
     String password = edPassword.getText().toString().trim();
     MyDatabaseHelper mb = new MyDatabaseHelper(MainActivity.this);
-    mb.getAllUser();
 
+    user = mb.getUserByPhone(phone);
     if (mb.checkUser(phone, password)) {
       Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
       String typeUser = mb.getTypeUserByPhone(phone);
+
       Log.d("Type User", typeUser);
       if (typeUser.equals("ADMIN")) {
         // Chuyển sang màn hình chính hoặc làm bất kỳ hành động nào khác sau khi đăng nhập thành công
         Intent intent = new Intent(MainActivity.this, MenuAdminActivity.class);
-        intent.putExtra("phone", phone);
+//        intent.putExtra("phone", phone);
+        intent.putExtra("userId", user.getId());
+        Log.d("sdssa", "dsadsad" + user.getId());
         startActivity(intent);
       } else {
 // Chuyển sang màn hình chính hoặc làm bất kỳ hành động nào khác sau khi đăng nhập thành công
         Intent intent = new Intent(MainActivity.this, MenuUserActivity.class);
-        intent.putExtra("phone", phone);
+//        intent.putExtra("phone", phone);
+        intent.putExtra("userId", user.getId());
+        Log.d("sdssa", "dsadsad" + user.getId());
         startActivity(intent);
       }
 

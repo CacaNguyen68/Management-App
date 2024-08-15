@@ -48,21 +48,11 @@ public class MenuUserActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_menu_user);
-
-    Intent intentProfile = getIntent();
-    String phone = intentProfile.getStringExtra("phone");
     db = new MyDatabaseHelper(this);
-    if (phone != null) {
-      user = db.getUserByPhone(phone);
-      if (user != null) {
-        Log.d("Profile user", "User ID: " + user.getId());
-      } else {
-        Log.d("Profile user", "User not found with phone: " + phone);
-      }
-    } else {
-      Log.d("Profile user", "Phone number is null");
-    }
 
+    int userId = getIntent().getIntExtra("userId", -1);
+    Log.d("cac don cua id ", "ID:" + userId);
+    user = db.getUserById(userId);
     viewPager = findViewById(R.id.viewPager);
 
     // Thêm các ảnh vào danh sách
@@ -102,7 +92,8 @@ public class MenuUserActivity extends AppCompatActivity {
     categoryFloating = findViewById(R.id.fabManageCategories);
     categoryFloating.setOnClickListener(view -> {
       Intent intent = new Intent(MenuUserActivity.this, CategoryForUserActivity.class);
-      intent.putExtra("phone",phone);
+//      intent.putExtra("phone",phone);
+      intent.putExtra("userId", user.getId());
       startActivity(intent);
     });
 
@@ -123,7 +114,7 @@ public class MenuUserActivity extends AppCompatActivity {
     starFloating = findViewById(R.id.fabStar);
     starFloating.setOnClickListener(view -> {
       Intent intent = new Intent(MenuUserActivity.this, FavoriteProductActivity.class);
-      intent.putExtra("phone",phone); // truyen thanh cong
+      intent.putExtra("userId", user.getId());
       startActivity(intent);
     });
 
@@ -142,16 +133,19 @@ public class MenuUserActivity extends AppCompatActivity {
         if (itemId == R.id.navigation_home) {
           // Điều hướng tới Home
           Intent homeIntent = new Intent(MenuUserActivity.this, UserActivity.class);
+          homeIntent.putExtra("userId", user.getId());
           startActivity(homeIntent);
           return true;
         } else if (itemId == R.id.navigation_profile) {
           // Điều hướng tới Profile
           Intent profileIntent = new Intent(MenuUserActivity.this, CategoryActivity.class);
+          profileIntent.putExtra("userId", user.getId());
           startActivity(profileIntent);
           return true;
         } else if (itemId == R.id.navigation_contents) {
           // Điều hướng tới Settings
           Intent settingsIntent = new Intent(MenuUserActivity.this, ContentForUserActivity.class);
+          settingsIntent.putExtra("userId", user.getId());
           startActivity(settingsIntent);
           return true;
         }

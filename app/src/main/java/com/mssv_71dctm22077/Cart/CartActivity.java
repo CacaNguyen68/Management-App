@@ -132,7 +132,7 @@ public class CartActivity extends AppCompatActivity {
     if (item.getItemId() == R.id.action_category) {
       // Xử lý khi nhấn vào mục menu
       Intent intent = new Intent(this, CategoryForUserActivity.class);
-      intent.putExtra("phone", user.getPhone());
+      intent.putExtra("userId", user.getId());
       startActivity(intent);
       return true;
     }
