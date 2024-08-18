@@ -1,6 +1,7 @@
 package com.mssv_71dctm22077.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.model.User;
+import com.mssv_71dctm22077.user.UpdateUserActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +58,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     } else {
       holder.imageView.setImageResource(R.drawable.ic_user); // Placeholder image
     }
+
+    // Set an OnClickListener to open UpdateUserActivity with user details
+    holder.itemView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(context, UpdateUserActivity.class);
+        intent.putExtra("userId", user.getId()); // Pass the user ID
+        intent.putExtra("userName", user.getName());
+        intent.putExtra("userPhone", user.getPhone());
+        intent.putExtra("userEmail", user.getEmail());
+        intent.putExtra("userType", user.getUserType());
+        intent.putExtra("userDob", user.getDob());
+        intent.putExtra("userCreated", user.getCreatedAt());
+        intent.putExtra("userImage", user.getImage());
+        context.startActivity(intent);
+      }
+    });
   }
 
   // Filter method to perform search

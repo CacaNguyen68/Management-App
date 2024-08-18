@@ -11,4 +11,10 @@
   </string-array>
 
   <string name="user_image">Hình ảnh người dùng</string>
+
+
+  <string-array name="user_types_full">
+    <item>Khách hàng</item>
+    <item>Quản trị viên</item>
+  </string-array>
 </resources>

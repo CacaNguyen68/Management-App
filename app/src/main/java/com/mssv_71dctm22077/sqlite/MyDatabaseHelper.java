@@ -295,6 +295,38 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     }
   }
 
+  //UPDATE USER
+  public void updateUser(int userId, String name, String dob, String phone, String email, String password, String userType, byte[] image) {
+    SQLiteDatabase db = this.getWritableDatabase();
+    ContentValues values = new ContentValues();
+
+    values.put(COLUMN_NAME_USER, name);
+    values.put(COLUMN_DOB_USER, dob);
+    values.put(COLUMN_PHONE_USER, phone);
+    values.put(COLUMN_EMAIL_USER, email);
+    if (password != null && !password.isEmpty()) {
+      values.put(COLUMN_PASSWORD, password);
+    }
+    values.put(COLUMN_USER_TYPE, userType);
+    values.put(COLUMN_IMAGE_USER, image);
+
+    try {
+      // Cập nhật thông tin người dùng dựa trên ID người dùng
+      int rowsAffected = db.update(TABLE_USER, values, COLUMN_ID_USER + " = ?", new String[]{String.valueOf(userId)});
+      if (rowsAffected == 0) {
+        Toast.makeText(context, "Cập nhật thất bại!", Toast.LENGTH_SHORT).show();
+      } else {
+        Toast.makeText(context, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+      }
+    } catch (SQLiteConstraintException e) {
+      // Lỗi trùng lặp số điện thoại hoặc email
+      Toast.makeText(context, "Lỗi cập nhật thông tin", Toast.LENGTH_SHORT).show();
+    } finally {
+      // Đóng kết nối đến cơ sở dữ liệu
+      db.close();
+    }
+  }
+
   // Câu truy vấn lấy danh sách người dùng mới vào cơ sở dữ liệu
   public Cursor getAllUser() {
     String query = "SELECT * FROM " + TABLE_USER;

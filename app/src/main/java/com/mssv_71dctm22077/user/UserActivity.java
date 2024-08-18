@@ -108,4 +108,25 @@ public class UserActivity extends AppCompatActivity {
     }
     userAdapter.notifyDataSetChanged();
   }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    // Reload data from the database
+    reloadUserData();
+  }
+
+  private void reloadUserData() {
+    // Clear old data
+    userList.clear();
+
+    // Get updated data from database
+    userList.addAll(myDB.getAllUsers());
+
+    // Notify the adapter about the data change
+    if (userAdapter != null) {
+      userAdapter.notifyDataSetChanged();
+    }
+  }
+
 }
