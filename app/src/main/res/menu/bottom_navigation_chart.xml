@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <item
+    android:id="@+id/navigation_danhmuc"
+    android:icon="@drawable/baseline_border_all_24"
+    android:title="Danh mục" />
+  <item
+    android:id="@+id/navigation_donhang"
+    android:icon="@drawable/baseline_list_alt_24"
+    android:title="Đơn hàng" />
+  <item
+    android:id="@+id/navigation_logout"
+    android:icon="@drawable/ic_logout"
+    android:title="Exit" />
+</menu>

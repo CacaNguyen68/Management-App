@@ -41,9 +41,6 @@ public class ContentActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_content);
 
-    Toolbar toolbar = findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
-
     recyclerView = findViewById(R.id.recyclerViewContent);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
     myDB = new MyDatabaseHelper(this);

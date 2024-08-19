@@ -15,6 +15,7 @@
     android:layout_height="?attr/actionBarSize"
     android:background="?attr/colorPrimary"
     android:elevation="4dp"
+    app:navigationIcon="@drawable/ic_arrow_back"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:layout_constraintTop_toTopOf="parent"
     app:title="Danh sách danh mục" />

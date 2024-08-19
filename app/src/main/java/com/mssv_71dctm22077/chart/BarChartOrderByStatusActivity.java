@@ -3,9 +3,11 @@ package com.mssv_71dctm22077.chart;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -37,6 +39,16 @@ public class BarChartOrderByStatusActivity extends AppCompatActivity {
     barChart = findViewById(R.id.barChart);
 
     setupBarChart(barChart);
+
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+    // Handle navigation icon click (back button click)
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
 
     ArrayList<BarEntry> entries = new ArrayList<>();
     ArrayList<String> labels = new ArrayList<>();

@@ -45,8 +45,8 @@ public class AddContentActivity extends AppCompatActivity {
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setDisplayShowHomeEnabled(true);
+    // Thiết lập sự kiện khi nhấn nút back trên thanh công cụ
+    toolbar.setNavigationOnClickListener(view -> finish());
 
     titleContent = findViewById(R.id.titleContent);
     contentText = findViewById(R.id.contentText);

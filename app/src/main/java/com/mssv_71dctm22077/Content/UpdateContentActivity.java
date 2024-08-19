@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -47,8 +48,16 @@ public class UpdateContentActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_update_content);
 
+    // Toolbar
     Toolbar toolbar = findViewById(R.id.toolbar_update_content);
     setSupportActionBar(toolbar);
+    // Handle navigation icon click (back button click)
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     etTitle = findViewById(R.id.et_update_title);

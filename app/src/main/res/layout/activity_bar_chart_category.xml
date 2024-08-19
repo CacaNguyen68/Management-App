@@ -2,11 +2,24 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   tools:context=".chart.BarChartCategoryActivity">
+  <!-- Toolbar for Navigation and Management -->
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/toolbar"
+    app:navigationIcon="@drawable/ic_arrow_back"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    app:title="Thống kê danh mục"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:layout_alignParentTop="true"
+    android:background="?attr/colorPrimary"
+    android:elevation="4dp"
+    android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
   <com.github.mikephil.charting.charts.BarChart
     android:id="@+id/barChart"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="8dp"/>
+    android:layout_margin="8dp" />
 </RelativeLayout>

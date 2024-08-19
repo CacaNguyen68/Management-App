@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.mssv_71dctm22077.MenuAdminActivity;
+import com.mssv_71dctm22077.MenuUserActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.ProductAdapter;
 import com.mssv_71dctm22077.model.Product;
@@ -46,6 +47,13 @@ public class ProductByCategoryActivity extends AppCompatActivity {
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+    // Handle navigation icon click (back button click)
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
 
     recyclerView = findViewById(R.id.recyclerViewProduct);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -110,22 +118,5 @@ public class ProductByCategoryActivity extends AppCompatActivity {
         productAdapter.notifyDataSetChanged();
       }
     }
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_user, menu);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    if (item.getItemId() == R.id.action_home) {
-      // Xử lý khi nhấn vào mục menu
-      Intent intent = new Intent(this, MenuAdminActivity.class);
-      startActivity(intent);
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
   }
 }

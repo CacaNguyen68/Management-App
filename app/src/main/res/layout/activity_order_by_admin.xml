@@ -5,7 +5,7 @@
   android:id="@+id/main"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="#F5F5F5"
+
   tools:context=".order.OrderByAdminActivity">
 
   <!-- Toolbar -->
@@ -14,6 +14,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="?attr/colorPrimary"
+    app:navigationIcon="@drawable/ic_arrow_back"
     android:elevation="4dp"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:layout_constraintTop_toTopOf="parent"
@@ -25,17 +26,31 @@
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:background="@drawable/search_view_background"
+    android:background="#FFFFFF"
     android:iconifiedByDefault="false"
-    android:queryHint="Tìm kiếm..."
-    android:textColorHint="#000000"
+    android:hint="Tìm kiếm..."
+    android:textColorHint="#FF9800"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/toolbar" />
+  <TextView
+    android:id="@+id/title1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+
+    android:text=" PLACED ; CONFIRMED ; SHIPPED ; DELIVERED ; CANCELED"
+    android:textAlignment="center"
+    android:textColor="#FF9800"
+    android:textSize="14sp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/search_view" />
 
   <!-- Title -->
   <TextView
-    android:id="@+id/title"
+    android:id="@+id/title2"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
@@ -47,7 +62,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/search_view" />
+    app:layout_constraintTop_toBottomOf="@id/title1" />
 
   <!-- RecyclerView -->
   <androidx.recyclerview.widget.RecyclerView
@@ -56,7 +71,9 @@
     android:layout_height="0dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/title" />
-
+    app:layout_constraintTop_toBottomOf="@+id/title2"
+    app:layout_constraintVertical_bias="0.0"
+    tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,17 +24,20 @@ import com.mssv_71dctm22077.order.CustomStatusAdapter;
 import com.mssv_71dctm22077.order.OrderDetailActivity;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderAdminAdapter extends RecyclerView.Adapter<OrderAdminAdapter.OrderViewHolder> {
 
   private List<Order> orders;
+  private List<Order> filteredOrders;
   private Context context;
   private MyDatabaseHelper databaseHelper;
 
   public OrderAdminAdapter(Context context, List<Order> orders) {
     this.context = context;
     this.orders = orders;
+    this.filteredOrders = new ArrayList<>(orders); // Initialize filtered list
     this.databaseHelper = new MyDatabaseHelper(context);
   }
 
@@ -46,7 +51,7 @@ public class OrderAdminAdapter extends RecyclerView.Adapter<OrderAdminAdapter.Or
 
   @Override
   public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-    Order order = orders.get(position);
+    Order order = filteredOrders.get(position);
     holder.orderIdTextView.setText("MA2024" + order.getOrderId());
     holder.createdAtTextView.setText("Ngày tạo: " + order.getCreatedAt());
 
@@ -79,7 +84,38 @@ public class OrderAdminAdapter extends RecyclerView.Adapter<OrderAdminAdapter.Or
 
   @Override
   public int getItemCount() {
-    return orders.size();
+    return filteredOrders.size();
+  }
+
+
+  public Filter getFilter() {
+    return new Filter() {
+      @Override
+      protected FilterResults performFiltering(CharSequence constraint) {
+        String query = constraint.toString().toLowerCase();
+        List<Order> filtered = new ArrayList<>();
+        if (query.isEmpty()) {
+          filtered.addAll(orders);
+        } else {
+          for (Order order : orders) {
+            if (order.getStatus().toString().toLowerCase().contains(query)) {
+              filtered.add(order);
+            }
+          }
+        }
+        FilterResults results = new FilterResults();
+        results.values = filtered;
+        return results;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      protected void publishResults(CharSequence constraint, FilterResults results) {
+        filteredOrders.clear();
+        filteredOrders.addAll((List<Order>) results.values);
+        notifyDataSetChanged();
+      }
+    };
   }
 
   private void showConfirmDialog(Order order, OrderStatus newStatus) {
@@ -116,7 +152,7 @@ public class OrderAdminAdapter extends RecyclerView.Adapter<OrderAdminAdapter.Or
       itemView.setOnClickListener(v -> {
         int position = getAdapterPosition();
         if (position != RecyclerView.NO_POSITION) {
-          Order order = orders.get(position);
+          Order order = filteredOrders.get(position);
           Intent intent = new Intent(context, OrderDetailActivity.class);
           intent.putExtra("orderId", order.getOrderId());
           context.startActivity(intent);

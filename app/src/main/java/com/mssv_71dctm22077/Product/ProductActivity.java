@@ -38,6 +38,13 @@ public class ProductActivity extends AppCompatActivity {
 
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+// Handle navigation icon click (back button click)
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
 
     recyclerView = findViewById(R.id.recyclerViewProduct);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -55,7 +62,7 @@ public class ProductActivity extends AppCompatActivity {
 //      loadProductsByCategory(categoryId);
 //      Log.d("vao ham con","id: "+categoryId);
 //    } else {
-      loadData();
+    loadData();
 //      Log.d("ham lon", "khong chinh xac");
 //    }
 

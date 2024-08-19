@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +37,13 @@ public class UserActivity extends AppCompatActivity {
     setContentView(R.layout.activity_user);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+    // Handle navigation icon click (back button click)
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
 
     recyclerView = findViewById(R.id.recyclerViewUser);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));

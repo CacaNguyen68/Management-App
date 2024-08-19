@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
@@ -42,6 +43,13 @@ public class CategoryActivity extends AppCompatActivity {
     // Toolbar
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+    // Handle navigation icon click (back button click)
+    toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        finish();
+      }
+    });
 
     // RecyclerView and FloatingActionButton
     recyclerView = findViewById(R.id.recyclerViewDanhMuc);

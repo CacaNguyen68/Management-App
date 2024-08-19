@@ -125,33 +125,33 @@ public class MenuUserActivity extends AppCompatActivity {
       startActivity(intent);
     });
 
-    BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-    bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-      @Override
-      public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == R.id.navigation_home) {
-          // Điều hướng tới Home
-          Intent homeIntent = new Intent(MenuUserActivity.this, UserActivity.class);
-          homeIntent.putExtra("userId", user.getId());
-          startActivity(homeIntent);
-          return true;
-        } else if (itemId == R.id.navigation_profile) {
-          // Điều hướng tới Profile
-          Intent profileIntent = new Intent(MenuUserActivity.this, CategoryActivity.class);
-          profileIntent.putExtra("userId", user.getId());
-          startActivity(profileIntent);
-          return true;
-        } else if (itemId == R.id.navigation_contents) {
-          // Điều hướng tới Settings
-          Intent settingsIntent = new Intent(MenuUserActivity.this, ContentForUserActivity.class);
-          settingsIntent.putExtra("userId", user.getId());
-          startActivity(settingsIntent);
-          return true;
-        }
-        return false;
-      }
-    });
+//    BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+//    bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+//      @Override
+//      public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//        int itemId = item.getItemId();
+//        if (itemId == R.id.navigation_home) {
+//          // Điều hướng tới Home
+//          Intent homeIntent = new Intent(MenuUserActivity.this, UserActivity.class);
+//          homeIntent.putExtra("userId", user.getId());
+//          startActivity(homeIntent);
+//          return true;
+//        } else if (itemId == R.id.navigation_profile) {
+//          // Điều hướng tới Profile
+//          Intent profileIntent = new Intent(MenuUserActivity.this, CategoryActivity.class);
+//          profileIntent.putExtra("userId", user.getId());
+//          startActivity(profileIntent);
+//          return true;
+//        } else if (itemId == R.id.navigation_contents) {
+//          // Điều hướng tới Settings
+//          Intent settingsIntent = new Intent(MenuUserActivity.this, ContentForUserActivity.class);
+//          settingsIntent.putExtra("userId", user.getId());
+//          startActivity(settingsIntent);
+//          return true;
+//        }
+//        return false;
+//      }
+//    });
   }
 
   @Override

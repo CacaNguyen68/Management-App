@@ -123,23 +123,24 @@ public class MenuAdminActivity extends AppCompatActivity {
       @Override
       public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.navigation_home) {
+        if (itemId == R.id.navigation_login) {
           // Điều hướng tới Home và dọn sạch back stack
           Intent homeIntent = new Intent(MenuAdminActivity.this, MainActivity.class);
           homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
           startActivity(homeIntent);
-          return true;
-        } else if (itemId == R.id.navigation_profile) {
-          // Điều hướng tới Profile
-          Intent profileIntent = new Intent(MenuAdminActivity.this, CategoryActivity.class);
-          profileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-          startActivity(profileIntent);
           return true;
         } else if (itemId == R.id.navigation_contents) {
           // Điều hướng tới Contents
           Intent contentsIntent = new Intent(MenuAdminActivity.this, ContentActivity.class);
           contentsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
           startActivity(contentsIntent);
+          finish();
+          return true;
+        } else if (itemId == R.id.navigation_logout) {
+          // Thoát tất cả các Activity và thoát ứng dụng
+          finishAffinity();
+          // Kết thúc toàn bộ ứng dụng
+          System.exit(0);
           return true;
         }
         return false;
