@@ -26,9 +26,11 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class MyDatabaseHelper extends SQLiteOpenHelper {
 
@@ -1235,30 +1237,6 @@ public List<Order> getAllOrders() {
     return productList;
   }
 
-//  public List<Review> getReviewsByOrderId(int orderId) {
-//    List<Review> reviews = new ArrayList<>();
-//    SQLiteDatabase db = this.getReadableDatabase();
-//    String query = "SELECT * FROM " + TABLE_REVIEW + " WHERE " + COLUMN_ORDER_ID_REVIEW + " = ?";
-//    Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(orderId)});
-//
-//    if (cursor.moveToFirst()) {
-//      do {
-//        int reviewId = cursor.getInt(cursor.getColumnIndex(COLUMN_REVIEW_ID));
-//        int productId = cursor.getInt(cursor.getColumnIndex(COLUMN_PRODUCT_ID_REVIEW));
-//        float rating = cursor.getFloat(cursor.getColumnIndex(COLUMN_RATING));
-//        String reviewText = cursor.getString(cursor.getColumnIndex(COLUMN_REVIEW_TEXT));
-//        String createdAt = cursor.getString(cursor.getColumnIndex(COLUMN_CREATED_AT_REVIEW));
-//
-//        reviews.add(new Review(reviewId, orderId, productId, rating, reviewText, createdAt));
-//      } while (cursor.moveToNext());
-//    }
-//
-//    cursor.close();
-//    db.close();
-//    return reviews;
-//  }
-
-
   public boolean addReview(int orderId, int productId, float rating, String reviewText, String reviewCreatedBy) {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
@@ -1279,7 +1257,6 @@ public List<Order> getAllOrders() {
       return true;
     }
   }
-
 
   public boolean updateReview(int orderId, int productId, float rating, String reviewText) {
     SQLiteDatabase db = this.getWritableDatabase();
@@ -1399,7 +1376,6 @@ public List<Order> getAllOrders() {
     int result = db.update("table_content", contentValues, "id = ?", new String[]{String.valueOf(id)});
     return result > 0;
   }
-
 
   public boolean deleteContent(int id) {
     SQLiteDatabase db = this.getWritableDatabase();
@@ -1549,7 +1525,6 @@ public List<Order> getAllOrders() {
     return cursor;
   }
 
-
   public Cursor getRevenueByDate() {
     // Câu lệnh SQL để tính doanh thu theo ngày cho trạng thái 'DELIVERED'
     String query = "SELECT strftime('%Y-%m-%d', date(substr(" + COLUMN_CREATED_AT_ORDER + ", 7, 4) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 4, 2) || '-' || substr(" + COLUMN_CREATED_AT_ORDER + ", 1, 2))) AS date, " +
@@ -1637,4 +1612,120 @@ public List<Order> getAllOrders() {
     return cursor;
   }
 
+  public List<Double> getTotalRevenueForChart(int year) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    List<Double> revenueList = new ArrayList<>();
+
+    // 1. Tính tổng doanh thu theo ngày hiện tại cho các đơn hàng đã giao
+    String queryDay = "SELECT SUM(" + COLUMN_TOTAL_ORDER + ") AS total_revenue_day " +
+      "FROM " + TABLE_ORDER + " " +
+      "WHERE date(" + COLUMN_CREATED_AT_ORDER + ") = date('now') " +
+      "AND " + COLUMN_STATUS_ORDER + " = ?";
+
+    Cursor cursorDay = db.rawQuery(queryDay, new String[]{OrderStatus.DELIVERED.name()});
+    double totalRevenueDay = 0;
+    if (cursorDay != null && cursorDay.moveToFirst()) {
+      totalRevenueDay = cursorDay.getDouble(cursorDay.getColumnIndex("total_revenue_day"));
+      cursorDay.close();
+    }
+    revenueList.add(totalRevenueDay);
+    Log.d("RevenueChart", "Total Revenue for Today (Delivered Orders): " + totalRevenueDay);
+
+    // 2. Tính tổng doanh thu theo tháng hiện tại cho các đơn hàng đã giao
+    Calendar calendar = Calendar.getInstance();
+    int monthNumber = calendar.get(Calendar.MONTH) + 1; // Tháng từ 0-11, cộng thêm 1 để có tháng từ 1-12
+
+    String queryMonth = "SELECT SUM(" + COLUMN_TOTAL_ORDER + ") AS total_revenue_month " +
+      "FROM " + TABLE_ORDER + " " +
+      "WHERE strftime('%m', " + COLUMN_CREATED_AT_ORDER + ") = ? " +
+      "AND strftime('%Y', " + COLUMN_CREATED_AT_ORDER + ") = ? " +
+      "AND " + COLUMN_STATUS_ORDER + " = ?";
+
+    Cursor cursorMonth = db.rawQuery(queryMonth, new String[]{String.format("%02d", monthNumber), String.valueOf(year), OrderStatus.DELIVERED.name()});
+    double totalRevenueMonth = 0;
+    if (cursorMonth != null && cursorMonth.moveToFirst()) {
+      totalRevenueMonth = cursorMonth.getDouble(cursorMonth.getColumnIndex("total_revenue_month"));
+      cursorMonth.close();
+    }
+    revenueList.add(totalRevenueMonth);
+    Log.d("RevenueChart", "Total Revenue for Month " + monthNumber + " of " + year + " (Delivered Orders): " + totalRevenueMonth);
+
+    // 3. Tính tổng doanh thu theo năm hiện tại cho các đơn hàng đã giao
+    String queryYear = "SELECT SUM(" + COLUMN_TOTAL_ORDER + ") AS total_revenue_year " +
+      "FROM " + TABLE_ORDER + " " +
+      "WHERE strftime('%Y', " + COLUMN_CREATED_AT_ORDER + ") = ? " +
+      "AND " + COLUMN_STATUS_ORDER + " = ?";
+
+    Cursor cursorYear = db.rawQuery(queryYear, new String[]{String.valueOf(year), OrderStatus.DELIVERED.name()});
+    double totalRevenueYear = 0;
+    if (cursorYear != null && cursorYear.moveToFirst()) {
+      totalRevenueYear = cursorYear.getDouble(cursorYear.getColumnIndex("total_revenue_year"));
+      cursorYear.close();
+    }
+    revenueList.add(totalRevenueYear);
+    Log.d("RevenueChart", "Total Revenue for Year " + year + " (Delivered Orders): " + totalRevenueYear);
+
+    db.close();
+    return revenueList;
+  }
+
+  private String getRandomDate() {
+    Random random = new Random();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    int year = 2024; // Chọn năm từ 2020 đến 2024
+    int month = 8; // Chọn tháng từ 1 đến 7
+    int day = 1 + random.nextInt(15); // Chọn ngày từ 1 đến 28 để tránh ngày không hợp lệ
+
+    // Tạo ngày ngẫu nhiên
+    String date = String.format("%d-%02d-%02d %02d:%02d:%02d", year, month, day, random.nextInt(24), random.nextInt(60), random.nextInt(60));
+    return date;
+  }
+
+  // Phương thức thêm dữ liệu mẫu vào bảng đơn hàng
+  public void insertTestOrders() {
+    SQLiteDatabase db = this.getWritableDatabase();
+
+    // Tạo dữ liệu mẫu với ngày ngẫu nhiên
+    ContentValues values1 = new ContentValues();
+    values1.put(COLUMN_USER_ID_ORDER, 1);
+    values1.put(COLUMN_STATUS_ORDER, OrderStatus.DELIVERED.name());
+    values1.put(COLUMN_ADDRESS_ORDER, "123 Đường A, TP.HCM");
+    values1.put(COLUMN_TOTAL_ORDER, 500000);
+    values1.put(COLUMN_CREATED_AT_ORDER, getRandomDate()); // Ngày ngẫu nhiên
+    db.insert(TABLE_ORDER, null, values1);
+
+    ContentValues values2 = new ContentValues();
+    values2.put(COLUMN_USER_ID_ORDER, 2);
+    values2.put(COLUMN_STATUS_ORDER, OrderStatus.DELIVERED.name());
+    values2.put(COLUMN_ADDRESS_ORDER, "456 Đường B, TP.HCM");
+    values2.put(COLUMN_TOTAL_ORDER, 300000);
+    values2.put(COLUMN_CREATED_AT_ORDER, getRandomDate()); // Ngày ngẫu nhiên
+    db.insert(TABLE_ORDER, null, values2);
+
+    ContentValues values3 = new ContentValues();
+    values3.put(COLUMN_USER_ID_ORDER, 1);
+    values3.put(COLUMN_STATUS_ORDER, OrderStatus.DELIVERED.name());
+    values3.put(COLUMN_ADDRESS_ORDER, "789 Đường C, TP.HCM");
+    values3.put(COLUMN_TOTAL_ORDER, 700000);
+    values3.put(COLUMN_CREATED_AT_ORDER, getRandomDate()); // Ngày ngẫu nhiên
+    db.insert(TABLE_ORDER, null, values3);
+
+    ContentValues values4 = new ContentValues();
+    values4.put(COLUMN_USER_ID_ORDER, 3);
+    values4.put(COLUMN_STATUS_ORDER, OrderStatus.CONFIRMED.name());
+    values4.put(COLUMN_ADDRESS_ORDER, "321 Đường D, TP.HCM");
+    values4.put(COLUMN_TOTAL_ORDER, 250000);
+    values4.put(COLUMN_CREATED_AT_ORDER, getRandomDate()); // Ngày ngẫu nhiên
+    db.insert(TABLE_ORDER, null, values4);
+
+    ContentValues values5 = new ContentValues();
+    values5.put(COLUMN_USER_ID_ORDER, 2);
+    values5.put(COLUMN_STATUS_ORDER, OrderStatus.SHIPPED.name());
+    values5.put(COLUMN_ADDRESS_ORDER, "654 Đường E, TP.HCM");
+    values5.put(COLUMN_TOTAL_ORDER, 600000);
+    values5.put(COLUMN_CREATED_AT_ORDER, getRandomDate()); // Ngày ngẫu nhiên
+    db.insert(TABLE_ORDER, null, values5);
+
+    db.close();
+  }
 }

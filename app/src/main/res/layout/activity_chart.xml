@@ -12,13 +12,9 @@
     android:layout_height="?attr/actionBarSize"
     android:background="?attr/colorPrimary"
     android:elevation="4dp"
-    android:titleTextColor="@color/black"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:layout_constraintTop_toTopOf="parent"
-    app:navigationContentDescription="Back"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    android:title="CHART QUẢN LÝ"
-    />
+    app:title="Biểu đồ thống kê" />
 
   <!-- LinearLayout to contain buttons -->
   <LinearLayout
@@ -26,12 +22,13 @@
     android:layout_height="match_parent"
     android:layout_below="@id/toolbar"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:gravity="center">
 
     <!-- Button 1 -->
     <Button
       android:id="@+id/button1"
-      android:layout_width="match_parent"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginBottom="8dp"
       android:backgroundTint="#FF5722"
@@ -41,7 +38,7 @@
     <!-- Button 2 -->
     <Button
       android:id="@+id/button2"
-      android:layout_width="match_parent"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginBottom="8dp"
       android:backgroundTint="#FF5722"
@@ -50,28 +47,13 @@
     <!-- Button 3 -->
     <Button
       android:id="@+id/button3"
-      android:layout_width="match_parent"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:backgroundTint="#FF5722"
       android:layout_marginBottom="8dp"
-      android:text="Button 3"/>
+      android:text="Biểu đồ doanh thu theo ngày, tháng, năm hiện tại"
+      android:textColor="@android:color/white"/>
 
-    <!-- Button 4 -->
-    <Button
-      android:id="@+id/button4"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:backgroundTint="#FF5722"
-      android:layout_marginBottom="8dp"
-      android:text="Button 4"/>
-
-    <!-- Button 5 -->
-    <Button
-      android:id="@+id/button5"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:backgroundTint="#FF5722"
-      android:text="Button 5"/>
   </LinearLayout>
 
 </RelativeLayout>

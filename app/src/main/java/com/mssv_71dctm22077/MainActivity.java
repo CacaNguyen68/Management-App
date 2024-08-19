@@ -1,7 +1,9 @@
 package com.mssv_71dctm22077;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.mssv_71dctm22077.model.CartItem;
 import com.mssv_71dctm22077.model.User;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 import com.mssv_71dctm22077.user.RegisterActivity;
@@ -144,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
       myDB.addProduct("[NARUTO] Costume Naruto", 220000, 2, formatter.format(today), "Super Admin", null);
       myDB.addProduct("[Naruto] Áo khoác Hokage đệ tứ – Minato", 250000, 2, formatter.format(today), "Super Admin", null);
 
-
+      myDB.insertTestOrders();
     }
   }
 }

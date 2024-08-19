@@ -99,6 +99,7 @@ public class CartActivity extends AppCompatActivity {
       addressInput.setError("Địa chỉ không được bỏ trống");
       return;
     }
+    Log.d("Tong tien luu","tien: "+tong);
     long orderId = databaseHelper.createOrder(userId, address, tong);
 
     for (CartItem cartItem : cartItemList) {

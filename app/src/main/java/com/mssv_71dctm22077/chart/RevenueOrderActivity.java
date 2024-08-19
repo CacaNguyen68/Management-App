@@ -22,6 +22,7 @@ import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.sqlite.MyDatabaseHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RevenueOrderActivity extends AppCompatActivity {
 
@@ -40,24 +41,24 @@ public class RevenueOrderActivity extends AppCompatActivity {
 
     ArrayList<BarEntry> entries = new ArrayList<>();
     ArrayList<String> labels = new ArrayList<>();
-    Cursor cursor = mb.getRevenueByDate(); // Câu lệnh SQL tính doanh thu theo ngày
 
-    if (cursor != null) {
-      int index = 0;
-      while (cursor.moveToNext()) {
-        String date = cursor.getString(0); // Ngày
-        float revenue = cursor.getFloat(1); // Doanh thu
+    // Giả sử bạn muốn lấy dữ liệu cho tuần hiện tại và năm hiện tại
+    int currentYear = 2024; // Lấy năm hiện tại (giả sử là năm 2024)
 
-         Log.d("ChartData", "Date: " + date + ", Revenue: " + revenue);
+    // Lấy dữ liệu doanh thu theo ngày, tuần, năm
+    List<Double> revenues = mb.getTotalRevenueForChart(currentYear);
 
-        entries.add(new BarEntry(index, revenue));
-        labels.add(date);
-        index++;
-      }
-      cursor.close();
-    }
+    // Thêm dữ liệu vào entries và labels
+    entries.add(new BarEntry(0, revenues.get(0).floatValue()));
+    labels.add("Hôm nay");
 
-    BarDataSet dataSet = new BarDataSet(entries, "Doanh thu theo ngày");
+    entries.add(new BarEntry(1, revenues.get(1).floatValue()));
+    labels.add("Tháng này");
+
+    entries.add(new BarEntry(2, revenues.get(2).floatValue()));
+    labels.add("Năm nay");
+
+    BarDataSet dataSet = new BarDataSet(entries, "Doanh thu");
     dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
     dataSet.setValueTextSize(12f);
 

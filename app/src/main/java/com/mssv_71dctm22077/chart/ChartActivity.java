@@ -35,8 +35,6 @@ public class ChartActivity extends AppCompatActivity {
     Button button1 = findViewById(R.id.button1);
     Button button2 = findViewById(R.id.button2);
     Button button3 = findViewById(R.id.button3);
-    Button button4 = findViewById(R.id.button4);
-    Button button5 = findViewById(R.id.button5);
 
     button1.setOnClickListener(v -> {
       Intent intent = new Intent(ChartActivity.this, BarChartCategoryActivity.class);
@@ -53,14 +51,5 @@ public class ChartActivity extends AppCompatActivity {
       startActivity(intent);
     });
 
-    button4.setOnClickListener(v -> {
-//      Intent intent = new Intent(ChartActivity.this, Button4Activity.class);
-//      startActivity(intent);
-    });
-
-    button5.setOnClickListener(v -> {
-//      Intent intent = new Intent(ChartActivity.this, Button5Activity.class);
-//      startActivity(intent);
-    });
   }
 }

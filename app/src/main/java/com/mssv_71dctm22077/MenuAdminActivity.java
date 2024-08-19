@@ -124,19 +124,22 @@ public class MenuAdminActivity extends AppCompatActivity {
       public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.navigation_home) {
-          // Điều hướng tới Home
-          Intent homeIntent = new Intent(MenuAdminActivity.this, UserActivity.class);
+          // Điều hướng tới Home và dọn sạch back stack
+          Intent homeIntent = new Intent(MenuAdminActivity.this, MainActivity.class);
+          homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
           startActivity(homeIntent);
           return true;
         } else if (itemId == R.id.navigation_profile) {
           // Điều hướng tới Profile
           Intent profileIntent = new Intent(MenuAdminActivity.this, CategoryActivity.class);
+          profileIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
           startActivity(profileIntent);
           return true;
         } else if (itemId == R.id.navigation_contents) {
-          // Điều hướng tới Settings
-          Intent settingsIntent = new Intent(MenuAdminActivity.this, ContentActivity.class);
-          startActivity(settingsIntent);
+          // Điều hướng tới Contents
+          Intent contentsIntent = new Intent(MenuAdminActivity.this, ContentActivity.class);
+          contentsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+          startActivity(contentsIntent);
           return true;
         }
         return false;
