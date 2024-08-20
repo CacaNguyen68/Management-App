@@ -9,12 +9,16 @@ import android.view.MenuItem;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mssv_71dctm22077.HistoryActivity;
+import com.mssv_71dctm22077.MainActivity;
 import com.mssv_71dctm22077.MenuUserActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.OrderAdapter;
@@ -34,6 +38,11 @@ public class OrderActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_order);
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+    // Thiết lập sự kiện khi nhấn nút back trên thanh công cụ
+    toolbar.setNavigationOnClickListener(view -> finish());
+
 
     userId = getIntent().getIntExtra("userId", -1);
     Log.d("cac don cua id ", "ID:" + userId);
@@ -51,6 +60,36 @@ public class OrderActivity extends AppCompatActivity {
     orderAdapter = new OrderAdapter(this, orderList);
     recyclerViewOrders.setAdapter(orderAdapter);
     recyclerViewOrders.setLayoutManager(new LinearLayoutManager(this));
+
+    // Initialize BottomNavigationView and set listener
+    BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+    bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+      @Override
+      public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.navigation_login) {
+          // Điều hướng tới Home
+          Intent homeIntent = new Intent(OrderActivity.this, MainActivity.class);
+          homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+          startActivity(homeIntent);
+          return true;
+        }
+//        else if (itemId == R.id.navigation_profile) {
+//          // Điều hướng tới Profile
+//          Intent profileIntent = new Intent(MenuUserActivity.this, CategoryActivity.class);
+//          profileIntent.putExtra("userId", user.getId());
+//          startActivity(profileIntent);
+//          return true;
+//        }
+        else if (itemId == R.id.navigation_exit) {
+          finishAffinity();
+          // Kết thúc toàn bộ ứng dụng
+          System.exit(0);
+          return true;
+        }
+        return false;
+      }
+    });
   }
 
   @Override
@@ -64,6 +103,7 @@ public class OrderActivity extends AppCompatActivity {
     if (item.getItemId() == R.id.action_home) {
       // Xử lý khi nhấn vào mục menu
       Intent intent = new Intent(this, MenuUserActivity.class);
+      intent.putExtra("userId", userId); // truyen thanh cong
       startActivity(intent);
       return true;
     }

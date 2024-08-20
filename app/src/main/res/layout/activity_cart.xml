@@ -11,6 +11,7 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
+    app:navigationIcon="@drawable/ic_arrow_back"
     android:background="?attr/colorPrimary"
     android:elevation="4dp"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
@@ -61,7 +62,7 @@
         android:layout_height="28dp"
         android:text="Tổng giá: 0 VND"
         android:textSize="18sp" />
-      
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button

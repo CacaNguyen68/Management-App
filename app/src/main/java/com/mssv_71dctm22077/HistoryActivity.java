@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -37,6 +38,11 @@ public class HistoryActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_history);
 
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+    // Thiết lập sự kiện khi nhấn nút back trên thanh công cụ
+    toolbar.setNavigationOnClickListener(view -> finish());
+
     userId = getIntent().getIntExtra("userId", -1);
     Log.d("cac don cua id ", "ID:" + userId);
 
@@ -60,50 +66,28 @@ public class HistoryActivity extends AppCompatActivity {
       @Override
       public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
-
-        if (itemId == R.id.navigation_return) {
-          // Quay trở lại màn hình trước đó
-          finish(); // Kết thúc Activity hiện tại và quay lại Activity trước đó
-          return true;
-
-        } else if (itemId == R.id.navigation_profile) {
-          // Chuyển tới màn hình hồ sơ người dùng
-          Intent profileIntent = new Intent(HistoryActivity.this, CategoryActivity.class);
-          startActivity(profileIntent);
-          return true;
-
-        } else if (itemId == R.id.navigation_exit) {
-          // Thực hiện đăng xuất và quay lại màn hình đăng nhập
-          logoutAndReturnToLogin();
+        if (itemId == R.id.navigation_login) {
+          // Điều hướng tới Home
+          Intent homeIntent = new Intent(HistoryActivity.this, MainActivity.class);
+          homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+          startActivity(homeIntent);
           return true;
         }
-
+//        else if (itemId == R.id.navigation_profile) {
+//          // Điều hướng tới Profile
+//          Intent profileIntent = new Intent(MenuUserActivity.this, CategoryActivity.class);
+//          profileIntent.putExtra("userId", user.getId());
+//          startActivity(profileIntent);
+//          return true;
+//        }
+        else if (itemId == R.id.navigation_exit) {
+          finishAffinity();
+          // Kết thúc toàn bộ ứng dụng
+          System.exit(0);
+          return true;
+        }
         return false;
       }
     });
-  }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_user, menu);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    if (item.getItemId() == R.id.action_home) {
-      // Handle action home click
-      Intent intent = new Intent(this, MenuUserActivity.class);
-      startActivity(intent);
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
-  }
-
-  private void logoutAndReturnToLogin() {
-    Intent loginIntent = new Intent(HistoryActivity.this, MainActivity.class);
-    loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Xóa các Activity trước đó
-    startActivity(loginIntent);
-    finish(); // Kết thúc Activity hiện tại
   }
 }

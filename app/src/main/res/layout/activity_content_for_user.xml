@@ -17,7 +17,7 @@
     android:elevation="4dp"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:layout_constraintTop_toTopOf="parent"
-    app:title="Danh sách danh mục" />
+    app:title="Danh sách bài viết" />
 
   <!-- Search View -->
   <androidx.appcompat.widget.SearchView

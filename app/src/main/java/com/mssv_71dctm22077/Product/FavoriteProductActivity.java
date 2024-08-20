@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -39,6 +40,10 @@ public class FavoriteProductActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     EdgeToEdge.enable(this);
     setContentView(R.layout.activity_favorite_product);
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+    // Thiết lập sự kiện khi nhấn nút back trên thanh công cụ
+    toolbar.setNavigationOnClickListener(view -> finish());
 
     userId = getIntent().getIntExtra("userId", -1);
     Log.d("cac don cua id ", "ID:" + userId);

@@ -13,25 +13,26 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
+    app:navigationIcon="@drawable/ic_arrow_back"
     android:background="?attr/colorPrimary"
     android:elevation="4dp"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:layout_constraintTop_toTopOf="parent"
     app:title="Danh sách đơn hàng" />
 
-  <!-- Search View -->
-  <androidx.appcompat.widget.SearchView
-    android:id="@+id/search_view"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:background="@drawable/search_view_background"
-    android:iconifiedByDefault="false"
-    android:queryHint="Tìm kiếm..."
-    android:textColorHint="#000000"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/toolbar" />
+<!--  &lt;!&ndash; Search View &ndash;&gt;-->
+<!--  <androidx.appcompat.widget.SearchView-->
+<!--    android:id="@+id/search_view"-->
+<!--    android:layout_width="0dp"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:layout_margin="8dp"-->
+<!--    android:background="@drawable/search_view_background"-->
+<!--    android:iconifiedByDefault="false"-->
+<!--    android:queryHint="Tìm kiếm..."-->
+<!--    android:textColorHint="#000000"-->
+<!--    app:layout_constraintEnd_toEndOf="parent"-->
+<!--    app:layout_constraintStart_toStartOf="parent"-->
+<!--    app:layout_constraintTop_toBottomOf="@id/toolbar" />-->
 
   <!-- Title -->
   <TextView
@@ -40,14 +41,14 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
     android:fontFamily="sans-serif-black"
-    android:text="Lịch sử đơn hàng của tôi"
+    android:text="Lịch sử đơn hàng giao thành công của tôi"
     android:textAlignment="center"
     android:textColor="#000000"
     android:textSize="20sp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintHorizontal_bias="0.5"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/search_view" />
+    app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
   <!-- RecyclerView -->
   <androidx.recyclerview.widget.RecyclerView

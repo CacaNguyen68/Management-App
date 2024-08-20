@@ -40,6 +40,11 @@ public class ContentActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_content);
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
+    // Thiết lập sự kiện khi nhấn nút back trên thanh công cụ
+    toolbar.setNavigationOnClickListener(view -> finish());
+
 
     recyclerView = findViewById(R.id.recyclerViewContent);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));

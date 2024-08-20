@@ -2,6 +2,7 @@ package com.mssv_71dctm22077.Content;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,12 +34,14 @@ public class ContentForUserActivity extends AppCompatActivity {
   private ContentForUserAdapter contentAdapter;
   private ArrayList<Content> contentList;
   private MyDatabaseHelper myDB;
+  private int userId;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_content_for_user);
-
+    userId = getIntent().getIntExtra("userId", -1);
+    Log.d("CONTENT XEM", "ID:" + userId);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -64,6 +67,7 @@ public class ContentForUserActivity extends AppCompatActivity {
         return true;
       }
     });
+
 
 
   }
@@ -108,6 +112,7 @@ public class ContentForUserActivity extends AppCompatActivity {
     if (item.getItemId() == R.id.action_home) {
       // Xử lý khi nhấn vào mục menu
       Intent intent = new Intent(this, MenuUserActivity.class);
+      intent.putExtra("userId", userId); // truyen thanh cong
       startActivity(intent);
       return true;
     }

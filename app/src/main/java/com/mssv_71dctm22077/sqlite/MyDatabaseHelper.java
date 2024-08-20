@@ -1076,7 +1076,7 @@ public List<Order> getAllOrders() {
 
     // Define the selection criteria and arguments
     String selection = COLUMN_USER_ID_ORDER + " = ? AND " + COLUMN_STATUS_ORDER + " IN (?, ?, ?)";
-    String[] selectionArgs = {String.valueOf(userId), OrderStatus.PLACED.name(), OrderStatus.CONFIRMED.name(), OrderStatus.SHIPPED.name()};
+    String[] selectionArgs = {String.valueOf(userId), OrderStatus.DELIVERED.name()};
 
     // Query the database with the specified criteria
     Cursor cursor = db.query(TABLE_ORDER,
@@ -1107,6 +1107,7 @@ public List<Order> getAllOrders() {
     db.close();
     return orderList;
   }
+
 
   public void updateOrderStatus(int orderId, OrderStatus newStatus) {
     SQLiteDatabase db = this.getWritableDatabase();

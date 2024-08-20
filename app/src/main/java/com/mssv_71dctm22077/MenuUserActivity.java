@@ -38,7 +38,7 @@ public class MenuUserActivity extends AppCompatActivity {
   private Runnable runnable;
   private ImageSliderAdapter adapter;
   private List<Integer> imageList;
-  private FloatingActionButton categoryFloating, cartFloating, orderFloating, starFloating, historyFloating;
+  private FloatingActionButton categoryFloating, cartFloating, orderFloating, starFloating, historyFloating, contentFloating;
   private CoordinatorLayout coordinatorLayout;
   private String userId;
   private MyDatabaseHelper db;
@@ -125,33 +125,42 @@ public class MenuUserActivity extends AppCompatActivity {
       startActivity(intent);
     });
 
-//    BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-//    bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-//      @Override
-//      public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//        int itemId = item.getItemId();
-//        if (itemId == R.id.navigation_home) {
-//          // Điều hướng tới Home
-//          Intent homeIntent = new Intent(MenuUserActivity.this, UserActivity.class);
-//          homeIntent.putExtra("userId", user.getId());
-//          startActivity(homeIntent);
-//          return true;
-//        } else if (itemId == R.id.navigation_profile) {
+    contentFloating = findViewById(R.id.fabContent);
+    contentFloating.setOnClickListener(view -> {
+      Intent intent = new Intent(MenuUserActivity.this, ContentForUserActivity.class);
+      intent.putExtra("userId", user.getId());
+      Log.d("CONTENT NRN", "ID:" + user.getId());
+      startActivity(intent);
+    });
+
+    BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+    bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+      @Override
+      public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.navigation_login) {
+          // Điều hướng tới Home
+          Intent homeIntent = new Intent(MenuUserActivity.this, MainActivity.class);
+          homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+          startActivity(homeIntent);
+          return true;
+        }
+//        else if (itemId == R.id.navigation_profile) {
 //          // Điều hướng tới Profile
 //          Intent profileIntent = new Intent(MenuUserActivity.this, CategoryActivity.class);
 //          profileIntent.putExtra("userId", user.getId());
 //          startActivity(profileIntent);
 //          return true;
-//        } else if (itemId == R.id.navigation_contents) {
-//          // Điều hướng tới Settings
-//          Intent settingsIntent = new Intent(MenuUserActivity.this, ContentForUserActivity.class);
-//          settingsIntent.putExtra("userId", user.getId());
-//          startActivity(settingsIntent);
-//          return true;
 //        }
-//        return false;
-//      }
-//    });
+        else if (itemId == R.id.navigation_exit) {
+          finishAffinity();
+          // Kết thúc toàn bộ ứng dụng
+          System.exit(0);
+          return true;
+        }
+        return false;
+      }
+    });
   }
 
   @Override
