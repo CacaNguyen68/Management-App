@@ -1,5 +1,6 @@
 package com.mssv_71dctm22077.Review;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -15,6 +16,9 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mssv_71dctm22077.Content.ContentActivity;
+import com.mssv_71dctm22077.MenuAdminActivity;
+import com.mssv_71dctm22077.MenuUserActivity;
 import com.mssv_71dctm22077.R;
 import com.mssv_71dctm22077.adapter.ReviewAdapter;
 import com.mssv_71dctm22077.model.Product;
@@ -28,7 +32,7 @@ public class ReviewActivity extends AppCompatActivity {
   private RecyclerView recyclerView;
   private ReviewAdapter reviewAdapter;
   private MyDatabaseHelper databaseHelper;
-  private int orderId;
+  private int orderId, userId;
   private Button buttonSubmit;
 
   @Override
@@ -43,6 +47,8 @@ public class ReviewActivity extends AppCompatActivity {
 
     // Nhận orderId từ Intent
     orderId = getIntent().getIntExtra("orderId", -1);
+    userId = getIntent().getIntExtra("userId", -1);
+    Log.d("REVIEW R", "GDHGDHJD"+userId);
 
     // Lấy danh sách sản phẩm trong đơn hàng
     List<Product> productList = databaseHelper.getProductInOrderItemByOrderId(orderId);
@@ -58,6 +64,9 @@ public class ReviewActivity extends AppCompatActivity {
       reviewAdapter.submitReviews();
       // Hiển thị thông báo hoặc điều hướng người dùng sang màn hình khác
       Toast.makeText(ReviewActivity.this, "Đánh giá đã được gửi!", Toast.LENGTH_SHORT).show();
+      Intent intent = new Intent(ReviewActivity.this, MenuUserActivity.class);
+      intent.putExtra("userId", userId);
+      startActivity(intent);
       finish(); // Đóng activity sau khi gửi đánh giá
     });
 

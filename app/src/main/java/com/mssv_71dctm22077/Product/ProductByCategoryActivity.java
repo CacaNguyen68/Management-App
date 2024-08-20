@@ -90,7 +90,7 @@ public class ProductByCategoryActivity extends AppCompatActivity {
     if (intent.hasExtra("categoryId")) {
       categoryId = Integer.parseInt(intent.getStringExtra("categoryId"));
       loadProductsByCategory(categoryId);
-      Log.d("ProductByCategory", "Category ID: " + categoryId);
+      Log.d("ProductByCategory", "Category ID ddf: " + categoryId);
     }
   }
 

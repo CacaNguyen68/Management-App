@@ -124,29 +124,39 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     AlertDialog.Builder builder = new AlertDialog.Builder(context);
     builder.setTitle("Xoá danh mục " + category_name.get(position).toString() + " này?");
     builder.setMessage("Bạn có muốn xóa danh mục " + category_name.get(position).toString() + " này?");
+
     builder.setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         MyDatabaseHelper myDB = new MyDatabaseHelper(context);
-        if (myDB.getDanhMucCountById(Integer.parseInt(category_id.get(position)))==0){
+
+        // Kiểm tra số lượng các mục trong danh mục
+        if (myDB.getDanhMucCountById(Integer.parseInt(category_id.get(position))) == 0) {
           myDB.deleteCategory(category_id.get(position).toString());
+
+          // Xóa danh mục khỏi danh sách
           category_id.remove(position);
           category_name.remove(position);
           caregory_created.remove(position);
+
+          // Cập nhật giao diện
           notifyItemRemoved(position);
           notifyItemRangeChanged(position, category_id.size());
-        }else {
+        } else {
           Toast.makeText(context, "Danh mục không thể xoá!", Toast.LENGTH_SHORT).show();
         }
-
       }
     });
+
     builder.setNegativeButton("Hủy bỏ", new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
+        // Không thực hiện hành động gì khi người dùng hủy
       }
     });
+
     builder.create().show();
   }
+
 
 }

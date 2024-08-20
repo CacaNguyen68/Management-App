@@ -3,7 +3,7 @@
   <item
     android:id="@+id/navigation_login"
     android:icon="@drawable/baseline_login_24"
-    android:title="Login" />
+    android:title="Đăng ký" />
 <!--  <item-->
 <!--    android:id="@+id/navigation_profile"-->
 <!--    android:icon="@drawable/ic_user"-->
@@ -11,5 +11,5 @@
   <item
     android:id="@+id/navigation_exit"
     android:icon="@drawable/ic_logout"
-    android:title="Logout" />
+    android:title="Thoát ra" />
 </menu>

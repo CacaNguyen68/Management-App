@@ -78,7 +78,9 @@ public class OrderDetailActivity extends AppCompatActivity {
 
               // Khởi động ReviewActivity
               Intent intent = new Intent(OrderDetailActivity.this, ReviewActivity.class);
+
               intent.putExtra("orderId", orderId);
+              intent.putExtra("userId", user.getId());
               startActivity(intent);
             } else {
               Toast.makeText(OrderDetailActivity.this, "Cập nhật trạng thái đơn hàng thất bại", Toast.LENGTH_SHORT).show();

@@ -35,10 +35,16 @@ public class CategoryActivity extends AppCompatActivity {
   ArrayList<String> categoryId, categoryName, categoryCreated;
   CategoryAdapter customAdapter;
 
+  SearchView searchView;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_category);
+
+    // Khởi tạo RecyclerView và SearchView
+    recyclerView = findViewById(R.id.recyclerViewDanhMuc);
+    searchView = findViewById(R.id.search_view);
 
     // Toolbar
     Toolbar toolbar = findViewById(R.id.toolbar);
@@ -51,30 +57,23 @@ public class CategoryActivity extends AppCompatActivity {
       }
     });
 
-    // RecyclerView and FloatingActionButton
-    recyclerView = findViewById(R.id.recyclerViewDanhMuc);
-    addButton = findViewById(R.id.add_button);
-
-    // Initialize database and arrays
+      // Khởi tạo đối tượng cơ sở dữ liệu
     myDB = new MyDatabaseHelper(CategoryActivity.this);
+
+    // Khởi tạo danh sách để chứa dữ liệu danh mục
     categoryId = new ArrayList<>();
     categoryName = new ArrayList<>();
     categoryCreated = new ArrayList<>();
 
-    // Load data into RecyclerView
-//    storeDataArrays();
-    customAdapter = new CategoryAdapter(CategoryActivity.this, this, categoryId, categoryName, categoryCreated);
+    // Gọi hàm để nạp dữ liệu từ cơ sở dữ liệu
+    storeDataArrays();
+
+    // Thiết lập adapter cho RecyclerView
+    customAdapter = new CategoryAdapter(CategoryActivity.this,this, categoryId, categoryName, categoryCreated);
     recyclerView.setAdapter(customAdapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(CategoryActivity.this));
 
-    // Handle FloatingActionButton click
-    addButton.setOnClickListener(view -> {
-      Intent intent = new Intent(CategoryActivity.this, AddCategoryActivity.class);
-      startActivity(intent);
-    });
-
-    // Setup SearchView
-    SearchView searchView = findViewById(R.id.search_view);
+    // Thiết lập sự kiện cho SearchView để lọc dữ liệu theo từ khóa
     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
       @Override
       public boolean onQueryTextSubmit(String query) {
@@ -83,15 +82,24 @@ public class CategoryActivity extends AppCompatActivity {
 
       @Override
       public boolean onQueryTextChange(String newText) {
-        customAdapter.filter(newText);
-        return true;
+        customAdapter.filter(newText); // Lọc danh sách dựa trên từ khóa nhập vào
+        return false;
       }
+    });
+
+    addButton = findViewById(R.id.add_button);
+    // Handle FloatingActionButton click
+    addButton.setOnClickListener(view -> {
+      Intent intent = new Intent(CategoryActivity.this, AddCategoryActivity.class);
+      startActivity(intent);
     });
   }
 
+  // Hàm để nạp dữ liệu từ cơ sở dữ liệu vào các ArrayList
   void storeDataArrays() {
-    Cursor cursor = myDB.getAllDanhMuc();
+    Cursor cursor = myDB.getAllDanhMuc(); // Lấy tất cả các danh mục từ cơ sở dữ liệu
     if (cursor.getCount() == 0) {
+      // Nếu không có dữ liệu, thêm dữ liệu mẫu vào cơ sở dữ liệu
       myDB.addDanhMuc("Trẻ em");
       myDB.addDanhMuc("Nhân vật");
       myDB.addDanhMuc("Tóc giả");
@@ -99,39 +107,26 @@ public class CategoryActivity extends AppCompatActivity {
       myDB.addDanhMuc("Phụ kiện");
       myDB.addDanhMuc("Cổ trang");
     } else {
+      // Nếu có dữ liệu, nạp vào các danh sách
       while (cursor.moveToNext()) {
-        categoryId.add(cursor.getString(0));
-        categoryName.add(cursor.getString(1));
-        categoryCreated.add(cursor.getString(2));
+        categoryId.add(cursor.getString(0));  // ID của danh mục
+        categoryName.add(cursor.getString(1)); // Tên danh mục
+        categoryCreated.add(cursor.getString(2)); // Ngày tạo
       }
     }
   }
 
+  // Hàm được gọi khi Activity quay trở lại trạng thái foreground (trở lại màn hình)
   @Override
   public void onResume() {
     super.onResume();
+    // Xóa dữ liệu cũ trong các danh sách
     categoryId.clear();
     categoryName.clear();
     categoryCreated.clear();
+    // Nạp lại dữ liệu từ cơ sở dữ liệu
     storeDataArrays();
+    // Thông báo cho adapter rằng dữ liệu đã thay đổi để cập nhật giao diện
     customAdapter.notifyDataSetChanged();
   }
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_user, menu);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    if (item.getItemId() == R.id.action_home) {
-      // Xử lý khi nhấn vào mục menu
-      Intent intent = new Intent(this, MenuUserActivity.class);
-      startActivity(intent);
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
-  }
-
 }

@@ -448,12 +448,28 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     return count;
   }
 
+//  public int getDanhMucCountById(int categoryId) {
+//    SQLiteDatabase db = this.getReadableDatabase();
+//    // Thêm điều kiện WHERE để lọc theo ID của danh mục
+//    Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_CATEGORY + " WHERE id = ?", new String[]{String.valueOf(categoryId)});
+//    cursor.moveToFirst();
+//    int count = cursor.getInt(0);
+//    cursor.close();
+//    return count;
+//  }
+
   public int getDanhMucCountById(int categoryId) {
     SQLiteDatabase db = this.getReadableDatabase();
+
     // Thêm điều kiện WHERE để lọc theo ID của danh mục
-    Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_CATEGORY + " WHERE id = ?", new String[]{String.valueOf(categoryId)});
+    Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_PRODUCT + " WHERE danhmuc_id = ?", new String[]{String.valueOf(categoryId)});
     cursor.moveToFirst();
+
     int count = cursor.getInt(0);
+
+    // Ghi log giá trị đếm được
+    Log.d("getDanhMucCountById", "Category ID: " + categoryId + ", Count: " + count);
+
     cursor.close();
     return count;
   }
@@ -652,7 +668,9 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     contentValues.put(COLUMN_USER_CREATED_PRODUCT, userCreated);
     contentValues.put(COLUMN_IMAGE_PRODUCT, image);
 
-    db.update(TABLE_PRODUCT, contentValues, COLUMN_ID_PRODUCT + " = ?", new String[]{String.valueOf(id)});
+//    db.update(TABLE_PRODUCT, contentValues, COLUMN_ID_PRODUCT + " = ?", new String[]{String.valueOf(id)});
+    int result = db.update(TABLE_PRODUCT, contentValues, COLUMN_ID_PRODUCT + " = ?", new String[]{String.valueOf(id)});
+    Log.d("UpdateProduct", "Rows affected: " + result);
   }
 
   // cau truy van search tat ca san pham theo ten san pham

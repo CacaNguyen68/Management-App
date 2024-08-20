@@ -99,13 +99,35 @@ public class UpdateProductActivity extends AppCompatActivity {
       if (newName.isEmpty() || newPrice.isEmpty()) {
         Toast.makeText(UpdateProductActivity.this, "Vui lòng nhập đầy đủ thông tin sản phẩm", Toast.LENGTH_SHORT).show();
       } else {
-        // Cập nhật sản phẩm trong cơ sở dữ liệu
-        Date today = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-        String createdAt = formatter.format(today);
-        Log.d("ID UPDATE","ID = "+id);
-        mb.updateProduct(idProduct, newName, Double.parseDouble(newPrice), newCategoryId, createdAt, "Admin", getBitmapAsByteArray(selectedImageBitmap));
-        finish();
+        try {
+          // Loại bỏ dấu phân cách hàng nghìn
+          DecimalFormat format = new DecimalFormat("#,###");
+          Number number = format.parse(newPrice);
+          double parsedPrice = number.doubleValue();
+
+          // Cập nhật sản phẩm trong cơ sở dữ liệu
+          Date today = new Date();
+          SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+          String createdAt = formatter.format(today);
+
+          // Nếu không chọn hình ảnh mới, giữ nguyên ảnh cũ
+          byte[] imageByteArray;
+          if (selectedImageBitmap != null) {
+            imageByteArray = getBitmapAsByteArray(selectedImageBitmap);
+          } else {
+            // Để null nếu không có ảnh mới
+            imageByteArray = null;
+          }
+
+          mb.updateProduct(idProduct, newName, parsedPrice, newCategoryId, createdAt, "Admin", imageByteArray);
+
+          Intent intent = new Intent(this, MenuAdminActivity.class);
+          startActivity(intent);
+          finish();
+        } catch (Exception e) {
+          e.printStackTrace();
+          Toast.makeText(UpdateProductActivity.this, "Lỗi định dạng giá. Vui lòng kiểm tra lại.", Toast.LENGTH_SHORT).show();
+        }
       }
     });
 
@@ -128,11 +150,8 @@ public class UpdateProductActivity extends AppCompatActivity {
       price = getIntent().getStringExtra("price");
       categoryId = getIntent().getStringExtra("categoryId");
 
-//      idProduct = Integer.parseInt(id);
       name_input.setText(name);
-      DecimalFormat decimalFormat = new DecimalFormat("#,###");
-      String formattedPrice = decimalFormat.format(Double.parseDouble(price));
-      price_input.setText(formattedPrice);
+      price_input.setText(new DecimalFormat("#,###").format(Double.parseDouble(price)));
 
       // Set selected category in spinner
       List<String> categoryList = mb.getCategoryList();
@@ -142,8 +161,6 @@ public class UpdateProductActivity extends AppCompatActivity {
 
       if (categoryId != null) {
         int categoryIntId = Integer.parseInt(categoryId);
-        Log.d("id lay category ", "lay ra: " + categoryId);
-//        String nameCategory = mb.getCategoryNameById(product.getCategoryId());
         spinnerCategory.setSelection(categoryIntId - 1);
       }
 
@@ -151,6 +168,7 @@ public class UpdateProductActivity extends AppCompatActivity {
         byte[] byteArray = getIntent().getByteArrayExtra("image");
         Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         product_image.setImageBitmap(bmp);
+        selectedImageBitmap = bmp;
       } else {
         product_image.setImageResource(R.drawable.baseline_yard_24);
       }
@@ -158,6 +176,7 @@ public class UpdateProductActivity extends AppCompatActivity {
       Toast.makeText(this, "Không có dữ liệu", Toast.LENGTH_SHORT).show();
     }
   }
+
 
   private void openImageChooser() {
     Intent intent = new Intent();
@@ -181,6 +200,7 @@ public class UpdateProductActivity extends AppCompatActivity {
     }
   }
 
+
   private byte[] getBitmapAsByteArray(Bitmap bitmap) {
     if (bitmap == null) return null;
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -199,10 +219,18 @@ public class UpdateProductActivity extends AppCompatActivity {
     if (item.getItemId() == R.id.action_home) {
       // Xử lý khi nhấn vào mục menu
       Intent intent = new Intent(this, MenuAdminActivity.class);
+
       startActivity(intent);
       return true;
     }
     return super.onOptionsItemSelected(item);
   }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    // Hủy các tác vụ đang chạy tại đây
+  }
+
 }
 
